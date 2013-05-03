@@ -85,13 +85,14 @@ require(['underscore', 'backbone', 'splunkjs/mvc', 'splunkjs/mvc/searchcontext']
         var components = require('splunkjs/mvc').Components;
 
         var pathSearch = components.create('appfx-searchcontext', 'users-loggin-in', {
-            search: 'search sourcetype="minecraft" world=world | transaction player startswith="action=player_connect" endswith="action=player_disconnect" | dedup player | rex max_match=0 field=_raw " to_x=(?<to_x>-{0,1}\\d*)\\." | rex max_match=0 field=_raw " to_y=(?<to_y>-{0,1}\\d*)\\." | rex max_match=0 field=_raw " to_z=(?<to_z>-{0,1}\\d*)\\." | table player, to_x, to_y, to_z',
+            search: 'search sourcetype="minecraft" action=player_moved world=world | eval point=round(to_x).",".round(to_y).",".round(to_z) | table player, point',
             autostart: false,
-            earliest_time: '-2d@d',
-            latest_time: 'now'
+            earliest_time: '-3w',
+            latest_time: 'now',
+            preview: true
         }).start();
 
-        var datasource = pathSearch.data('results', {
+        var datasource = pathSearch.data('preview', {
             output_mode: 'json_rows',
             count: 0 // get all results
         });
@@ -111,45 +112,60 @@ require(['underscore', 'backbone', 'splunkjs/mvc', 'splunkjs/mvc/searchcontext']
             '#FF00FF'
         ];
 
+        var polylines = [];
+
         datasource.on('data', function(results) {
             if (!datasource.hasData()) {
                 return;
             }
 
             $('#loading').text('');
+            $('#legend').empty();
 
-            var paths = results.collection().toJSON();
-            _.each(paths, function(path, pathIndex) {
-                var color = colors[pathIndex % colors.length];
+            console.log('PREVIEW RECEIVED');
+            console.dir(results);
 
-                // assumption, path.to_x.length === path.to_y.length === path.to_z.length
-                _.each(path.to_x, function(xPos, pointIndex) {
-                    xPos = parseInt(xPos);
-                    var yPos = parseInt(path.to_y[pointIndex]);
-                    var zPos = parseInt(path.to_z[pointIndex]);
+            _.each(polylines, function(polyline) {
+                polyline.setMap(null);
+            });
+            polylines = [];
+
+            var locations = results.collection().toJSON();
+            locations = _.groupBy(locations, function(location) { return location.player; });
+            var playerNames = _.keys(locations);
+
+            _.each(playerNames, function(playerName, playerIndex) {
+                var color = colors[playerIndex % colors.length];
+                var points = _.pluck(locations[playerName], 'point');
+                var latLngs = []
+
+                _.each(points, function(point) {
+                    var split = point.split(',');
+                    var xPos = parseInt(split[0]);
+                    var yPos = parseInt(split[1]);
+                    var zPos = parseInt(split[2]);
 
                     var latLng = overviewer.util.fromWorldToLatLng(
                         xPos, yPos, zPos,
                         overviewer.mapView.options.currentTileSet
                     );
 
-                    // TODO path or line instead of circle
-                    new google.maps.Circle({
-                        strokeColor: color,
-                        strokeOpacity: 0.8,
-                        strokeWeight: 5,
-                        fillColor: color,
-                        fillOpacity: 0.35,
-                        map: overviewer.map,
-                        center: latLng,
-                        radius: 10
-                    }); 
+                    latLngs.push(latLng);
+
                 });
 
-                $('#legend').append('<li><div class="color-block" style="background-color:' + color + '"></div> ' + path.player + '</li>');
+                polylines.push(new google.maps.Polyline({
+                    strokeColor: color,
+                    strokeOpacity: 0.8,
+                    strokeWeight: 5,
+                    map: overviewer.map,
+                    path: latLngs
+                }));
+
+                $('#legend').append('<li><div class="color-block" style="background-color:' + color + '"></div> ' + playerName + '</li>');
 
 
-            });
+           });
 
 
         });
