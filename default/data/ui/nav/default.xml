@@ -1,0 +1,7 @@
+<nav>
+    <view name="default" default="true"></view>
+    <a name="home" href="/dj/splunk-demo-minecraft/home">Overview</a>
+    <a name="players" href="/dj/splunk-demo-minecraft/players">Players</a>
+    <a name="blocks" href="/dj/splunk-demo-minecraft/blocks">Blocks</a>
+    <a name="livemap" href="/dj/splunk-demo-minecraft/livemap">Live Map</a>
+</nav>

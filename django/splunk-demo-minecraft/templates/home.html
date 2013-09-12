@@ -1,158 +1,46 @@
-{% extends "appfx:base_with_app_bar.html" %}
+{% extends "splunkdj:base_with_app_bar.html" %}
 
 {% load splunkmvc %}
 
-{% block title %}{{app_label}}{% endblock title %}
+{% block title %}{{app_name}}Home Page{% endblock title %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}{{app_name}}/custom.css" />
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}{{app_name}}/dashboard.css" />
 
-    <link rel="stylesheet" href="http://mc.splunk.local:81/overviewer.css" type="text/css" />
-
-    <style>
-        #overviewerFrame {
-            width: 1000px;
-            height: 1000px;
-        }
-        .splunk .container {
-            width: 100%;
-        }
-        .container div#mcmap {
-            height:800px;
-            width:100%;
-        }
-
-        /* Bootstrap Css Map Fix*/
-        .container div#mcmap img { 
-           max-width: none;
-        }
-        .container div#mcmap label { 
-           width: auto; display:inline; 
-        } 
-        .container ul#legend {
-            display: block;
-            margin: auto;
-            min-width: 800px;
-        }
-
-        .container ul#legend li {
-            display: inline-block;
-            padding: 20px;
-        }
-
-        .container ul#legend .color-block {
-            display: inline-block;
-            height: 50px;
-            width: 50px;
-            border: 1px solid black;
-            border-radius: 3px;
-        }
+    <style>        
+        .main-area {
+            margin: 4px auto;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 10px;
+            width: 300px;
+        }    
     </style>
-
-
-    
 {% endblock css %}
 
 {% block content %}
 
-    <div class="container">
-        <div id="mcmap"></div>
-        <ul id="legend"></ul>
-    </div>
-            
+    {% chart id="test-chart" managerid="test-search" %}
 
-{% endblock content%}
+{% endblock content %}
 
-{% block js %}   
+{% block managers %}
 
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    {% searchmanager id="test-search" search="search index=_internal | stats distinct_count(user) by date_hour" %}
+
+{% endblock managers %}
+
+{% block js %}
 
 <script>
-require(['underscore', 'backbone', 'splunkjs/mvc', 'splunkjs/mvc/searchcontext'], function(_, Backbone) {
-    // TODO this is bad, but what should i do?
-    // the files below depend on underscore and backbone being on the root
-    window._ = _;
-    window.Backbone = Backbone;
+require(['underscore', 'backbone', 'splunkjs/mvc/searchmanager', 'splunkjs/mvc', 'splunkjs/ready!'], function(_, Backbone) {
+    var mvc = require('splunkjs/mvc');
+    var SearchManager = require('splunkjs/mvc/searchmanager');
 
-    require([
-        '{{STATIC_URL}}{{app_name}}/overviewerConfig.js',
-        '{{STATIC_URL}}{{app_name}}/overviewer.js'
-    ], function() {
-
-        var components = require('splunkjs/mvc').Components;
-
-        var usersLoggingInSearch = components.create('appfx-searchcontext', 'users-loggin-in', {
-            search: 'search sourcetype="minecraft_log" "logged in" | rex field=_raw ".*\\[INFO\\] (?<user>.*)\\[.*\\((?<xpos>.*),(?<ypos>.*),(?<zpos>.*)\\)" | eval comb=xpos.",".ltrim(ypos).",".ltrim(zpos) | stats values(comb) by user',
-            autostart: false
-        }).start();
-
-        var datasource = usersLoggingInSearch.data('results', {
-            output_mode: 'json_rows',
-            count: 0 // get all results
-        });
-
-        var colors = [
-            '#FF0000',
-            '#00FF00',
-            '#FF7F00',
-            '#000000',
-            '#FFFF00',
-            '#FF00FF',
-            '#00FFFF',
-            '#BF3EFF',
-            '#ADFF2F',
-            '#FF69B4',
-            '#7CFC00',
-            '#FF00FF'
-        ];
-
-        datasource.on('data', function(results) {
-            if (!datasource.hasData()) {
-                return;
-            }
-
-            var users = results.collection().toJSON();
-            var i = 0;
-            _.each(users, function(user) {
-                var points = _.isArray(user['values(comb)']) ? user['values(comb)'] : [user['values(comb)']];
-                points = _.map(points, function(point) { var split = point.split(','); return [parseFloat(split[0]), parseFloat(split[1]), parseFloat(split[2])]; });
-                user.color = colors[i++];
-                i %= colors.length;
-
-                _.each(points, function(point) {
-                    var latLng = overviewer.util.fromWorldToLatLng(point[0], point[1], point[2], overviewer.mapView.options.currentTileSet);
-                    new google.maps.Circle({
-                        strokeColor: user.color,
-                        strokeOpacity: 0.8,
-                        strokeWeight: 5,
-                        fillColor: user.color,
-                        fillOpacity: 0.35,
-                        map: overviewer.map,
-                        center: latLng,
-                        radius: 50
-                    });
-
-                });
-
-
-                $('#legend').append('<li><div class="color-block" style="background-color:' + user.color + '"></div> ' + user.user + '</li>');
-
-            });
-
-        });
-
-        overviewer.util.initialize();
-        usersLoggingInSearch.startSearch();
-
-    	setTimeout(function() {
-            window.location.reload();
-        }, 1000 * 60 * 60); // reload once per hour
-
-
-    });
+    mvc.Components.getInstance("test-chart").settings.set({"charting.axisTitleY.text" : "test
+test2"});
+    
 });
 </script>
 
-    
 {% endblock js %}

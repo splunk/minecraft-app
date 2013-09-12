@@ -1,0 +1,46 @@
+{% extends "splunkdj:base_with_app_bar.html" %}
+
+{% load splunkmvc %}
+
+{% block title %}{{app_name}}Home Page{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}{{app_name}}/custom.css" />
+
+    <style>        
+        .main-area {
+            margin: 4px auto;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 10px;
+            width: 300px;
+        }    
+    </style>
+{% endblock css %}
+
+{% block content %}
+
+    {% chart id="test-chart" managerid="test-search" %}
+
+{% endblock content %}
+
+{% block managers %}
+
+    {% searchmanager id="test-search" search="search index=_internal | stats distinct_count(user) by date_hour" %}
+
+{% endblock managers %}
+
+{% block js %}
+
+<script>
+require(['underscore', 'backbone', 'splunkjs/mvc/searchmanager', 'splunkjs/mvc', 'splunkjs/ready!'], function(_, Backbone) {
+    var mvc = require('splunkjs/mvc');
+    var SearchManager = require('splunkjs/mvc/searchmanager');
+
+    mvc.Components.getInstance("test-chart").settings.set({"charting.axisTitleY.text" : "test
+test2"});
+    
+});
+</script>
+
+{% endblock js %}

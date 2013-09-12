@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from appfx.utility.views import render_template as render
+from splunkdj.utility.views import render_template as render
 
 urlpatterns = patterns('',
 	url(r'^home/$', 'splunk-demo-minecraft.views.home', name='home'),

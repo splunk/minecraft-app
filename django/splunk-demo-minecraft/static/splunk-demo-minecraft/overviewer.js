@@ -160,7 +160,9 @@ overviewer.util = {
     // vars for callback
     readyQueue: [],
     isReady: false,
-    
+
+    lastHash: null,
+
     /* fuzz tester!
      */
     'testMaths': function(t) {
@@ -295,8 +297,9 @@ overviewer.util = {
 
         overviewer.mapView.render();
          
-        // Jump to the hash if given
+        // Jump to the hash if given (and do so for any further hash changes)
         overviewer.util.initHash();
+        $(window).on('hashchange', function() { overviewer.util.initHash(); });
 
         // create this control after initHash so it can correctly select the current world
         var worldSelector = new overviewer.views.WorldSelectorView({tagName:'DIV'});
@@ -622,18 +625,23 @@ overviewer.util = {
         });
     },
     'initHash': function() {
-        if(window.location.hash.split("/").length > 1) {
-            overviewer.util.goToHash();
-            // Clean up the hash.
-            overviewer.util.updateHash();
-
+        var newHash = window.location.hash;
+        if (overviewer.util.lastHash !== newHash) {
+            overviewer.util.lastHash = newHash;
+            if(newHash.split("/").length > 1) {
+                overviewer.util.goToHash();
+                // Clean up the hash.
+                overviewer.util.updateHash();
+            }
         }
     },
     'setHash': function(x, y, z, zoom, w, maptype)    {
         // save this info is a nice easy to parse format
         var currentWorldView = overviewer.mapModel.get("currentWorldView");
         currentWorldView.options.lastViewport = [x,y,z,zoom];
-        window.location.replace("#/" + Math.floor(x) + "/" + Math.floor(y) + "/" + Math.floor(z) + "/" + zoom + "/" + w + "/" + maptype);
+        var newHash = "#/" + Math.floor(x) + "/" + Math.floor(y) + "/" + Math.floor(z) + "/" + zoom + "/" + w + "/" + maptype;
+        overviewer.util.lastHash = newHash; // this should not trigger initHash
+        window.location.replace(newHash);
     },
     'updateHash': function() {
         var currTileset = overviewer.mapView.options.currentTileSet;
@@ -833,13 +841,13 @@ overviewer.views.CompassView = Backbone.View.extend({
         var tsetModel = overviewer.mapView.options.currentTileSet;
         var northdir = tsetModel.get("north_direction");
         if (northdir == overviewerConfig.CONST.UPPERLEFT)
-            this.$("IMG").attr("src","http://mc.splunk.local:81/compass_upper-left.png"); // TODO major hack right about here!!!!
+            this.$("IMG").attr("src","http://mcserver.splunk.local:81/compass_upper-left.png"); // TODO major hack right about here!!!!
         if (northdir == overviewerConfig.CONST.UPPERRIGHT)
-            this.$("IMG").attr("src", "http://mc.splunk.local:81/compass_upper-right.png");
+            this.$("IMG").attr("src", "http://mcserver.splunk.local:81/compass_upper-right.png");
         if (northdir == overviewerConfig.CONST.LOWERLEFT)
-            this.$("IMG").attr("src", "http://mc.splunk.local:81/compass_lower-left.png");
+            this.$("IMG").attr("src", "http://mcserver.splunk.local:81/compass_lower-left.png");
         if (northdir == overviewerConfig.CONST.LOWERRIGHT)
-            this.$("IMG").attr("src", "http://mc.splunk.local:81/compass_lower-right.png");
+            this.$("IMG").attr("src", "http://mcserver.splunk.local:81/compass_lower-right.png");
     }
 });
 
@@ -864,25 +872,25 @@ overviewer.views.ProgressView = Backbone.View.extend({
         this.el.id = 'progressDiv';
         this.el.innerHTML = 'Current Render Progress';
         overviewer.map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(this.el);
-        this.el.hidden = true;
+        $(this.el).hide();
         $.ajaxSetup({cache: false});
     },
     updateProgress: function() {
         e = this;
         $.getJSON('progress.json', null, function(d){
             if (!(d == null||d=='')) {
-                e.el.hidden = false;
+                $(e.el).show();
                 e.el.innerHTML = d['message'];
                 if (d.update > 0) {
                     setTimeout("e.updateProgress()", d.update);
                 } else {
                     setTimeout("e.updateProgress()", 60000);
                     e.el.innerHTML="Hidden - d.update < 0";
-                    e.el.hidden = true;
+                    $(e.el).hide();
                 }
             } else {
                 e.el.innerHTML="Hidden - !!d==false";
-                e.el.hidden = true;
+                $(e.el).hide();
             }
         });
     }
@@ -1196,6 +1204,22 @@ overviewer.views.SignControlView = Backbone.View.extend({
                         }
                     }
                     dataRoot[i].markerObjs.push(marker);
+                    // Polyline stuff added by FreakusGeekus. Probably needs work.
+                    if (typeof entity['polyline'] != 'undefined') {
+						var polypath = new Array();
+                        for (point in entity.polyline) {
+                            polypath.push(overviewer.util.fromWorldToLatLng(entity.polyline[point].x, entity.polyline[point].y, entity.polyline[point].z, overviewer.mapView.options.currentTileSet));
+                        }
+                        
+                        var polyline = new google.maps.Polyline({
+								'path': polypath,
+                                'clickable': false,
+                                'map': overviewer.map,
+                                'visible': false,
+								'strokeColor': entity['strokeColor']
+                        });
+						dataRoot[i].markerObjs.push(polyline);
+                    }
                 }
                 dataRoot[i].created = true;
             }
@@ -1293,7 +1317,8 @@ overviewer.views.LocationIconView = Backbone.View.extend({
         'icon':     overviewerConfig.CONST.image.queryMarker,
         'visible':  false
     }); 
-    overviewer.collections.locationMarker.setVisible(true);
+    overviewer.collections.locationMarker.setVisible(overviewer.mapView.options.currentTileSet.get("showlocationmarker"));
 
     }
 });
+

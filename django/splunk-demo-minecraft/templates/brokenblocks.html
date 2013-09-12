@@ -1,0 +1,112 @@
+{% extends "splunkdj:base_with_app_bar.html" %}
+
+{% load splunkmvc %}
+
+{% block title %}{{app_name}}Home Page{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}{{app_name}}/custom.css"/>
+{% endblock css %}
+
+{% block content %}
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row">
+				<div class="span4">
+					{% chart id="most-mined-chart" managerid="most-mined-search" %}
+				</div>
+				<div class="span4">
+					{% chart id="logging-chart" managerid="logging-search" %}
+				</div>
+				<div class="span4">
+					{% chart id="logging-chart2" managerid="logging-search" %}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="ore_grid">
+        <div class="row-fluid">
+            <div class="span1">
+                <img src="http://media-mcw.cursecdn.com/4/40/Coal_%28Ore%29.png">
+            </div>
+            <div class="span3">
+                {% single managerid="coal-ore-search" id="coal-single" afterLabel="Coal Ore Mined" %}
+            </div>
+            <div class="span1">
+                <img src="http://media-mcw.cursecdn.com/9/9f/Redstone_%28Ore%29.png">
+            </div>
+            <div class="span3">
+                {% single managerid="redstone-ore-search" id="redstone-single" afterLabel="Redstone Ore Mined" %}
+            </div>
+            <div class="span1">
+                <img src="http://media-mcw.cursecdn.com/c/cf/Lapis_Lazuli_%28Ore%29.png">
+            </div>
+            <div class="span3">
+                {% single managerid="lapis-ore-search" id="lapis-single" afterLabel="Lapis Ore Mined" %}
+            </div>
+        </div>
+        <div class="row-fluid ore_row">
+            <div class="span1">
+                <img src="http://media-mcw.cursecdn.com/a/a8/Iron_%28Ore%29.png">
+            </div>
+            <div class="span3">
+                {% single managerid="iron-ore-search" id="iron-single" afterLabel="Iron Ore Mined" %}
+            </div>
+            <div class="span1">
+                <img src="http://media-mcw.cursecdn.com/3/39/Gold_%28Ore%29.png">
+            </div>
+            <div class="span3">
+                {% single managerid="gold-ore-search" id="gold-single" afterLabel="Gold Ore Mined" %}
+            </div>
+            <div class="span1">
+                <img src="http://media-mcw.cursecdn.com/9/9d/Diamond_%28Ore%29.png">
+            </div>
+            <div class="span3">
+                {% single managerid="diamond-ore-search" id="diamond-single" afterLabel="Diamond Ore Mined" %}
+            </div>
+        </div>
+        <div class="row-fluid ore_row">
+            <div class="span1 offset2">
+                <img src="http://media-mcw.cursecdn.com/3/3d/Emerald_Ore2.png">
+            </div>
+            <div class="span3">
+                {% single managerid="emerald-ore-search" id="emerald-single" afterLabel="Emerald Ore Mined" %}
+            </div>
+            <div class="span1">
+                <img src="http://media-mcw.cursecdn.com/3/39/Nether_Quartz_Ore.png">
+            </div>
+            <div class="span3">
+                {% single managerid="quartz-ore-search" id="quartz-single" afterLabel="Nether Quartz Ore Mined" %}
+            </div>
+        </div>
+    </div>
+    {% endblock content %}
+
+{% block managers %}
+    {% searchmanager id="coal-ore-search" search="sourcetype=minecraft_log action=block_broken block_type=COAL_ORE | stats count" %}
+    {% searchmanager id="redstone-ore-search" search="sourcetype=minecraft_log action=block_broken block_type=REDSTONE_ORE OR block_type=GLOWING_REDSTONE_ORE | stats count" %}
+    {% searchmanager id="lapis-ore-search" search="sourcetype=minecraft_log action=block_broken block_type=LAPIS_ORE | stats count" %}
+    {% searchmanager id="iron-ore-search" search="sourcetype=minecraft_log action=block_broken block_type=IRON_ORE | stats count" %}
+    {% searchmanager id="gold-ore-search" search="sourcetype=minecraft_log action=block_broken block_type=GOLD_ORE | stats count" %}
+    {% searchmanager id="diamond-ore-search" search="sourcetype=minecraft_log action=block_broken block_type=DIAMOND_ORE | stats count" %}
+    {% searchmanager id="emerald-ore-search" search="sourcetype=minecraft_log action=block_broken block_type=EMERALD_ORE | stats count" %}
+    {% searchmanager id="quartz-ore-search" search="sourcetype=minecraft_log action=block_broken block_type=QUARTZ_ORE | stats count" %}
+    
+    {% searchmanager id="most-mined-search" search="sourcetype=minecraft_log action=block_broken block_type!=TORCH block_type!=CROPS | top limit=5 block_type" %}
+    {% searchmanager id="logging-search" search="sourcetype=minecraft_log action=block_broken block_type=*_LOG | stats count by block_type" %}
+
+{% endblock managers %}
+
+{% block js %}
+
+<script>
+require(['underscore', 'backbone', 'splunkjs/mvc/searchmanager', 'splunkjs/mvc', 'splunkjs/ready!'], function(_, Backbone) {
+    var mvc = require('splunkjs/mvc');
+    var SearchManager = require('splunkjs/mvc/searchmanager');
+
+    mvc.Components.getInstance("logging-chart").settings.set({"charting.chart" : "pie"});
+    
+});
+</script>
+
+{% endblock js %}

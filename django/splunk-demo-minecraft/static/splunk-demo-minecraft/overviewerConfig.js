@@ -5,87 +5,91 @@ var overviewerConfig = {
     "tilesets": [
         {
             "spawn": [
-                236, 
+                -185, 
                 64, 
-                256
+                125
             ], 
             "isOverlay": false, 
-            "last_rendertime": 1365037188, 
+            "last_rendertime": 1379001155, 
             "name": "Overviewer Render (normal)", 
-            "poititle": "Signs", 
+            "poititle": "Markers", 
             "north_direction": 0, 
             "minZoom": 0, 
             "bgcolor": "#1a1a1a", 
-            "zoomLevels": 8, 
+            "zoomLevels": 6, 
             "base": "", 
             "imgextension": "png", 
             "defaultZoom": 1, 
             "world": "world", 
-            "maxZoom": 8, 
-            "path": "http://mc.splunk.local:81/world-normal"
+            "maxZoom": 6, 
+            "path": "http://mcserver.splunk.local:81/world-normal", 
+            "showlocationmarker": true
         }, 
         {
             "spawn": [
-                236, 
+                -185, 
                 64, 
-                256
+                125
             ], 
             "isOverlay": false, 
-            "last_rendertime": 1365037188, 
+            "last_rendertime": 1379001155, 
             "name": "Overviewer Render (lighting)", 
-            "poititle": "Signs", 
+            "poititle": "Markers", 
             "north_direction": 0, 
             "minZoom": 0, 
             "bgcolor": "#1a1a1a", 
-            "zoomLevels": 8, 
+            "zoomLevels": 6, 
             "base": "", 
             "imgextension": "png", 
             "defaultZoom": 1, 
             "world": "world", 
-            "maxZoom": 8, 
-            "path": "http://mc.splunk.local:81/world-lighting"
+            "maxZoom": 6, 
+            "path": "http://mcserver.splunk.local:81/world-lighting", 
+            "showlocationmarker": true
         }, 
         {
             "spawn": [
-                236, 
+                -185, 
                 64, 
-                256
+                125
             ], 
             "isOverlay": false, 
-            "last_rendertime": 1365037188, 
+            "last_rendertime": 1379001155, 
             "name": "Overviewer Render (night)", 
-            "poititle": "Signs", 
+            "poititle": "Markers", 
             "north_direction": 0, 
             "minZoom": 0, 
             "bgcolor": "#1a1a1a", 
-            "zoomLevels": 8, 
+            "zoomLevels": 6, 
             "base": "", 
             "imgextension": "png", 
             "defaultZoom": 1, 
             "world": "world", 
-            "maxZoom": 8, 
-            "path": "http://mc.splunk.local:81/world-night"
+            "maxZoom": 6, 
+            "path": "http://mcserver.splunk.local:81/world-night", 
+            "showlocationmarker": true
         }, 
         {
             "spawn": [
-                236, 
+                -185, 
                 64, 
-                256
+                125
             ], 
             "isOverlay": false, 
-            "last_rendertime": 1365037188, 
+            "last_rendertime": 1379001155, 
             "name": "Overviewer Render (cave)", 
-            "poititle": "Signs", 
+            "poititle": "Markers", 
             "north_direction": 0, 
             "minZoom": 0, 
             "bgcolor": "#1a1a1a", 
-            "zoomLevels": 8, 
+            "zoomLevels": 6, 
             "base": "", 
             "imgextension": "png", 
             "defaultZoom": 1, 
             "world": "world", 
-            "maxZoom": 8, 
-            "path": "http://mc.splunk.local:81/world-cave"
+            "maxZoom": 6, 
+            "path": "http://mcserver.splunk.local:81/world-cave", 
+            "showlocationmarker": true
         }
     ], 
     "CONST": {
@@ -95,9 +99,9 @@ var overviewerConfig = {
         "UPPERRIGHT": 1, 
         "image": {
             "defaultMarker": "signpost.png", 
-            "queryMarker": "http://google-maps-icons.googlecode.com/files/regroup.png", 
+            "queryMarker": "https://google-maps-icons.googlecode.com/files/regroup.png", 
             "signMarker": "signpost_icon.png", 
-            "spawnMarker": "http://google-maps-icons.googlecode.com/files/home.png", 
+            "spawnMarker": "https://google-maps-icons.googlecode.com/files/home.png", 
             "bedMarker": "bed.png"
         }, 
         "LOWERRIGHT": 2, 
@@ -122,6 +126,6 @@ var overviewerConfig = {
             67, 
             94
         ], 
-        "cacheTag": "1365040543"
+        "cacheTag": "1379001211"
     }
 };
