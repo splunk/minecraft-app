@@ -1,26 +1,91 @@
-.span6 > div
-{
+.grey_border > div {
     border: 1px solid grey;
 }
-.span4 > div
-{
-    border: 1px solid grey;
-}
-.span12 > div
-{
+
+.row_margins > div {
     margin-top: 30px;
     margin-right: 30px;
     margin-left: 30px;
 }
-.ore_grid
-{
-    border: 1px solid grey;
+
+.row_margins_top > div {
     margin-top: 30px;
-    margin-right: 30px;
-    margin-left: 30px;
+}
+
+.ore_grid {
+    border: 1px solid grey;
     padding: 15px;
+    background: white;
 }
-.ore_row
-{
+
+.ore_row {
     margin-top: 15px;
+}
+
+.ore_row_last {
+	margin-bottom: 15px;
+}
+
+.mcheader > div {
+    border: 1px solid grey;
+    margin-top: 30px;
+    margin-left: 30px;
+    margin-right: 30px;
+    background: white;
+    padding: 10px;
+}
+
+.white_background > div {
+    background: white;
+}
+
+.active_player_list > div {
+    min-height: 100px;
+}
+
+        
+.mcmap {
+    border: 2px solid grey;
+    height:800px;
+    width:100%;
+}
+
+.mcmap img { 
+   max-width: none;
+}
+.mcmap label { 
+   width: auto;
+   display:inline; 
+} 
+.legend {
+    display: block;
+    margin: auto;
+    max-height: 800px;
+}
+
+.legend li {
+    padding: 10px;
+}
+
+.legend .color-block {
+    height: 50px;
+    width: 50px;
+    border: 1px solid grey;
+    border-radius: 3px;
+}
+
+.player_dropdown {
+    margin-top: 15px;
+}
+
+.chart_title {
+    float : center;
+}
+
+.bottom_border {
+    margin-bottom : 30px;
+}
+
+#example-sunburst {
+    min-height : 600px;
 }
