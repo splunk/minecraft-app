@@ -10,18 +10,18 @@ var overviewerConfig = {
                 125
             ], 
             "isOverlay": false, 
-            "last_rendertime": 1379001155, 
+            "last_rendertime": 1380033923, 
             "name": "Overviewer Render (normal)", 
             "poititle": "Markers", 
             "north_direction": 0, 
             "minZoom": 0, 
             "bgcolor": "#1a1a1a", 
-            "zoomLevels": 6, 
+            "zoomLevels": 7, 
             "base": "", 
             "imgextension": "png", 
             "defaultZoom": 1, 
             "world": "world", 
-            "maxZoom": 6, 
+            "maxZoom": 7, 
             "path": "http://mcserver.splunk.local:81/world-normal", 
             "showlocationmarker": true
         }, 
@@ -32,18 +32,18 @@ var overviewerConfig = {
                 125
             ], 
             "isOverlay": false, 
-            "last_rendertime": 1379001155, 
+            "last_rendertime": 1380033923, 
             "name": "Overviewer Render (lighting)", 
             "poititle": "Markers", 
             "north_direction": 0, 
             "minZoom": 0, 
             "bgcolor": "#1a1a1a", 
-            "zoomLevels": 6, 
+            "zoomLevels": 7, 
             "base": "", 
             "imgextension": "png", 
             "defaultZoom": 1, 
             "world": "world", 
-            "maxZoom": 6, 
+            "maxZoom": 7, 
             "path": "http://mcserver.splunk.local:81/world-lighting", 
             "showlocationmarker": true
         }, 
@@ -54,41 +54,19 @@ var overviewerConfig = {
                 125
             ], 
             "isOverlay": false, 
-            "last_rendertime": 1379001155, 
+            "last_rendertime": 1380033923, 
             "name": "Overviewer Render (night)", 
             "poititle": "Markers", 
             "north_direction": 0, 
             "minZoom": 0, 
             "bgcolor": "#1a1a1a", 
-            "zoomLevels": 6, 
+            "zoomLevels": 7, 
             "base": "", 
             "imgextension": "png", 
             "defaultZoom": 1, 
             "world": "world", 
-            "maxZoom": 6, 
+            "maxZoom": 7, 
             "path": "http://mcserver.splunk.local:81/world-night", 
-            "showlocationmarker": true
-        }, 
-        {
-            "spawn": [
-                -185, 
-                64, 
-                125
-            ], 
-            "isOverlay": false, 
-            "last_rendertime": 1379001155, 
-            "name": "Overviewer Render (cave)", 
-            "poititle": "Markers", 
-            "north_direction": 0, 
-            "minZoom": 0, 
-            "bgcolor": "#1a1a1a", 
-            "zoomLevels": 6, 
-            "base": "", 
-            "imgextension": "png", 
-            "defaultZoom": 1, 
-            "world": "world", 
-            "maxZoom": 6, 
-            "path": "http://mcserver.splunk.local:81/world-cave", 
             "showlocationmarker": true
         }
     ], 
@@ -126,6 +104,6 @@ var overviewerConfig = {
             67, 
             94
         ], 
-        "cacheTag": "1379001211"
+        "cacheTag": "1380033976"
     }
 };
