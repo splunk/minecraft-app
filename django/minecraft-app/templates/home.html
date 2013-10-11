@@ -2,7 +2,7 @@
 
 {% load splunkmvc %}
 
-{% block title %}{{app_name}}Home Page{% endblock title %}
+{% block title %}{{app_label}}{% endblock title %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}{{app_name}}/custom.css" />
@@ -39,14 +39,10 @@
                 <div class="span4">
                     <div class="chart_title"><h3>Active Players</h1></div>
                     <div class="grey_border active-player-list">
-                        {% table id="example-table" managerid="active-player-search" pageSize="20" %}
+                        {% table id="active-player-table" managerid="active-player-search" pageSize="20" %}
                     </div>
                 </div>
                 <div class="span8">
-                    <div class="chart_title"><h3>Total Block Activity</h1></div>
-                    <div class="grey_border">
-                        {% chart id="activity-chart" managerid="activity-search" %}
-                    </div>
                     <div class="chart_title row_margins_top"><h3>Mining Activity</h1></div>
                     <div class="grey_border">
                         {% chart id="mining-chart" managerid="mining-search" %}
@@ -54,6 +50,10 @@
                     <div class="chart_title row_margins_top"><h3>Building Activity</h1></div>
                     <div class="grey_border">
                         {% chart id="building-chart" managerid="building-search" %}
+                    </div>
+                    <div class="chart_title"><h3>Player Deaths</h1></div>
+                    <div class="grey_border">
+                        {% chart id="player-death-chart" managerid="player-death-search" %}
                     </div>
                 </div>
             </div>
@@ -64,8 +64,12 @@
 {% endblock content %}
 
 {% block managers %}
+    {% searchmanager id="broken-block-search" search="sourcetype=minecraft_log action=block_broken | stats count" %}
+    {% searchmanager id="placed-block-search" search="sourcetype=minecraft_log action=block_placed | stats count" %}
     {% searchmanager id="time-played-search"
-       search="search sourcetype=minecraft_log | eval player=if(player not null, player, victim) | transaction player startswith=player_connect endswith=player_disconnect maxspan=2d | stats sum(duration) as total_time_sec | eval hours_played=total_time_sec/3600.0" %}
+       search="search sourcetype=minecraft_log | eval player=if(player not null, player, victim) | transaction player startswith=player_connect endswith=player_disconnect maxspan=2d | stats sum(duration) as total_time_sec | eval hours_played=total_time_sec/60.0" %}
+    {% searchmanager id="player-death-search"
+        search="sourcetype=minecraft_log action=player_died killer!=lava killer!=fire killer!=fire_tick killer!=drowning killer!=suffocation killer!=fall killer!=suicide | chart count by killer,victim" %}
 
 {% endblock managers %}
 
@@ -77,12 +81,6 @@ require(['underscore', 'backbone', 'splunkjs/mvc/searchmanager', 'splunkjs/mvc',
     var SearchManager = require('splunkjs/mvc/searchmanager');
 
     mvc.Components.getInstance("duration-single").settings.set({"field" : "hours_played"});
-    
-    mvc.Components.getInstance("activity-chart").settings.set({
-        "charting.chart" : "line",
-        "charting.axisTitleX.text" : "Date",
-        "charting.axisTitleY.text" : "Blocks"
-    });
 
     mvc.Components.getInstance("mining-chart").settings.set({
         "charting.chart" : "line",
@@ -95,20 +93,6 @@ require(['underscore', 'backbone', 'splunkjs/mvc/searchmanager', 'splunkjs/mvc',
         "charting.axisTitleX.text" : "Date",
         "charting.axisTitleY.text" : "Blocks Placed"
     });
-    
-    var placedBlockSearch = new SearchManager({
-        search: 'sourcetype=minecraft_log action=block_placed | stats count',
-        name: 'placed-block-search',
-        earliest_time: 'rt-52w',
-        latest_time: 'rt'
-    });
-
-    var brokenBlockSearch = new SearchManager({
-        search: 'sourcetype=minecraft_log action=block_broken | stats count',
-        name: 'broken-block-search',
-        earliest_time: 'rt-52w',
-        latest_time: 'rt'
-    });
 
     var activePlayerSearch = new SearchManager({
         search: 'sourcetype=minecraft_log action=player_connect OR action=player_disconnect | eval player=if(player not null, player, victim) | transaction player startswith=player_connect endswith=player_disconnect maxspan=2d keeporphans=true | search NOT action=player_disconnect |rename _time as since| table player,since',
@@ -117,25 +101,16 @@ require(['underscore', 'backbone', 'splunkjs/mvc/searchmanager', 'splunkjs/mvc',
         latest_time: 'rt'
     });
 
-    var activitySearch = new SearchManager({
-        search: 'sourcetype=minecraft_log AND (action=block_broken OR action=block_placed) | timechart span=1d count',
-        name: 'activity-search',
-        earliest_time: 'rt-7d',
-        latest_time: 'rt'
-    });
-
-    var activitySearch = new SearchManager({
+    var activityMiningSearch = new SearchManager({
         search: 'sourcetype=minecraft_log action=block_broken | timechart span=1d count by block_type',
         name: 'mining-search',
-        earliest_time: 'rt-7d',
-        latest_time: 'rt'
+        earliest_time: '-14d'
     });
 
-    var activitySearch = new SearchManager({
+    var activityBuildingSearch = new SearchManager({
         search: 'sourcetype=minecraft_log action=block_placed | timechart span=1d count by block_type',
         name: 'building-search',
-        earliest_time: 'rt-7d',
-        latest_time: 'rt'
+        earliest_time: '-7d'
     });
     
 });

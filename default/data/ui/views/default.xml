@@ -1,1 +1,1 @@
-<view isVisible="false" template="splunk-demo-minecraft:/templates/redirect.tmpl" />
+<view isVisible="false" template="minecraft-app:/templates/redirect.tmpl" />

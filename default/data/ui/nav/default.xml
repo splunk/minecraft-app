@@ -1,8 +1,8 @@
 <nav>
     <view name="default" default="true"></view>
-    <a name="home" href="/dj/splunk-demo-minecraft/home">Overview</a>
-    <a name="players" href="/dj/splunk-demo-minecraft/players">Players</a>
-    <a name="brokenblocks" href="/dj/splunk-demo-minecraft/brokenblocks">Broken Blocks</a>
-    <a name="placedblocks" href="/dj/splunk-demo-minecraft/placedblocks">Placed Blocks</a>
-    <a name="livemap" href="/dj/splunk-demo-minecraft/livemap">Live Map</a>
+    <a name="home" href="/dj/minecraft-app/home">Overview</a>
+    <a name="players" href="/dj/minecraft-app/players">Players</a>
+    <a name="brokenblocks" href="/dj/minecraft-app/brokenblocks">Broken Blocks</a>
+    <a name="placedblocks" href="/dj/minecraft-app/placedblocks">Placed Blocks</a>
+    <a name="livemap" href="/dj/minecraft-app/livemap">Live Map</a>
 </nav>

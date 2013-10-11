@@ -2,7 +2,7 @@
 
 {% load splunkmvc %}
 
-{% block title %}{{app_name}}Home Page{% endblock title %}
+{% block title %}{{app_label}}{% endblock title %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}{{app_name}}/custom.css" />
@@ -58,6 +58,10 @@
                     <div class="grey_border">
                         {% chart id="mob-kills-chart" managerid="mob-kills-search" %}
                     </div>
+                    <div class="chart_title row_margins_top"><h3>Player Deaths</h1></div>
+                    <div class="grey_border">
+                        {% chart id="player-kills-chart" managerid="player-kills-search" %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,7 +81,7 @@
        search="sourcetype=minecraft_log killer=$player$ action=mob_died | stats count"|token_safe %}
 
     {% searchmanager id="time-played-search"
-       search="sourcetype=minecraft_log player=$player$ | transaction player startswith=player_connect endswith=player_disconnect maxspan=2d | stats sum(duration) as total_time_sec | eval hours_played=total_time_sec/3600.0"|token_safe %}
+       search="sourcetype=minecraft_log player=$player$ | transaction player startswith=player_connect endswith=player_disconnect maxspan=2d | stats sum(duration) as total_time_sec | eval hours_played=total_time_sec/60.0"|token_safe %}
     
     {% searchmanager id="building-blocks-search"
        search="sourcetype=minecraft_log action=block_placed player=$player$ block_type!=TORCH block_type!=DIRT block_type!=CROPS | top limit=5 block_type"|token_safe %}
@@ -87,6 +91,9 @@
 
     {% searchmanager id="mob-kills-search"
        search="sourcetype=minecraft_log killer=$player$ action=mob_died | top limit=5 victim"|token_safe %}
+
+    {% searchmanager id="player-kills-search"
+       search="sourcetype=minecraft_log action=player_died victim=$player$ killer!=lava killer!=fire killer!=fire_tick killer!=drowning killer!=suffocation killer!=fall killer!=suicide | timechart count by killer"|token_safe %}
 
     {% searchmanager id="player-search"
        search="sourcetype=minecraft_log | dedup player | table player" %}
@@ -113,6 +120,11 @@
         
         mvc.Components.getInstance("mob-kills-chart").settings.set({
             "charting.seriesColors": "[0x008800]"
+        });
+        
+        mvc.Components.getInstance("player-kills-chart").settings.set({
+            "charting.chart" : "line",
+            "charting.axisTitleX.text" : "Date"
         });
     });
 </script>

@@ -1,0 +1,92 @@
+{% extends "splunkdj:base_with_app_bar.html" %}
+
+{% load splunkmvc %}
+{% load splunk_wftoolkit %}
+
+{% block title %}{{app_label}}{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}{{app_name}}/custom.css"/>
+{% endblock css %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span12 row_margins">
+            <div class="row">
+                <div class="span8">
+                    <div class="chart_title"><h3>Most Placed Blocks</h1></div>
+                    <div class="grey_border">
+                        {% chart id="most-placed-chart" managerid="most-placed-search" height="940" %}
+                    </div>
+                </div>
+                <div class="span4">
+                    <div class="chart_title"><h3>Wood Building Breakdown</h1></div>
+                    <div class="grey_border">
+                        {% sunburst id="logs-sunburst" managerid="wood-sundburst-search" height="300" %}
+                    </div>
+                    <div class="chart_title row_margins_top"><h3>Stone Building Breakdown</h1></div>
+                    <div class="grey_border">
+                        {% sunburst id="stone-sunburst" managerid="stone-sundburst-search" height="300" %}
+                    </div>
+                    <div class="chart_title row_margins_top"><h3>Stone Building Breakdown</h1></div>
+                    <div class="grey_border">
+						{% chart id="top-builders-chart" managerid="top-builders-search" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<div class="row-fluid">
+		<div class="span12 row_margins">
+			<div class="row">
+				<div class="span12">
+                    <div class="chart_title"><h3>Building Rate By Block</h1></div>
+                    <div class="grey_border">
+						{% chart id="building-rate-chart" managerid="building-rate-search" %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div class="row-fluid">
+        <div class="span12 row_margins bottom_border">
+            <div class="row">
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block managers %}
+    {% searchmanager id="most-placed-search" search="sourcetype=minecraft_log action=block_placed block_type!=TORCH block_type!=DIRT block_type!=CROPS | top limit=30 block_type" %}
+    {% searchmanager id="wood-sundburst-search" search="sourcetype=minecraft_log action=block_placed AND (block_type=SPRUCE* OR block_type=OAK* OR block_type=JUNGLE* OR block_type=BIRCH*) | rex \".*block_type=(?<wood_type>[A-Z]*)_(LOG|SLAB|STAIR)\" | table wood_type block_type" %}
+    {% searchmanager id="stone-sundburst-search" search="sourcetype=minecraft_log action=block_placed AND (block_type=COBBLESTONE* OR block_type=SANDSTONE* OR block_type=STONE* OR block_type=SMOOTH*) | rex \".*block_type=(?<stone_type>[A-Z]*)(_|$)\" | table stone_type block_type" %}
+    {% searchmanager id="top-builders-search" search="sourcetype=minecraft_log action=block_placed | chart count by player" %}
+
+    {% searchmanager id="building-rate-search" search="sourcetype=minecraft_log action=block_placed block_type!=TORCH block_type!=CROPS | timechart count by block_type" %}
+
+{% endblock managers %}
+
+{% block js %}
+
+    <script>
+    require(['underscore', 'backbone', 'splunkjs/mvc/searchmanager', 'splunkjs/mvc', 'splunkjs/ready!'], function(_, Backbone) {
+        var mvc = require('splunkjs/mvc');
+        var SearchManager = require('splunkjs/mvc/searchmanager');
+        
+        mvc.Components.getInstance("most-placed-chart").settings.set({
+            "charting.chart" : "bar",
+            "charting.seriesColors": "[0x999955s]"
+        });
+
+        mvc.Components.getInstance("building-rate-chart").settings.set({
+            "charting.chart" : "line"
+        });
+        
+        mvc.Components.getInstance("top-builders-chart").settings.set({
+            "charting.chart" : "bar",
+            "charting.seriesColors": "[0xAAE9FF]"
+        });
+    });
+    </script>
+
+{% endblock js %}
