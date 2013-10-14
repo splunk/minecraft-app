@@ -52,7 +52,7 @@ or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.gi
 1. Download and configure Overview as described int the [Overviewer Docs](http://docs.overviewer.org/en/latest/)
 2. Serve the overviewer via a webserver like [Apache](http://httpd.apache.org) or [IIS](http://www.iis.net). Many operating systems have a web service built in that just needs to be enabled.
 3. Create an initial render from overviewer with at least one of the "Normal","Lighting", and "Night" options
-4. Copy the overviewerConfig.js script from the base render directory to `$SPLUNK_HOME/etc/apps/minecraft-app/django/minecraft-app/static/minecraft-app/` on your splunk server.
+4. Copy the overviewer.css,overviewer.js, and overviewerConfig.js scripts from the base render directory to `$SPLUNK_HOME/etc/apps/minecraft-app/django/minecraft-app/static/minecraft-app/` on your splunk server.
 5. Edit `$SPLUNK_HOME/etc/apps/minecraft-app/django/minecraft-app/static/minecraft-app/overviewerConfig.js` and modify the path variable of each tileset object to include your webserver path. For example, change `"path": "world-normal"` to `"path": "http://webserver:81/world-normal"`. The external hostname must be used in order for the map to be visible to clients. Using "localhost" as the webserver will not work as the minecraft app does not reserve the map, it simply redirects to it.
 
 NOTE: The minecraft-app does not refresh overviewer renders automatically. This will need to be scheduled by another service (ie. cron or task scheduler).
