@@ -591,15 +591,7 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
         writeMessage(msg.toString());
     }
 
-    class HostPortCombo {
-        final String host;
-        final int port;
 
-        HostPortCombo(String host, int port) {
-            this.host = host;
-            this.port = port;
-        }
-    }
 
    
 }
