@@ -57,15 +57,11 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import java.net.Socket;
+import java.net.UnknownHostException;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
-
-import javax.swing.JOptionPane;
 
 
 public class LogToSplunkPlugin extends JavaPlugin implements Listener {
@@ -81,11 +77,7 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
 
     //below keeps track of socket status, address, and data to be sent.
     private String[] instances;
-    private HashMap<String, Queue<String>> dataToBeSentToSplunk = new HashMap<String, Queue<String>>(); //keys are from instances
-    private HashMap<String, HostPortCombo> socketList = new HashMap<String, HostPortCombo>(); // keys are from instances
-    private HashMap<String, Boolean> socketsConnectedList = new HashMap<String, Boolean>();
-    private HashMap<String, Socket> splunkSockets = new HashMap<String, Socket>();
-    private boolean connectionOK;
+    private Queue<SplunkConnectionInstance> splunkInstances = new LinkedList<SplunkConnectionInstance>();
 
     @Override
     public void onEnable() {
@@ -93,255 +85,141 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents((Listener) this, this);
 
         // set values specified in the config.yml file,
-        //or assign default values (splunk server host:port MUST
+        //or assign default values (splunk server host:ports MUST
         // be specified in config.
         setConfigValues();
 
         //initial attempt to connect to splunk servers
-        establishConnectionToSplunk(true);
-
-        // This thread keeps LogToSplunk trying to send data to
-        // the splunk server.  If this thread ends, data will no longer
-        // be sent to the splunk server.
-        new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        try {
-                            Thread.sleep(1000 * reconnectTime);
-                        } catch (InterruptedException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                        establishConnectionToSplunk(false);
-                        sendPackagesToSplunks();
-                    }
-                }
-            }).start();
+        //creates a thread for each splunk instance
+        establishConnectionToSplunk();
 
         // Write a configuration file if none exists.
         saveDefaultConfig();
     }
 
-    /**
-     *
-     * @param firstTime  if this is the first time attempting to connect to splunk
-     * @return true if all connections appear to be OK.
-     */
-    private boolean establishConnectionToSplunk(final boolean firstTime) {
-        connectionOK = true;
+    // puts each SplunkConnectionInstance in a thread and runs them
+    // reports some information about the success of connections.
+    private void establishConnectionToSplunk() {
+        boolean connectionOK = true;
 
-        if (instances.length > 0) {
-            for (String instance : instances) {
-                // new Thread(new Runnable() {
-                // public void run() {
-                HostPortCombo hpc = socketList.get(instance);
+        if (splunkInstances.size() > 0) {
+            for (SplunkConnectionInstance i : splunkInstances) {
+                Thread t = new Thread(i);
+                t.start();
 
-                final String host = hpc.host;
-                final int port = hpc.port;
-
-                ArrayList<String> logMessages = new ArrayList<String>();
-
-                try {
-                	boolean alreadyConnected = false;
-                    if(socketsConnectedList.get(instance) != null){
-                	 alreadyConnected = socketsConnectedList.get(instance);
-                    }
-                    Socket newSocket = new Socket(host, port);
-                    socketsConnectedList.put(instance, true);
-                    splunkSockets.put(instance, newSocket);
-
-                    if (firstTime) {
-                        getLogger()
-                            .info("LogToSplunk connected with Splunk instance " +
-                            host + ":" + port);
-                    }
-
-                    if (!alreadyConnected && !firstTime) {
-                        getLogger()
-                            .info("LogToSplunk reconnected with Splunk instance " +
-                            host + ":" + port);
-                    }
-                } catch (IOException err) {
-                    socketsConnectedList.put(instance, false);
-                    getLogger()
-                        .severe("Could not connect to port " + port +
-                        " on Splunk server at " + host);
-                    //too many messages...  
-                    //  getLogger().severe(err.getMessage());
-
-                    connectionOK = false;
-
-                    // err.printStackTrace;
-                }
             }
-
-            // }
-            // }).start();
         } else {
             connectionOK = false;
         }
+        
+        //give started threads a chance to run
+        //so we can better attempt to report accurate status
+        try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+		
+			e.printStackTrace();
+		}
+        for(SplunkConnectionInstance i : splunkInstances){
+        	if(!i.connected) connectionOK = false;
+        }
 
+        // message only happens at start of mc server if any splunk connections
+        // fail (or if there are no splunk connections)
         if (!connectionOK) {
             getLogger()
-                .severe("Problems connecting to splunk,  if connections are not\n " +
+                .severe("Problems connecting to splunk,  if connections\n are not " +
                 "established, some data may not be logged.\n" +
                 "Perhaps the splunk host:port has not been set in config.");
         }
 
-        if (firstTime && connectionOK) {
-            // could make it so that every time a connection is re-established
-            // after a disconnect, also logs this event.
+        //send a message to the splunk server that connection was established
+        if (connectionOK) {
             writeMessage("Minecraft server started with connection to splunk.");
         }
-
-        return connectionOK;
     }
-
+    
     /**
-     * Tests to see if a socket is working
-     * @param s the socket to test.
-     * @param msg the test data to send to splunk
-     * @return true if the socket is recieving data correctly
+     * keeps track of the state of a particular splunk instance
+     *
      */
-    private boolean testSocket(Socket s, String msg) {
-        String stampedMsg = Calendar.getInstance().getTime().toString() + " " +
-            msg + "\r\n\r\n";
+    class SplunkConnectionInstance implements Runnable {
+        final String host;
+        final int port;
+        Socket socket;
+        boolean connected;
+        private final Queue<String> data = new LinkedList<String>();
 
-        try {
-            s.getOutputStream().write(stampedMsg.getBytes("UTF-8"));
-
-            return true;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-
-            return false;
-        } catch (IOException e) {
-            //Unable Toreach server
-            getLogger().severe(e.getMessage());
-
-            //e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * assigns values for some members of this class that can be set in config
-     * currently: instances(splunk server host ports), doWoodTypes -to
-     * have splunk specifiy specific wood types like "Birch log" rather than just "log"
-     * and splunkinterval - the number of seconds between each attemp to send
-     * data to the splunk server.
-     */
-    private void setConfigValues() {
-        // set reconnect time // if not there default to some amount of time.
-        // set doWoodTypes //if not there default to false
-        try {
-            Integer seconds = new Integer(getConfig().getString("splunkinterval"));
-            reconnectTime = seconds;
-            getLogger()
-                .info("Time between connect attemps to splunk: " +
-                reconnectTime +
-                "s \n Set in config under heading 'splunkinterval:'");
-        } catch (NumberFormatException e) {
-            getLogger()
-                .severe("Connect to splunk interval not a assigned a proper integer\n in config, default value of 30s" +
-                "between connect attemps assigned.");
+        SplunkConnectionInstance(String host, int port) {
+            this.host = host;
+            this.port = port;
+            connected = false;
         }
 
-        Boolean b = new Boolean(getConfig().getString("usewoodtypes"));
-        doWoodTypes = b;
+        public void run() {
+            while (true) {
+                if (connect()) {
+                    sendData();
+                }
 
-        String yesNo = (doWoodTypes) ? "" : "not ";
-        getLogger()
-            .info("Specific wood types will " + yesNo +
-            "be collected by splunk\n to" +
-            " change: set 'usewoodtypes' in config");
-
-        // Extract the Splunk TCP sockets to write to from the configuration.
-        // The sockets are specified as a comma separated list of host:port
-        // pairs, e.g.,
-        //
-        //     boris.local:10000, hilda:1234
-        //
-        // Whitespace around the commas are ignored.
-        prepareSplunkInstances();
-    }
-
-    private void prepareSplunkInstances() {
-        String splunks = getConfig().getString("splunks");
-
-        if (splunks != null) {
-            instances = splunks.split(",");
-
-            for (int i = 0; i < instances.length; i++) {
-                String[] pieces = instances[i].split(":");
-                String host = pieces[0].trim();
-                int port = Integer.valueOf(pieces[1].trim());
-                socketList.put(instances[i], new HostPortCombo(host, port));
-                dataToBeSentToSplunk.put(instances[i], new LinkedList<String>());
+                try {
+                    Thread.sleep(1000 * reconnectTime);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
-    }
 
-    @Override
-    public void onDisable() {
-        // Close all the sockets when this plugin is disabled.
-        for (Socket s : splunkSockets.values()) {
+        public void sendData() {
+            sendPackage(socket, data);
+        }
+
+		public boolean connect() {
+			boolean wasConnected = (socket == null) ? false : true;
+
+			socket = getSocket();
+
+			connected = (socket == null) ? false : true;
+
+			if (connected && !wasConnected) {
+				getLogger().info(
+						"LogToSplunk connected with Splunk instance " + host
+								+ ":" + port);
+
+			}
+
+			return connected;
+		}
+
+        public Socket getSocket() {
             try {
-                s.close();
+                return new Socket(host, port);
+            } catch (UnknownHostException e) {
+                getLogger().severe(e.getMessage() + " *at " + host + ":" + port);
+
+                return null;
             } catch (IOException e) {
-                e.printStackTrace();
+                getLogger().severe(e.getMessage() + " *at " + host + ":" + port);
+
+                return null;
             }
         }
     }
-
-    //Writes a message that will be sent to splunk
-    // 
-    private void writeMessage(String msg) {
-        String stampedMsg = Calendar.getInstance().getTime().toString() + " " +
-            msg + "\r\n\r\n";
-
-        if (stampedMsg.equals(lastLoggedMessage)) {
-            return;
-        } else {
-            lastLoggedMessage = stampedMsg;
-        }
-
-        //each time we get a message, write it to the list to be sent
-        bundleMessage(stampedMsg);
-    }
-
-    // iterates through the list, saves the value being sent if it doesnt make it
-    //Currently if there are multiple sockets and this process is interrupted,
-    // a message may be sent twice.
-    private void sendPackagesToSplunks() {
-        for (String splunkInstance : instances) {
-            if (socketsConnectedList.get(splunkInstance)) {
-                Queue<String> instanceBuffer = dataToBeSentToSplunk.get(splunkInstance);
-                sendPackage(splunkSockets.get(splunkInstance), instanceBuffer);
-            }
-        }
-    }
-
+    
+    //synchronized to prevent concurrent modification of data buffers
     private synchronized void sendPackage(final Socket s,
         final Queue<String> instanceBuffer) {
-        new Thread(new Runnable() {
-                public void run() {
-                    while (instanceBuffer.size() > 0) {
-                        if (!sendMessageToSplunk(s, instanceBuffer.poll())) {
-                            return;
-                        }
-                    }
-                }
-            }).start();
+        while (instanceBuffer.size() > 0) {
+            if (!sendMessageToSplunk(s, instanceBuffer.poll())) {
+                return;
+            }
+        }
     }
-
-    // sends a stamped message to the splunk server,
+    
+    // sends a stamped message to a single splunk server. 
     // is called repeatedly by the sendPackageToSplunk method until all have
     // been sent.
-
-    //Currently if there are multiple sockets and this process is interrupted,
-    // a message may be sent twice.
     private boolean sendMessageToSplunk(Socket s, String stampedMsg) {
         try {
             s.getOutputStream().write(stampedMsg.getBytes("UTF-8"));
@@ -367,13 +245,121 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
             return false;
         }
     }
+    
+    
+    // prepares the string that will be sends to splunk, and sends
+    // it off to the data buffer of each splunk instance
+    private void writeMessage(String msg) {
+        String stampedMsg = Calendar.getInstance().getTime().toString() + " " +
+            msg + "\r\n\r\n";
 
+        if (stampedMsg.equals(lastLoggedMessage)) {
+            return;
+        } else {
+            lastLoggedMessage = stampedMsg;
+        }
+
+        //each time we get a message, write it to the list to be sent
+        bundleMessage(stampedMsg);
+    }
+
+
+    //puts the message in the data buffer for each SplunkConnectionInstance
     private void bundleMessage(String stampedMsg) {
-        for (String instance : instances) {
-            Queue<String> instanceDataBuffer = dataToBeSentToSplunk.get(instance);
+        for (SplunkConnectionInstance s : splunkInstances) {
+            Queue<String> instanceDataBuffer = s.data;
             instanceDataBuffer.offer(stampedMsg);
         }
     }
+
+    /**
+     * assigns values for some members of this class that can be set in config
+     * currently: instances(splunk server host ports), doWoodTypes -to
+     * have splunk specifiy specific wood types like "Birch log" rather than just "log"
+     * and splunkinterval - the number of seconds between each attemp to send
+     * data to the splunk server.
+     */
+    private void setConfigValues() {
+
+    	prepareAttemptToReconnectTime();
+
+
+        prepareWoodBoolean();
+
+
+        prepareSplunkInstances();
+    }
+    
+    
+    // Extract the Splunk TCP sockets to write to from the configuration.
+    // The sockets are specified as a comma separated list of host:port
+    // pairs, e.g.,
+    //
+    //     boris.local:10000, hilda:1234
+    //
+    // Whitespace around the commas are ignored.
+    //creates a SplunkConnectionInstances for each connection specified in config
+    private void prepareSplunkInstances() {
+        String splunks = getConfig().getString("splunks");
+
+        if (splunks != null) {
+            instances = splunks.split(",");
+
+            for (int i = 0; i < instances.length; i++) {
+                String[] pieces = instances[i].split(":");
+                String host = pieces[0].trim();
+                int port = Integer.valueOf(pieces[1].trim());
+
+                splunkInstances.add(new SplunkConnectionInstance(host, port));
+
+
+            }
+        }
+    }
+    
+    //sets the time interval between attempts to send data
+    //default is 30s
+    private void prepareAttemptToReconnectTime(){
+        try {
+            Integer seconds = new Integer(getConfig().getString("splunkinterval"));
+            reconnectTime = seconds;
+            getLogger()
+                .info("Time between connect attemps to splunk: " +
+                reconnectTime +
+                "s \n Set in config under heading 'splunkinterval:'");
+        } catch (NumberFormatException e) {
+            getLogger()
+                .severe("Connect to splunk interval not a assigned a proper integer\n in config, default value of 30s" +
+                "between connect attemps assigned.");
+        }
+    }
+    
+    //sets if specific wood names are used:
+    //default set to false
+    private void prepareWoodBoolean(){
+        Boolean b = new Boolean(getConfig().getString("usewoodtypes"));
+        doWoodTypes = b;
+
+        String yesNo = (doWoodTypes) ? "" : "not ";
+        getLogger()
+            .info("Specific wood types will " + yesNo +
+            "be collected by splunk\n to" +
+            " change: set 'usewoodtypes' in config");
+    }
+
+    @Override
+    public void onDisable() {
+        // Close all the sockets when this plugin is disabled.
+        for (SplunkConnectionInstance s : splunkInstances) {
+            try {
+                s.socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+  
 
     // The types of wood are kept in a bitmask in an integer field.
     // Extract them to something usable for logging.
@@ -444,6 +430,7 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent evt) {
         Block b = evt.getBlock();
+  
         writeMessage("action=block_placed player=" +
             evt.getPlayer().getDisplayName() + " " +
             locationToString(b.getLocation()) + " block_type=" +
@@ -613,4 +600,6 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
             this.port = port;
         }
     }
+
+   
 }
