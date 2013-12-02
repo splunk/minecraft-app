@@ -36,7 +36,8 @@ or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.gi
 ##### Input Configuration
 
 1. Confgiure a TCP input as noted in the [Documentation](http://docs.splunk.com/Documentation/Splunk/6.0/Data/Monitornetworkports) for whatever port you like.
-2. Ensure firewalls and NAT are properly configured if applicable
+2. Manually set the source type to "minecraft_log"
+3. Ensure firewalls and NAT are properly configured if applicable
 
 
 #### Installing the LogToSplunk Plugin
