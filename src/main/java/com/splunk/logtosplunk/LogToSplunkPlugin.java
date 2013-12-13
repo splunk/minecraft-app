@@ -100,8 +100,7 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     // puts each SplunkConnectionInstance in a thread and runs them
     // reports some information about the success of connections.
     private void establishConnectionToSplunk() {
-        boolean connectionOK = true;
-
+  
         if (splunkInstances.size() > 0) {
             for (SplunkConnectionInstance i : splunkInstances) {
                 Thread t = new Thread(i);
@@ -109,34 +108,12 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
 
             }
         } else {
-            connectionOK = false;
-        }
+        	 getLogger()
+             .severe("No splunk host:port combos have been set in config, data will not be logged");
         
-        //give started threads a chance to run
-        //so we can better attempt to report accurate status
-        try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {
-		
-			e.printStackTrace();
-		}
-        for(SplunkConnectionInstance i : splunkInstances){
-        	if(!i.connected) connectionOK = false;
         }
-
-        // message only happens at start of mc server if any splunk connections
-        // fail (or if there are no splunk connections)
-        if (!connectionOK) {
-            getLogger()
-                .severe("Problems connecting to splunk,  if connections\n are not " +
-                "established, some data may not be logged.\n" +
-                "Perhaps the splunk host:port has not been set in config.");
-        }
-
-        //send a message to the splunk server that connection was established
-        if (connectionOK) {
-            writeMessage("Minecraft server started with connection to splunk.");
-        }
+       
+        
     }
     
     /**
@@ -159,21 +136,20 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
         public void run() {
             while (true) {
                 if (connect()) {
-                    sendData();
+                	 sendPackage(socket, data);
+     
                 }
 
                 try {
                     Thread.sleep(1000 * reconnectTime);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
+             
                     e.printStackTrace();
                 }
             }
         }
 
-        public void sendData() {
-            sendPackage(socket, data);
-        }
+ 
 
 		public boolean connect() {
 			boolean wasConnected = (socket == null) ? false : true;
@@ -281,72 +257,64 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
      */
     private void setConfigValues() {
 
-    	prepareAttemptToReconnectTime();
+    	
+    	  //sets the time interval between attempts to send data
+        //default is 30s
+    	 try {
+             Integer seconds = new Integer(getConfig().getString("splunkinterval"));
+             reconnectTime = seconds;
+             getLogger()
+                 .info("Time between connect attemps to splunk: " +
+                 reconnectTime +
+                 "s \n Set in config under heading 'splunkinterval:'");
+         } catch (NumberFormatException e) {
+             getLogger()
+                 .severe("Connect to splunk interval not a assigned a proper integer\n in config, default value of 30s" +
+                 "between connect attemps assigned.");
+         }
 
 
-        prepareWoodBoolean();
+    	    //sets if specific wood names are used:
+    	    //default set to false
+    	   Boolean b = new Boolean(getConfig().getString("usewoodtypes"));
+           doWoodTypes = b;
+
+           String yesNo = (doWoodTypes) ? "" : "not ";
+           getLogger()
+               .info("Specific wood types will " + yesNo +
+               "be collected by splunk\n to" +
+               " change: set 'usewoodtypes' in config");
 
 
-        prepareSplunkInstances();
+           
+           // Extract the Splunk TCP sockets to write to from the configuration.
+           // The sockets are specified as a comma separated list of host:port
+           // pairs, e.g.,
+           //
+           //     boris.local:10000, hilda:1234
+           //
+           // Whitespace around the commas are ignored.
+           //creates a SplunkConnectionInstances for each connection specified in config
+           String splunks = getConfig().getString("splunks");
+
+           if (splunks != null) {
+               instances = splunks.split(",");
+
+               for (int i = 0; i < instances.length; i++) {
+                   String[] pieces = instances[i].split(":");
+                   String host = pieces[0].trim();
+                   int port = Integer.valueOf(pieces[1].trim());
+
+                   splunkInstances.add(new SplunkConnectionInstance(host, port));
+
+
+               }
+           }
     }
     
+
     
-    // Extract the Splunk TCP sockets to write to from the configuration.
-    // The sockets are specified as a comma separated list of host:port
-    // pairs, e.g.,
-    //
-    //     boris.local:10000, hilda:1234
-    //
-    // Whitespace around the commas are ignored.
-    //creates a SplunkConnectionInstances for each connection specified in config
-    private void prepareSplunkInstances() {
-        String splunks = getConfig().getString("splunks");
-
-        if (splunks != null) {
-            instances = splunks.split(",");
-
-            for (int i = 0; i < instances.length; i++) {
-                String[] pieces = instances[i].split(":");
-                String host = pieces[0].trim();
-                int port = Integer.valueOf(pieces[1].trim());
-
-                splunkInstances.add(new SplunkConnectionInstance(host, port));
-
-
-            }
-        }
-    }
     
-    //sets the time interval between attempts to send data
-    //default is 30s
-    private void prepareAttemptToReconnectTime(){
-        try {
-            Integer seconds = new Integer(getConfig().getString("splunkinterval"));
-            reconnectTime = seconds;
-            getLogger()
-                .info("Time between connect attemps to splunk: " +
-                reconnectTime +
-                "s \n Set in config under heading 'splunkinterval:'");
-        } catch (NumberFormatException e) {
-            getLogger()
-                .severe("Connect to splunk interval not a assigned a proper integer\n in config, default value of 30s" +
-                "between connect attemps assigned.");
-        }
-    }
-    
-    //sets if specific wood names are used:
-    //default set to false
-    private void prepareWoodBoolean(){
-        Boolean b = new Boolean(getConfig().getString("usewoodtypes"));
-        doWoodTypes = b;
-
-        String yesNo = (doWoodTypes) ? "" : "not ";
-        getLogger()
-            .info("Specific wood types will " + yesNo +
-            "be collected by splunk\n to" +
-            " change: set 'usewoodtypes' in config");
-    }
-
     @Override
     public void onDisable() {
         // Close all the sockets when this plugin is disabled.
