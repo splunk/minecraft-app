@@ -10,6 +10,10 @@ running it in Eclipse, although there are guides for Intellij as well.
 To get started on Intellij, clone this project, checkout a forge-enabled branch and import
 as a gradle project. I hope IDEA community has the Gradle plugin >:/.
 
+## Gradle
+If you don't have Gradle installed, you can instead use the Gradle wrapper by running
+the gradlew in place of the gradle command (the arguments are the same).
+
 ## Forge
 The forge dev environment is constructed with gradle.  
 
