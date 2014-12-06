@@ -1,4 +1,4 @@
-Splunk logger for Minecraft Forge 0.1
+Splunk logger for Minecraft Forge 0.1 Alpha
 
 The Splunk logger for Minecraft Forge provides additional logging
 functionality to the Minecraft Forge server. The logs are written
@@ -8,7 +8,7 @@ TCP input ports declared in config.yml.
 The messages conform to Splunk's logging best practices:
 
      http://dev.splunk.com/view/logging-best-practices/SP-CAAADP6
-     
+
 INSTALLATION
 
 **SPECIFY CONFIG DIRECTORY HERE*** In that directory write a config.yml
