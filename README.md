@@ -11,8 +11,8 @@ This section provides information about installing and using the Minecraft App.
 
 * Operating System: Windows, Linux, or Mac OS X.
 * Web browsers: Latest versions of Chrome, Safari, or Firefox, Internet Explorer 9 or later. 
-* Craftbukkit: The open source minecraft server from [Craftbukkit](http://bukkit.org/)
-* LogToSplunk Plugin: The log to splunk plugin that allows input of more detailed minecraft data to splunk from [CraftBukkit](http://dev.bukkit.org/bukkit-plugins/logtosplunk/)
+* Forge: The open source minecraft server from [Forge](link here)
+* LogToSplunk Plugin: The log to splunk plugin that allows input of more detailed minecraft data to splunk from [Forge](link here)
 * The Splunk Web Framework: The Web Framework is included in Splunk 6 and is available for Splunk 5 from the 
 [Splunk Developer Portal](http://dev.splunk.com/view/webframework-standalone/SP-CAAAEMA).
 * Minecraft Overviewer (Optional): The Google Maps based minecraft word renderer from [Overviewer](http://overviewer.org)
@@ -42,13 +42,9 @@ or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.gi
 
 #### Installing the LogToSplunk Plugin
 
-1. Downlod the jar from [Craftbukkit](http://dev.bukkit.org/bukkit-plugins/logtosplunk/)
-2. Copy the LogToSplunk jar into your craftbukkit server's `/plugins` folder.
-3. Create a `/LogToSplunk` directory in the `/plugins` folder
-4. Create a and edit `/config.yml` text file in the `/LogToSplunk` directory created in 3
-   * The text file should contain one line in the format of "splunks: \<Splunk Server\>:\<TCP Input Port\>" (ie. "splunks: localhost:8888"). Multiple servers can be added as comma separated values between the server:port entries. A port must be specified.
+*** UNDER CONSTRUCTION ***
 
-#### Configuring The Livemap
+#### Configuring The Livemap ***may need update***
 
 1. Download and configure Overview as described int the [Overviewer Docs](http://docs.overviewer.org/en/latest/)
 2. Serve the overviewer via a webserver like [Apache](http://httpd.apache.org) or [IIS](http://www.iis.net). Many operating systems have a web service built in that just needs to be enabled.
@@ -61,7 +57,7 @@ NOTE: The minecraft-app does not refresh overviewer renders automatically. This 
 
 #### Known Issues
 
-1) LogToSplunk does not maintain connecton across Splunk restarts. The minecraft server must be restarted if Splunk is restarted
+1) LogToSplunk does not maintain connection across Splunk restarts. The minecraft server must be restarted if Splunk is restarted
 2) Time calculations and active players may be mis-reported if player disconnects are not logged properly (ie. due to a server crash). Orphaned sessions may be estimated by running sessions from connection to the subsequent server start.
 3) The live map may appear to "shift" as the minecraft world expands and overviewer resets it's origin in future renders. This can be corrected by recopying and modifying the overviewerConfig.js script with the same steps as the installation.
 
@@ -71,7 +67,7 @@ NOTE: The minecraft-app does not refresh overviewer renders automatically. This 
 
 When you need to know more:
 
-* For CraftBukkit documentation, see [Craftbukkit](http://bukkit.org/)
+* For Forge documentation, see [Forge](link here)
 
 * For Overviewer documentation, see [Overviewer](http://overviewer.org)
 
