@@ -24,7 +24,7 @@ before forge.
 
 Run the following steps (some steps may take a little while):
 ``` 
-gradle setupDevWorkspace
+gradle setupDecompWorkspace
 ```
 At this point, I think you should have access to any code necessary to write the plugin.
 
