@@ -1,9 +1,12 @@
 package com.splunk.logtosplunk;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import net.minecraftforge.fml.common.eventhandler.EventBus;
 
 public class TestLogToSplunkMod {
 
@@ -13,7 +16,7 @@ public class TestLogToSplunkMod {
     @Before
     public void setUp(){
         spy = new SplunkMessagePreparerSpy();
-        mod = new LogToSplunkMod(spy);
+        mod = new LogToSplunkMod(spy, mock(EventBus.class));
     }
 
     @Test
