@@ -14,6 +14,9 @@ as a gradle project. I hope IDEA community has the Gradle plugin >:/.
 If you don't have Gradle installed, you can instead use the Gradle wrapper by running
 the gradlew in place of the gradle command (the arguments are the same).
 
+## Testing
+Mockito and JUnit need to be on the classpath (dependencies are in build.gradle).
+
 ## Forge
 The forge dev environment is constructed with gradle.  
 
