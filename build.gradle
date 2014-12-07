@@ -16,6 +16,8 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'org.mockito:mockito-all:1.8.4'
+        classpath 'junit:junit:4.4'
     }
 }
 
@@ -37,8 +39,11 @@ minecraft {
     mappings = "snapshot_nodoc_20141130"
 }
 
+apply plugin: 'java'
 dependencies {
 //No dependencies currently.
+    testCompile 'junit:junit:4.4'
+    testCompile 'org.mockito:mockito-all:1.8.4'
 }
 
 processResources
