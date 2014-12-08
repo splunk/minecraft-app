@@ -23,13 +23,22 @@ public class TestOriginalSplunkMessagePreparer {
 
     @Test
     public void testPlayerLoginEvent() {
-        LoggablePlayerEvent event =
-                new LoggablePlayerEvent(PlayerEventAction.PLAYER_CONNECT, 1000, "woName", new Vec3(10, 10, 10))
-                        .setPlayerName("Bro!");
-        messagePreparer.writeMessage(event);
-
-        //Format of the original splunk message system is never going to change.
+        writeEvent(PlayerEventAction.PLAYER_CONNECT);
         final String expected = "action=player_connect player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000";
         assertEquals(expected, spy.getMessage());
+    }
+
+    @Test
+    public void testPlayerLogoutEvent() {
+        writeEvent(PlayerEventAction.PLAYER_DISCONNECT);
+        final String expected = "action=player_disconnect player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000";
+        assertEquals(expected, spy.getMessage());
+    }
+
+    private void writeEvent(PlayerEventAction action) {
+        LoggablePlayerEvent event =
+                new LoggablePlayerEvent(action, 1000, "woName", new Vec3(10, 10, 10))
+                        .setPlayerName("Bro!");
+        messagePreparer.writeMessage(event);
     }
 }

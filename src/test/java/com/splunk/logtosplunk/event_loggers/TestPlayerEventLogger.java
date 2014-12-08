@@ -29,17 +29,16 @@ public class TestPlayerEventLogger {
     EntityPlayer player = mock(EntityPlayer.class);
 
     @InjectMocks
-    private PlayerEvent.PlayerLoggedInEvent event = mock(PlayerEvent.PlayerLoggedInEvent.class);
+    private PlayerEvent.PlayerLoggedInEvent loggedInEvent = mock(PlayerEvent.PlayerLoggedInEvent.class);
+
+    @InjectMocks
+    private PlayerEvent.PlayerLoggedOutEvent loggedOutEvent = mock(PlayerEvent.PlayerLoggedOutEvent.class);
 
     @Before
     public void setUp() {
         spy = new SplunkMessagePreparerSpy();
         logger = new PlayerEventLogger(spy);
         MockitoAnnotations.initMocks(this);
-    }
-
-    @Test
-    public void testOnPlayerLogin() {
         when(player.getName()).thenReturn("Bro!");
         when(player.getPositionVector()).thenReturn(new Vec3(10, 10, 10));
 
@@ -50,12 +49,26 @@ public class TestPlayerEventLogger {
         WorldInfo info = mock(WorldInfo.class);
         when(info.getWorldName()).thenReturn("WoName");
         when(world.getWorldInfo()).thenReturn(info);
+    }
 
-        LoggablePlayerEvent expected =
-                new LoggablePlayerEvent(PlayerEventAction.PLAYER_CONNECT, 1000,"WoName",new Vec3(10, 10, 10))
-                        .setPlayerName("Bro!");
+    @Test
+    public void testOnPlayerLogin() {
+        LoggablePlayerEvent expected = getExpectedLoggablePlayerEvent(PlayerEventAction.PLAYER_CONNECT);
+        logger.onPlayerConnect(loggedInEvent);
 
-        logger.onPlayerConnect(event);
         assertEquals(expected, spy.getLoggable());
+    }
+
+    @Test
+    public void testOnPlayerLogout() {
+        LoggablePlayerEvent expected = getExpectedLoggablePlayerEvent(PlayerEventAction.PLAYER_DISCONNECT);
+        logger.onPlayerDisconnect(loggedOutEvent);
+
+        assertEquals(expected, spy.getLoggable());
+    }
+
+    private LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action) {
+        return new LoggablePlayerEvent(action, 1000,"WoName",new Vec3(10, 10, 10))
+                .setPlayerName("Bro!");
     }
 }

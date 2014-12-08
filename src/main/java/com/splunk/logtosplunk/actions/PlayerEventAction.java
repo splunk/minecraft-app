@@ -4,7 +4,8 @@ package com.splunk.logtosplunk.actions;
  * Different types of actions that can occur as part of a PlayerEvent.
  */
 public enum PlayerEventAction {
-    PLAYER_CONNECT("player_connect");
+    PLAYER_CONNECT("player_connect"),
+    PLAYER_DISCONNECT("player_disconnect");
 
     /**
      * The name of the action.

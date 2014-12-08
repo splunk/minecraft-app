@@ -44,14 +44,24 @@ public class PlayerEventLogger {
     @SubscribeEvent
     @SideOnly(Side.SERVER)
     public void onPlayerConnect(PlayerEvent.PlayerLoggedInEvent event) {
+        logAndSend(generateLoggablePlayerEvent(event,PlayerEventAction.PLAYER_CONNECT,null,null));
+    }
+
+    public void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event) {
+        logAndSend(generateLoggablePlayerEvent(event,PlayerEventAction.PLAYER_DISCONNECT,null,null));
+    }
+
+    private LoggablePlayerEvent generateLoggablePlayerEvent(PlayerEvent event,PlayerEventAction actionType,String reason,String message) {
         World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
         final Vec3 coordinates = event.player.getPositionVector();
         final LoggablePlayerEvent loggable =
-                new LoggablePlayerEvent(PlayerEventAction.PLAYER_CONNECT, worldTime, worldName, coordinates);
+                new LoggablePlayerEvent(actionType, worldTime, worldName, coordinates);
         loggable.setPlayerName(event.player.getName());
-        logAndSend(loggable);
+        loggable.setReason(reason);
+        loggable.setMessage(message);
+        return loggable;
     }
 
     /**
@@ -63,4 +73,5 @@ public class PlayerEventLogger {
         logger.info(loggable);
         messagePreparer.writeMessage(loggable);
     }
+
 }
