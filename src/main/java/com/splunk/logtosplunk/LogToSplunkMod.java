@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.splunk.logtosplunk.event_loggers.PlayerEventLogger;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -22,9 +23,14 @@ public class LogToSplunkMod {
     private static final Logger logger = getLogger(LOGGER_NAME);
 
     /**
-     * Used for registering listeners to events.
+     * Used for registering listeners to FML events.
      */
-    private final EventBus bus;
+    private final EventBus fmlBus;
+
+    /**
+     * Used for registering listeners to ForgeMinecraft events.
+     */
+    private final EventBus mcBus;
 
     /**
      * Used for processing messages from the various Minecraft event handlers.
@@ -35,19 +41,21 @@ public class LogToSplunkMod {
      * Constructor that is called by Forge. Uses the default SplunkMessagePreparer.
      */
     public LogToSplunkMod() {
-        this(new OriginalSplunkMessagePreparer(), new FMLCommonHandler().instance().bus());
+        this(new OriginalSplunkMessagePreparer(), FMLCommonHandler.instance().bus(), MinecraftForge.EVENT_BUS);
     }
 
     /**
      * Constructor.
      *
      * @param splunkMessagePreparer The message preparer to use.
-     * @param bus Passed in to allow testing via JUnit (problems with classloader)
+     * @param fmlBus EventBus to register FML event listeners on. For when you're having a bad day.
+     * @param mcBus Used to register MinecraftForge event listeners. Not actually Irish.
      */
     @VisibleForTesting
-    public LogToSplunkMod(SplunkMessagePreparer splunkMessagePreparer, EventBus bus) {
+    public LogToSplunkMod(SplunkMessagePreparer splunkMessagePreparer, EventBus fmlBus, EventBus mcBus) {
         this.messagePreparer = splunkMessagePreparer;
-        this.bus = bus;
+        this.fmlBus = fmlBus;
+        this.mcBus = mcBus;
     }
 
     /**
@@ -56,7 +64,9 @@ public class LogToSplunkMod {
     @Mod.EventHandler
     @SuppressWarnings("unused")
     public void init(FMLInitializationEvent event) {
-        bus.register(new PlayerEventLogger(messagePreparer));
+        PlayerEventLogger playerEventLogger = new PlayerEventLogger(messagePreparer);
+        fmlBus.register(playerEventLogger);
+        mcBus.register(playerEventLogger);
         logAndSend("Splunk for Minecraft initialized.");
     }
 

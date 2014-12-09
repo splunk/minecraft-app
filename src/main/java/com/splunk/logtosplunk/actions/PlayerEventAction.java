@@ -5,7 +5,8 @@ package com.splunk.logtosplunk.actions;
  */
 public enum PlayerEventAction {
     PLAYER_CONNECT("player_connect"),
-    PLAYER_DISCONNECT("player_disconnect");
+    PLAYER_DISCONNECT("player_disconnect"),
+    CHAT("chat");
 
     /**
      * The name of the action.

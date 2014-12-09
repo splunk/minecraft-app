@@ -10,6 +10,7 @@ import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -44,23 +45,55 @@ public class PlayerEventLogger {
     @SubscribeEvent
     @SideOnly(Side.SERVER)
     public void onPlayerConnect(PlayerEvent.PlayerLoggedInEvent event) {
-        logAndSend(generateLoggablePlayerEvent(event,PlayerEventAction.PLAYER_CONNECT,null,null));
+        logAndSend(generateLoggablePlayerEvent(event, PlayerEventAction.PLAYER_CONNECT, null, null));
     }
 
+    /**
+     * Logs to Splunk when a player logs out.
+     *
+     * @param event The captured event.
+     */
+    @SubscribeEvent
+    @SideOnly(Side.SERVER)
     public void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event) {
-        logAndSend(generateLoggablePlayerEvent(event,PlayerEventAction.PLAYER_DISCONNECT,null,null));
+        logAndSend(generateLoggablePlayerEvent(event, PlayerEventAction.PLAYER_DISCONNECT, null, null));
     }
 
-    private LoggablePlayerEvent generateLoggablePlayerEvent(PlayerEvent event,PlayerEventAction actionType,String reason,String message) {
+    /**
+     * Logs to Splunk when a player chats and what they chat.
+     *
+     * @param chatEvent The captured chat event.
+     */
+    @SubscribeEvent
+    @SideOnly(Side.SERVER)
+    public void onPlayerChat(ServerChatEvent chatEvent) {
+        logAndSend(generateLoggablePlayerEvent(chatEvent, PlayerEventAction.CHAT, chatEvent.message));
+    }
+
+    private LoggablePlayerEvent generateLoggablePlayerEvent(
+            PlayerEvent event, PlayerEventAction actionType, String reason, String message) {
         World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
         final Vec3 coordinates = event.player.getPositionVector();
-        final LoggablePlayerEvent loggable =
-                new LoggablePlayerEvent(actionType, worldTime, worldName, coordinates);
+        final LoggablePlayerEvent loggable = new LoggablePlayerEvent(actionType, worldTime, worldName, coordinates);
         loggable.setPlayerName(event.player.getName());
         loggable.setReason(reason);
         loggable.setMessage(message);
+
+        return loggable;
+    }
+
+    private LoggablePlayerEvent generateLoggablePlayerEvent(
+            ServerChatEvent event, PlayerEventAction actionType, String message) {
+        World world = event.player.getEntityWorld();
+        final long worldTime = world.getWorldTime();
+        final String worldName = world.getWorldInfo().getWorldName();
+        final Vec3 coordinates = event.player.getPositionVector();
+        final LoggablePlayerEvent loggable = new LoggablePlayerEvent(actionType, worldTime, worldName, coordinates);
+        loggable.setPlayerName(event.player.getName());
+        loggable.setMessage(message);
+
         return loggable;
     }
 
@@ -73,5 +106,4 @@ public class PlayerEventLogger {
         logger.info(loggable);
         messagePreparer.writeMessage(loggable);
     }
-
 }

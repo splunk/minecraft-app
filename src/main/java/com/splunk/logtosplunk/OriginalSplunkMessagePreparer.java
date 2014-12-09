@@ -6,7 +6,7 @@ import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     static final String BASE_PLAYER_STRING = "action=%s player=%s";
     static final String REASON = " reason=%s";
-    static final String MESSAGE = " message\"%s\"";
+    static final String MESSAGE = " message=\"%s\"";
     /**
      * Connection(s) to Splunk.
      */
