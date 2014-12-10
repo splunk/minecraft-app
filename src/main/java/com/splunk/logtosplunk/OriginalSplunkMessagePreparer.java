@@ -1,16 +1,40 @@
 package com.splunk.logtosplunk;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.splunk.logtosplunk.actions.PlayerEventAction;
+import com.splunk.logtosplunk.event_loggers.PlayerMovementEventLogger;
 import com.splunk.logtosplunk.loggable_events.LoggableEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
+import net.minecraft.util.Vec3;
+
+/**
+ * Based off of the original Splunk Minecraft app, this message preparer takes data from Minecraft events and prepares
+ * them for Splunk.
+ */
 public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     static final String BASE_PLAYER_STRING = "action=%s player=%s";
     static final String REASON = " reason=%s";
     static final String MESSAGE = " message=\"%s\"";
+
     /**
      * Connection(s) to Splunk.
      */
     private final SplunkConnector connector;
+
+    /**
+     * Keeps track players last positions, in a guava cache for it's eviction policy.
+     */
+    private final Cache<String, Vec3> lastKnownCoordinates = CacheBuilder.newBuilder().maximumSize(
+            PlayerMovementEventLogger.MAX_PLAYERS).build(
+            new CacheLoader<String, Vec3>() {
+                @Override
+                public Vec3 load(String key) throws Exception {
+                    return lastKnownCoordinates.getIfPresent(key);
+                }
+            });
 
     /**
      * Constructor, uses default Splunk connection.
@@ -40,7 +64,17 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
         connector.sendToSplunk(message);
     }
 
+    /**
+     * Processes a LoggablePlayerEvent to send to splunk
+     *
+     * @param event The event to process.
+     */
     private void writePlayerMessage(LoggablePlayerEvent event) {
+        if (event.getAction() == PlayerEventAction.LOCATION) {
+            logLegacyMoveEvent(event);
+            return;
+        }
+
         StringBuilder b = new StringBuilder(
                 String.format(BASE_PLAYER_STRING, event.getAction().asString(), event.getPlayerName()));
         if (event.getReason() != null) {
@@ -53,6 +87,40 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
         writeMessage(b.toString());
     }
 
+    /**
+     * Log move data in the way of the original splunk minecraft app, which was based off of CraftBukkit's MoveEvent.
+     *
+     * @param event Movement event to be logged.
+     */
+    private void logLegacyMoveEvent(LoggablePlayerEvent event) {
+        String playerName = event.getPlayerName();
+        Vec3 lastCoords = lastKnownCoordinates.getIfPresent(playerName);
+        lastKnownCoordinates.put(playerName, event.getCoordinates());
+
+        if (lastCoords == null) {
+            return;
+        }
+
+        // message in this format to support old craftbukkit style move events (and how they were loged in splunk).
+        writeMessage(
+                "action=" + event.getAction().asString() +
+                        " player=" + playerName +
+                        " world=" + event.getWorldName() +
+                        " from_x=" + lastCoords.xCoord +
+                        " from_y=" + lastCoords.yCoord +
+                        " from_z=" + lastCoords.zCoord +
+                        " to_x=" + event.getCoordinates().xCoord +
+                        " to_y=" + event.getCoordinates().yCoord +
+                        " to_z=" + event.getCoordinates().zCoord +
+                        " game_time=" + event.getWorldTime());
+    }
+
+    /**
+     * Produce a String representing location in the original Splunk Minecraft App format.
+     *
+     * @param event The event to extract the location String from.
+     * @return A String representing the location in the event.
+     */
     private String extractLocation(LoggableEvent event) {
         StringBuilder b = new StringBuilder();
         b.append("world=" + event.getWorldName());
