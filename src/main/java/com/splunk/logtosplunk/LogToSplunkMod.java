@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.splunk.logtosplunk.event_loggers.PlayerEventLogger;
+import com.splunk.logtosplunk.event_loggers.PlayerMovementEventLogger;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -67,6 +68,10 @@ public class LogToSplunkMod {
         PlayerEventLogger playerEventLogger = new PlayerEventLogger(messagePreparer);
         fmlBus.register(playerEventLogger);
         mcBus.register(playerEventLogger);
+
+        PlayerMovementEventLogger playerMovementEventLogger = new PlayerMovementEventLogger(messagePreparer);
+        mcBus.register(playerMovementEventLogger);
+
         logAndSend("Splunk for Minecraft initialized.");
     }
 
