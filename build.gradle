@@ -18,6 +18,8 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
         classpath 'org.mockito:mockito-all:1.8.4'
         classpath 'junit:junit:4.4'
+        classpath 'org.jmockit:jmockit:1.13'
+
     }
 }
 
@@ -44,6 +46,7 @@ dependencies {
 //No dependencies currently.
     testCompile 'junit:junit:4.4'
     testCompile 'org.mockito:mockito-all:1.8.4'
+    testCompile 'org.jmockit:jmockit:1.13'
 }
 
 processResources
