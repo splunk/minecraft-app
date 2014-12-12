@@ -4,7 +4,8 @@ package com.splunk.logtosplunk.loggable_events;
  * Categories of loggable events.
  */
 public enum LoggableEventType {
-    PLAYER("PlayerEvent");
+    PLAYER("PlayerEvent"),
+    BLOCK("BlockEvent");
 
     private final String eventName;
 
