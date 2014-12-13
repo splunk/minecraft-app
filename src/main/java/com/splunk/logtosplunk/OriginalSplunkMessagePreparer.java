@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.splunk.logtosplunk.actions.PlayerEventAction;
 import com.splunk.logtosplunk.event_loggers.PlayerMovementEventLogger;
+import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
@@ -18,6 +19,7 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     static final String BASE_PLAYER_STRING = "action=%s player=%s";
     static final String REASON = " reason=%s";
     static final String MESSAGE = " message=\"%s\"";
+    static final String BLOCK = " block_type=%s";
 
     /**
      * Connection(s) to Splunk.
@@ -56,6 +58,8 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     public void writeMessage(LoggableEvent loggable) {
         if (loggable instanceof LoggablePlayerEvent) {
             writePlayerMessage((LoggablePlayerEvent) loggable);
+        } else if (loggable instanceof LoggableBlockEvent) {
+            writeBlockMessage((LoggableBlockEvent) loggable);
         }
     }
 
@@ -65,7 +69,21 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     }
 
     /**
-     * Processes a LoggablePlayerEvent to send to splunk
+     * Processes a LoggableBlockEvent to send to Splunk.
+     *
+     * @param event The event to process.
+     */
+    private void writeBlockMessage(LoggableBlockEvent event) {
+        StringBuilder b = new StringBuilder(
+                String.format(BASE_PLAYER_STRING, event.getAction().asString(), event.getPlayerName()));
+        b.append(" " + extractLocation(event));
+        b.append(String.format(BLOCK, event.getBlockName()));
+
+        writeMessage(b.toString());
+    }
+
+    /**
+     * Processes a LoggablePlayerEvent to send to Splunk.
      *
      * @param event The event to process.
      */

@@ -5,10 +5,13 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.splunk.logtosplunk.actions.BlockEventAction;
 import com.splunk.logtosplunk.actions.PlayerEventAction;
+import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
 import net.minecraft.util.Vec3;
+
 
 public class TestOriginalSplunkMessagePreparer {
 
@@ -61,6 +64,21 @@ public class TestOriginalSplunkMessagePreparer {
         assertEquals(expected3 ,spy.getMessage());
     }
 
+    @Test
+    public void testBlockEventLogging(){
+        writeEvent(BlockEventAction.BREAK);
+        assertEquals("action=block_broken player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000 block_type=block", spy.getMessage());
+
+        writeEvent(BlockEventAction.PLACE);
+        assertEquals("action=block_placed player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000 block_type=block", spy.getMessage());
+    }
+
+    private void writeEvent(BlockEventAction action){
+        LoggableBlockEvent event =
+                new LoggableBlockEvent(action, 1000, "woName", new Vec3(10,10,10)).setPlayerName("Bro!").setBlockName("block");
+
+        messagePreparer.writeMessage(event);
+    }
     private void writeEvent(PlayerEventAction action, Vec3 coords, String message) {
         LoggablePlayerEvent event =
                 new LoggablePlayerEvent(action, 1000, "woName", coords).setPlayerName("Bro!");
