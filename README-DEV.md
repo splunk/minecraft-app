@@ -8,14 +8,26 @@ These steps have been tested in Intellij.  It looks like most of the guides on f
 running it in Eclipse, although there are guides for Intellij as well. 
 
 To get started on Intellij, clone this project, checkout a forge-enabled branch and import
-as a gradle project. I hope IDEA community has the Gradle plugin >:/.
+as a gradle project.  In the forge section below, a bunch of gradle tasks are run to get the environment set up.
+Somewhere in there we *might* be supposed to run 'genIntellijRuns' but I'm not sure I needed to.
+
+I add the below snippet to the bottom of my build.gradle to get it to download the test dependencies for me.
+
+```
+idea{
+    module{
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+```
 
 ## Gradle
 If you don't have Gradle installed, you can instead use the Gradle wrapper by running
 the gradlew in place of the gradle command (the arguments are the same).
 
 ## Testing
-Mockito and JUnit need to be on the classpath (dependencies are in build.gradle).
+Mockito, JUnit and JMockit need to be on the classpath (dependencies are in build.gradle). 
 
 ## Forge
 The forge dev environment is constructed with gradle.  
@@ -53,6 +65,7 @@ gradle runClient
 
 Enter the server via the client instance and test!
 
+
 ## Unit Tests
 
-***Under construction***
+Unit testing the deobfuscated code requires a lot of mocking to work. Some of the Forge classes can't loaded at the same time as our test dependencies so they also must be mocked out.
