@@ -69,10 +69,10 @@ public class TestOriginalSplunkMessagePreparer {
     @Test
     public void testBlockEventLogging(){
         writeEvent(BlockEventAction.BREAK);
-        assertEquals("action=block_broken player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000 block_type=block", spy.getMessage());
+        assertEquals("action=block_broken player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000 block_type=block base_type=stone", spy.getMessage());
 
         writeEvent(BlockEventAction.PLACE);
-        assertEquals("action=block_placed player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000 block_type=block", spy.getMessage());
+        assertEquals("action=block_placed player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000 block_type=block base_type=stone", spy.getMessage());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class TestOriginalSplunkMessagePreparer {
 
     private void writeEvent(BlockEventAction action){
         LoggableBlockEvent event =
-                new LoggableBlockEvent(action, 1000, "woName", new Vec3(10,10,10)).setPlayerName("Bro!").setBlockName("block");
+                new LoggableBlockEvent(action, 1000, "woName", new Vec3(10,10,10)).setPlayerName("Bro!").setBlockName("block").setBaseType("stone");
 
         messagePreparer.writeMessage(event);
     }

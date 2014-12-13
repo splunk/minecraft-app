@@ -59,7 +59,6 @@ public class TestBlockEventLogger {
      */
     @Before
     public void setUp() {
-
         spy = new SplunkMessagePreparerSpy();
         logger = new BlockEventLogger(spy);
 
@@ -70,9 +69,7 @@ public class TestBlockEventLogger {
         //for some reason only break event has a getPlayer, placeevent you just
         // access it directly...
         when(breakEvent.getPlayer()).thenReturn(player);
-
         when(player.getEntityWorld()).thenReturn(world);
-
         when(world.getWorldTime()).thenReturn(1000L);
 
         when(blockPos.getX()).thenReturn(10);
@@ -83,6 +80,8 @@ public class TestBlockEventLogger {
         when(info.getWorldName()).thenReturn("WoName");
         when(world.getWorldInfo()).thenReturn(info);
         final Block block = mock(Block.class);
+
+        when(block.getUnlocalizedName()).thenReturn("chocolate");
         final Item item = mock(Item.class);
         when(item.getItemStackDisplayName((net.minecraft.item.ItemStack) anyObject()))
                 .thenReturn("I hope it was worth it block");
@@ -116,6 +115,6 @@ public class TestBlockEventLogger {
 
     private LoggableBlockEvent getExpectedLoggableBlockEvent(BlockEventAction action) {
         return new LoggableBlockEvent(action, 1000, "WoName", new Vec3(10, 10, 10)).setPlayerName("Bro!")
-                .setBlockName("I_hope_it_was_worth_it_block");
+                .setBlockName("I_hope_it_was_worth_it_block").setBaseType("chocolate");
     }
 }

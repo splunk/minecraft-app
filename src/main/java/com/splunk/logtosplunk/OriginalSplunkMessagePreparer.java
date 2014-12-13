@@ -22,6 +22,7 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     static final String REASON = " reason=%s";
     static final String MESSAGE = " message=\"%s\"";
     static final String BLOCK = " block_type=%s";
+    static final String BASE_BLOCK_TYPE = " base_type=%s";
     static final String KILLER = " killer=%s";
     static final String VICTIM = " victim=%s";
     static final String DAMAGE_SOURCE = " damage_source=%s";
@@ -85,7 +86,7 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
                 String.format(BASE_PLAYER_STRING, event.getAction().asString(), event.getPlayerName()));
         b.append(' ' + extractLocation(event));
         b.append(String.format(BLOCK, event.getBlockName()));
-
+        b.append(String.format(BASE_BLOCK_TYPE, event.getBaseType()));
         writeMessage(b.toString());
     }
 

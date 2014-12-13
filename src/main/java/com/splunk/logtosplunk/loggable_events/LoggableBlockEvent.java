@@ -12,6 +12,7 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
     private String cause;
     private BlockEventAction action;
     private String blockName;
+    private String baseType;
 
     /**
      * Constructor.
@@ -60,6 +61,15 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         return this;
     }
 
+    public String getBaseType() {
+        return baseType;
+    }
+
+    public LoggableBlockEvent setBaseType(String baseType) {
+        this.baseType = baseType;
+        return this;
+    }
+
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
@@ -72,6 +82,9 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         }
         if (cause != null) {
             b.append(", Cause: " + cause);
+        }
+        if (baseType != null) {
+            b.append(", Material: " + baseType);
         }
         b.append(" " + getLocation());
 
@@ -92,6 +105,7 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         if (action != that.action) {
             return false;
         }
+
         //Seems like vec3's equals is borked.
         if (getCoordinates() != null ? !getCoordinates().toString().equals(that.getCoordinates().toString()) :
                 that.getCoordinates() != null) {
@@ -104,6 +118,11 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         if (blockName != null ? !blockName.equals(that.blockName) : that.blockName != null) {
             return false;
         }
+
+        if (baseType != null ? !baseType.equals(that.baseType) : that.baseType != null) {
+            return false;
+        }
+
         if (this.getWorldTime() != that.getWorldTime()) {
             return false;
         }
@@ -120,6 +139,8 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         result = 31 * result + (action != null ? action.hashCode() : 0);
         result = 31 * result + (cause != null ? cause.hashCode() : 0);
         result = 31 * result + (blockName != null ? blockName.hashCode() : 0);
+        result = 31 * result + (baseType != null ? baseType.hashCode() : 0);
+
         return result;
     }
 }
