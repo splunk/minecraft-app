@@ -63,6 +63,7 @@ public class BlockEventLogger {
 
     private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event) {
         Block block = event.state.getBlock();
+        String base_type = block.getUnlocalizedName();
         World w = event.world;
         Item item =  Item.getItemFromBlock(block);
         int damVal = block.getDamageValue(event.world, event.pos);
@@ -76,7 +77,7 @@ public class BlockEventLogger {
             playerName = ((BlockEvent.PlaceEvent) event).player.getName();
         }
         return new LoggableBlockEvent(action, w.getWorldTime(), w.getWorldInfo().getWorldName(), coords)
-                .setBlockName(blockName).setPlayerName(playerName);
+                .setBlockName(blockName).setPlayerName(playerName).setBaseType(base_type);
     }
 
     /**
