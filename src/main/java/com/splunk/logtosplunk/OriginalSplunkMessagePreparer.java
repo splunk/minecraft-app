@@ -6,6 +6,7 @@ import com.google.common.cache.CacheLoader;
 import com.splunk.logtosplunk.actions.PlayerEventAction;
 import com.splunk.logtosplunk.event_loggers.PlayerMovementEventLogger;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
+import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
@@ -17,9 +18,13 @@ import net.minecraft.util.Vec3;
  */
 public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     static final String BASE_PLAYER_STRING = "action=%s player=%s";
+    static final String ACTION = "action=%s";
     static final String REASON = " reason=%s";
     static final String MESSAGE = " message=\"%s\"";
     static final String BLOCK = " block_type=%s";
+    static final String KILLER = " killer=%s";
+    static final String VICTIM = " victim=%s";
+    static final String DAMAGE_SOURCE = " damage_source=%s";
 
     /**
      * Connection(s) to Splunk.
@@ -60,6 +65,8 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
             writePlayerMessage((LoggablePlayerEvent) loggable);
         } else if (loggable instanceof LoggableBlockEvent) {
             writeBlockMessage((LoggableBlockEvent) loggable);
+        } else if (loggable instanceof LoggableDeathEvent) {
+            writeDeathMessage((LoggableDeathEvent) loggable);
         }
     }
 
@@ -76,7 +83,7 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     private void writeBlockMessage(LoggableBlockEvent event) {
         StringBuilder b = new StringBuilder(
                 String.format(BASE_PLAYER_STRING, event.getAction().asString(), event.getPlayerName()));
-        b.append(" " + extractLocation(event));
+        b.append(' ' + extractLocation(event));
         b.append(String.format(BLOCK, event.getBlockName()));
 
         writeMessage(b.toString());
@@ -98,7 +105,7 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
         if (event.getReason() != null) {
             b.append(String.format(REASON, event.getReason()));
         }
-        b.append(" " + extractLocation(event));
+        b.append(' ' + extractLocation(event));
         if (event.getMessage() != null) {
             b.append(String.format(MESSAGE, event.getMessage()));
         }
@@ -134,12 +141,30 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     }
 
     /**
+     * Processes a {@link LoggableDeathEvent} to send to Splunk.
+     *
+     * @param event
+     */
+    private void writeDeathMessage(LoggableDeathEvent event) {
+        StringBuilder b = new StringBuilder();
+        b.append(String.format(ACTION, event.getAction().asString()));
+        b.append(String.format(VICTIM, event.getVictim()));
+        if (event.getKiller() != null) {
+            b.append(String.format(KILLER, event.getKiller()));
+        }
+        b.append(String.format(DAMAGE_SOURCE, event.getDamageSource()));
+        b.append(' ' + extractLocation(event));
+
+        writeMessage(b.toString());
+    }
+
+    /**
      * Produce a String representing location in the original Splunk Minecraft App format.
      *
      * @param event The event to extract the location String from.
      * @return A String representing the location in the event.
      */
-    private String extractLocation(LoggableEvent event) {
+    private static String extractLocation(LoggableEvent event) {
         StringBuilder b = new StringBuilder();
         b.append("world=" + event.getWorldName());
         if (event.getCoordinates() != null) {
