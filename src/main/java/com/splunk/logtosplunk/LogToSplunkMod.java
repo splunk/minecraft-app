@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.splunk.logtosplunk.event_loggers.BlockEventLogger;
+import com.splunk.logtosplunk.event_loggers.DeathEventLogger;
 import com.splunk.logtosplunk.event_loggers.PlayerEventLogger;
 import com.splunk.logtosplunk.event_loggers.PlayerMovementEventLogger;
 
@@ -75,6 +76,9 @@ public class LogToSplunkMod {
 
         BlockEventLogger blockLogger = new BlockEventLogger(messagePreparer);
         mcBus.register(blockLogger);
+
+        DeathEventLogger deathLogger = new DeathEventLogger(messagePreparer);
+        mcBus.register(deathLogger);
 
         logAndSend("Splunk for Minecraft initialized.");
     }

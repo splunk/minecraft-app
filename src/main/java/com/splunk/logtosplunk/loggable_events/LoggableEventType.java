@@ -5,7 +5,8 @@ package com.splunk.logtosplunk.loggable_events;
  */
 public enum LoggableEventType {
     PLAYER("PlayerEvent"),
-    BLOCK("BlockEvent");
+    BLOCK("BlockEvent"),
+    DEATH("DeathEvent");
 
     private final String eventName;
 

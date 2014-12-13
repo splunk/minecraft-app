@@ -3,6 +3,9 @@ Information on how to get things up and running for development.  There may be s
 need to be downloaded to get this to work, if you run into any, email alszeb@gmail.com with the
 info more make a merge request with the updated README-DEV.
 
+Here is their guide to setting up a mod environment (its' a little different from the below instructions...):
+[minecraft-forge] (https://github.com/MinecraftForge/MinecraftForge)
+
 ## Intellij
 These steps have been tested in Intellij.  It looks like most of the guides on forge talk about
 running it in Eclipse, although there are guides for Intellij as well. 

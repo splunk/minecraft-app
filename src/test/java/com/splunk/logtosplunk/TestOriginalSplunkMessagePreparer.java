@@ -6,8 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.splunk.logtosplunk.actions.BlockEventAction;
+import com.splunk.logtosplunk.actions.DeathEventAction;
 import com.splunk.logtosplunk.actions.PlayerEventAction;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
+import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
 import net.minecraft.util.Vec3;
@@ -71,6 +73,20 @@ public class TestOriginalSplunkMessagePreparer {
 
         writeEvent(BlockEventAction.PLACE);
         assertEquals("action=block_placed player=Bro! world=woName x=10.0 y=10.0 z=10.0 game_time=1000 block_type=block", spy.getMessage());
+    }
+
+    @Test
+    public void testDeathEventLogging(){
+        writeEvent(DeathEventAction.PLAYER_DIED);
+        assertEquals("action=player_died victim=veectim killer=keeler damage_source=deemage_source world=woName x=10.0 y=10.0 z=10.0 game_time=1000", spy.getMessage());
+
+    }
+
+    private void writeEvent(DeathEventAction action) {
+        LoggableDeathEvent event =
+                new LoggableDeathEvent(action, 1000, "woName", new Vec3(10,10,10)).setVicitim("veectim").setKiller("keeler").setDamageSource("deemage_source");
+
+        messagePreparer.writeMessage(event);
     }
 
     private void writeEvent(BlockEventAction action){
