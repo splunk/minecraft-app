@@ -48,7 +48,7 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
      * Constructor, uses default Splunk connection.
      */
     public OriginalSplunkMessagePreparer() {
-        this(new MultiSplunkConnection());
+        this(new SingleSplunkConnection("localhost",8888,true));
     }
 
     /**

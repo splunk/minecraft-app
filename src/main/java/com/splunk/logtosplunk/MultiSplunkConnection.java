@@ -5,6 +5,9 @@ package com.splunk.logtosplunk;
  */
 public class MultiSplunkConnection implements SplunkConnector {
 
+    public MultiSplunkConnection(){
+
+    }
     @Override
     public void sendToSplunk(String message) {
     //NYI
