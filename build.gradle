@@ -30,7 +30,7 @@ group= "com.splunk"
 archivesBaseName = "logtosplunk"
 
 minecraft {
-    version = "1.8-11.14.0.1252-1.8"
+    version = "1.8-11.14.0.1289-1.8"
     runDir = "eclipse"
 
     // the mappings can be changed at any time, and must be in the following format.
