@@ -62,13 +62,24 @@ public class BlockEventLogger {
     }
 
     private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event) {
+
         Block block = event.state.getBlock();
         String base_type = block.getUnlocalizedName();
         World w = event.world;
-        Item item =  Item.getItemFromBlock(block);
-        int damVal = block.getDamageValue(event.world, event.pos);
-        ItemStack stack = new ItemStack(block, 1, damVal);
-        String blockName = item.getItemStackDisplayName(stack).replace(' ', '_');
+        Item item = Item.getItemFromBlock(block);
+
+        String blockName = null;
+        if (item != null) {
+            int damVal = block.getDamageValue(event.world, event.pos);
+            ItemStack stack = new ItemStack(block, 1, damVal);
+            blockName = item.getItemStackDisplayName(stack).replace(' ', '_');
+        } else {
+
+            blockName = base_type;
+            if (event instanceof BlockEvent.PlaceEvent) {
+                blockName = ((BlockEvent.PlaceEvent) event).itemInHand.getDisplayName();
+            }
+        }
         Vec3 coords = new Vec3(event.pos.getX(), event.pos.getY(), event.pos.getZ());
         String playerName = null;
         if (event instanceof BlockEvent.BreakEvent) {
