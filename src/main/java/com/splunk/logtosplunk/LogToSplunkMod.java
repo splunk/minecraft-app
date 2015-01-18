@@ -67,6 +67,8 @@ public class LogToSplunkMod {
     @Mod.EventHandler
     @SuppressWarnings("unused")
     public void init(FMLInitializationEvent event) {
+
+
         PlayerEventLogger playerEventLogger = new PlayerEventLogger(messagePreparer);
         fmlBus.register(playerEventLogger);
         mcBus.register(playerEventLogger);
