@@ -10,6 +10,8 @@ import java.util.Queue;
 
 import org.apache.logging.log4j.Logger;
 
+//TODO: tests?
+
 /**
  * Knows a single Splunk instance by its host:port and forwards data to it.
  */
@@ -18,7 +20,7 @@ public class SingleSplunkConnection implements SplunkConnector, Runnable {
     private static final String DEFAULT_RECONNECT_TIME = "10";
 
     /**
-     * Interval in seconds between attempts to connect to splunk.
+     * Interval in seconds between attempts to connect to Splunk.
      */
     private static final int RECONNECT_TIME =
             Integer.valueOf(System.getProperty("splunk_mc.reconnect_time", DEFAULT_RECONNECT_TIME));
@@ -30,7 +32,7 @@ public class SingleSplunkConnection implements SplunkConnector, Runnable {
     private boolean connected;
 
     /**
-     * This classes data buffer.
+     * This class' data buffer.
      */
     private final Queue<String> data = new LinkedList<String>();
 
@@ -73,7 +75,7 @@ public class SingleSplunkConnection implements SplunkConnector, Runnable {
     }
 
     /**
-     * Ques up a message to send to this Spunk connections' Splunk instance.
+     * Queues up a message to send to this Spunk connections' Splunk instance.
      *
      * @param message The message to send.
      */
@@ -95,7 +97,7 @@ public class SingleSplunkConnection implements SplunkConnector, Runnable {
      * @return True if it is connected to its Splunk instance.
      */
     public boolean isConnected() {
-        return socket != null && socket.isConnected() ;
+        return socket != null && socket.isConnected();
     }
 
     /**
