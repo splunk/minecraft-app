@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Knows a single Splunk instance by its host:port and forwards data to it.
  */
-public class SingleSplunkConnection implements SplunkConnector, Runnable {
+public class SingleSplunkConnection implements SplunkConnection, Runnable {
     private static final String LOGGER_PREFIX = "SplunkConnection - ";
     private static final String DEFAULT_RECONNECT_TIME = "10";
 

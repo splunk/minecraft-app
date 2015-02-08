@@ -3,7 +3,7 @@ package com.splunk.logtosplunk;
 /**
  * Has a way of connecting to Splunk and sends information to it.
  */
-public interface SplunkConnector {
+public interface SplunkConnection {
 
     /**
      * Sends a message to Splunk(s).

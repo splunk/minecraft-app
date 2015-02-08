@@ -44,7 +44,7 @@ public class LogToSplunkMod {
      * Constructor that is called by Forge. Uses the default SplunkMessagePreparer.
      */
     public LogToSplunkMod() {
-        this(new OriginalSplunkMessagePreparer(), FMLCommonHandler.instance().bus(), MinecraftForge.EVENT_BUS);
+        this(new BasicSplunkMessagePreparer(), FMLCommonHandler.instance().bus(), MinecraftForge.EVENT_BUS);
     }
 
     /**

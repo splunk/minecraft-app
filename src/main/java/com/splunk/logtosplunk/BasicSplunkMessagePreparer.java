@@ -16,7 +16,7 @@ import net.minecraft.util.Vec3;
  * Based off of the original Splunk Minecraft app, this message preparer takes data from Minecraft events and prepares
  * them for Splunk.
  */
-public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
+public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
     static final String BASE_PLAYER_STRING = "action=%s player=%s";
     static final String ACTION = "action=%s";
     static final String REASON = " reason=%s";
@@ -30,7 +30,7 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     /**
      * Connection(s) to Splunk.
      */
-    private final SplunkConnector connector;
+    private final SplunkConnection connector;
 
     /**
      * Keeps track players last positions, in a guava cache for it's eviction policy.
@@ -47,17 +47,17 @@ public class OriginalSplunkMessagePreparer implements SplunkMessagePreparer {
     /**
      * Constructor, uses default Splunk connection.
      */
-    public OriginalSplunkMessagePreparer() {
+    public BasicSplunkMessagePreparer() {
         this(new SingleSplunkConnection("localhost",8888,true));
     }
 
     /**
      * Constructor.
      *
-     * @param splunkConnector Connection to splunk to use.
+     * @param splunkConnection Connection to splunk to use.
      */
-    public OriginalSplunkMessagePreparer(SplunkConnector splunkConnector) {
-        this.connector = splunkConnector;
+    public BasicSplunkMessagePreparer(SplunkConnection splunkConnection) {
+        this.connector = splunkConnection;
     }
 
     @Override

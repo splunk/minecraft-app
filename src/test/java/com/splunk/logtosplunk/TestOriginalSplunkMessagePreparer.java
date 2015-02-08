@@ -17,13 +17,13 @@ import net.minecraft.util.Vec3;
 
 public class TestOriginalSplunkMessagePreparer {
 
-    private OriginalSplunkMessagePreparer messagePreparer;
-    private SplunkConnectorSpy spy;
+    private BasicSplunkMessagePreparer messagePreparer;
+    private SplunkConnectionSpy spy;
 
     @Before
     public void setUp() {
-        spy = new SplunkConnectorSpy();
-        messagePreparer = new OriginalSplunkMessagePreparer(spy);
+        spy = new SplunkConnectionSpy();
+        messagePreparer = new BasicSplunkMessagePreparer(spy);
     }
 
     @Test

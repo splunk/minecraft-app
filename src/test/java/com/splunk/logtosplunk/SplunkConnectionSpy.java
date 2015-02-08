@@ -3,7 +3,7 @@ package com.splunk.logtosplunk;
 /**
  * Standard spy.  Returns input values from getters.
  */
-public class SplunkConnectorSpy implements SplunkConnector {
+public class SplunkConnectionSpy implements SplunkConnection {
 
     private String message;
 
