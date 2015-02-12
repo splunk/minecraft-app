@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 
 import com.splunk.logtosplunk.SplunkMessagePreparerSpy;
-import com.splunk.logtosplunk.actions.DeathEventAction;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
 
 import net.minecraft.entity.Entity;
@@ -36,7 +35,7 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(DeathEventAction.PLAYER_DIED, null, "Waldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, null, "Waldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
@@ -74,7 +73,7 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(DeathEventAction.PLAYER_DIED, "anti-waldo", "Waldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, "anti-waldo", "Waldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
@@ -94,14 +93,14 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(DeathEventAction.MOB_DIED, "anti-waldo", "MonsterWaldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.MOB_DIED, "anti-waldo", "MonsterWaldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
     private LoggableDeathEvent getExpected(
-            DeathEventAction actionType, String killer, String victim, String damageSource) {
+            LoggableDeathEvent.DeathEventAction actionType, String killer, String victim, String damageSource) {
         return new LoggableDeathEvent(actionType, 1000, "woName", new Vec3(10, 10, 10)).setKiller(killer)
                 .setVicitim(victim).setDamageSource(damageSource);
     }

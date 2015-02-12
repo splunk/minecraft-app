@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.splunk.logtosplunk.LogToSplunkMod;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
-import com.splunk.logtosplunk.actions.DeathEventAction;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,7 +59,8 @@ public class DeathEventLogger {
         } else {
             killer = event.source.getEntity().getName().replace(' ', '_');
         }
-        final DeathEventAction deathAction = playerDied ? DeathEventAction.PLAYER_DIED : DeathEventAction.MOB_DIED;
+        final LoggableDeathEvent.DeathEventAction
+                deathAction = playerDied ? LoggableDeathEvent.DeathEventAction.PLAYER_DIED : LoggableDeathEvent.DeathEventAction.MOB_DIED;
 
         final String victim = event.entity.getName().replace(' ', '_');
         final String damageSource = event.source.getDamageType().replace(' ', '_');

@@ -12,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 
 import com.mojang.authlib.GameProfile;
 import com.splunk.logtosplunk.SplunkMessagePreparerSpy;
-import com.splunk.logtosplunk.actions.PlayerEventAction;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +26,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 public class TestAllPlayerEventLoggers {
 
     private PlayerEventLogger logger;
-    private PlayerMovementEventLogger moveLogger;
 
     private SplunkMessagePreparerSpy spy;
 
@@ -58,7 +56,6 @@ public class TestAllPlayerEventLoggers {
     public void setUp() {
         spy = new SplunkMessagePreparerSpy();
         logger = new PlayerEventLogger(spy);
-        moveLogger = new PlayerMovementEventLogger(spy);
 
         MockitoAnnotations.initMocks(this);
         when(player.getName()).thenReturn("Bro!");
@@ -83,7 +80,7 @@ public class TestAllPlayerEventLoggers {
 
     @Test
     public void testOnPlayerLogin() {
-        LoggablePlayerEvent expected = getExpectedLoggablePlayerEvent(PlayerEventAction.PLAYER_CONNECT);
+        LoggablePlayerEvent expected = getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction.PLAYER_CONNECT);
         logger.onPlayerConnect(loggedInEvent);
 
         assertEquals(expected, spy.getLoggable());
@@ -91,7 +88,7 @@ public class TestAllPlayerEventLoggers {
 
     @Test
     public void testOnPlayerLogout() {
-        LoggablePlayerEvent expected = getExpectedLoggablePlayerEvent(PlayerEventAction.PLAYER_DISCONNECT);
+        LoggablePlayerEvent expected = getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction.PLAYER_DISCONNECT);
         logger.onPlayerDisconnect(loggedOutEvent);
 
         assertEquals(expected, spy.getLoggable());
@@ -100,7 +97,7 @@ public class TestAllPlayerEventLoggers {
     @Test
     public void testOnPlayerChat() {
         LoggablePlayerEvent expected =
-                getExpectedLoggablePlayerEvent((PlayerEventAction.CHAT)).setMessage("message").setPlayerName("Bro!");
+                getExpectedLoggablePlayerEvent((LoggablePlayerEvent.PlayerEventAction.CHAT)).setMessage("message").setPlayerName("Bro!");
 
         ServerChatEvent chatEvent = new ServerChatEvent(mPlayer, "message", null);
         logger.onPlayerChat(chatEvent);
@@ -110,20 +107,20 @@ public class TestAllPlayerEventLoggers {
     @Test
     public void testOnPlayerStatusReported_move() {
         LoggablePlayerEvent expected =
-                getExpectedLoggablePlayerEvent((PlayerEventAction.LOCATION)).setPlayerName("Bro!");
+                getExpectedLoggablePlayerEvent((LoggablePlayerEvent.PlayerEventAction.LOCATION)).setPlayerName("Bro!");
 
-        moveLogger.onPlayerStatusReported(updateEvent);
+        logger.onPlayerStatusReported(updateEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
     @Test
     public void testOnPlayerStatusReported_moveALittle() {
         LoggablePlayerEvent expected =
-                getExpectedLoggablePlayerEvent((PlayerEventAction.LOCATION)).setPlayerName("Bro!");
+                getExpectedLoggablePlayerEvent((LoggablePlayerEvent.PlayerEventAction.LOCATION)).setPlayerName("Bro!");
 
-        moveLogger.onPlayerStatusReported(updateEvent);
+        logger.onPlayerStatusReported(updateEvent);
         when(player.getPositionVector()).thenReturn(new Vec3(10.1, 10.1, 10.1));
-        moveLogger.onPlayerStatusReported(updateEvent);
+        logger.onPlayerStatusReported(updateEvent);
 
         assertEquals(expected, spy.getLoggable());
     }
@@ -131,21 +128,21 @@ public class TestAllPlayerEventLoggers {
     @Test
     public void testOnPlayerStatusReported_moveALittleMore() {
         LoggablePlayerEvent expected =
-                getExpectedLoggablePlayerEvent((PlayerEventAction.LOCATION), new Vec3(11, 11, 11))
+                getExpectedLoggablePlayerEvent((LoggablePlayerEvent.PlayerEventAction.LOCATION), new Vec3(11, 11, 11))
                         .setPlayerName("Bro!");
 
-        moveLogger.onPlayerStatusReported(updateEvent);
+        logger.onPlayerStatusReported(updateEvent);
         when(player.getPositionVector()).thenReturn(new Vec3(11, 11, 11));
-        moveLogger.onPlayerStatusReported(updateEvent);
+        logger.onPlayerStatusReported(updateEvent);
 
         assertEquals(expected, spy.getLoggable());
     }
 
-    private LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action) {
+    private LoggablePlayerEvent getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction action) {
         return new LoggablePlayerEvent(action, 1000, "WoName", new Vec3(10, 10, 10)).setPlayerName("Bro!");
     }
 
-    private LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action, Vec3 coords) {
+    private LoggablePlayerEvent getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction action, Vec3 coords) {
         return new LoggablePlayerEvent(action, 1000, "WoName", new Vec3(11, 11, 11)).setPlayerName("Bro!");
     }
 }

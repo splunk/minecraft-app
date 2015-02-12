@@ -8,7 +8,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.splunk.logtosplunk.LogToSplunkMod;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
-import com.splunk.logtosplunk.actions.PlayerEventAction;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,24 +21,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class PlayerMovementEventLogger {
     private static final String LOG_NAME_MODIFIER = " - MOVE";
     private static final Logger logger = LogManager.getLogger(LogToSplunkMod.LOGGER_NAME + LOG_NAME_MODIFIER);
-    public static final double GRANULARITY = 1.5;
-    public static final int MAX_PLAYERS = 128;
-
-    /**
-     * Keeps track players last positions, in a guava cache for it's eviction policy.
-     */
-    private final Cache<String, Vec3> lastKnownCoordinates = CacheBuilder.newBuilder().maximumSize(MAX_PLAYERS).build(
-            new CacheLoader<String, Vec3>() {
-                @Override
-                public Vec3 load(String key) throws Exception {
-                    return lastKnownCoordinates.getIfPresent(key);
-                }
-            });
-
-    /**
-     * Processes and sends messages to Splunk.
-     */
-    private final SplunkMessagePreparer messagePreparer;
 
     /**
      * Constructor.
@@ -52,35 +33,6 @@ public class PlayerMovementEventLogger {
     }
 
     /**
-     * Living update seems to get called about 10x/sec. We check if the update belongs to a player and if so we check if
-     * the players position has changed significantly based on {@code GRANULARITY}.
-     *
-     * @param playerMove The captured event.
-     */
-    @SubscribeEvent
-    @SideOnly(Side.SERVER)
-    public void onPlayerStatusReported(LivingEvent.LivingUpdateEvent playerMove) {
-        if (playerMove.entity instanceof EntityPlayer) {
-            final String playerName = playerMove.entity.getName();
-            final Vec3 coordinates = playerMove.entity.getPositionVector();
-
-            //Don't log if position hasn't changed significantly.
-            Vec3 lastCoords = lastKnownCoordinates.getIfPresent(playerName);
-            if (lastCoords != null && coordinates.distanceTo(lastCoords) < GRANULARITY) {
-                return;
-            }
-
-            lastKnownCoordinates.put(playerName, coordinates);
-            World world = playerMove.entity.getEntityWorld();
-            final long worldTime = world.getWorldTime();
-            final String worldName = world.getWorldInfo().getWorldName();
-            logAndSend(
-                    new LoggablePlayerEvent(PlayerEventAction.LOCATION, worldTime, worldName, coordinates)
-                            .setPlayerName(playerName));
-        }
-    }
-
-    /**
      * Logs via Log4j and forwards the message to the message preparer.
      *
      * @param loggable The message to log.
@@ -89,4 +41,10 @@ public class PlayerMovementEventLogger {
         logger.debug(loggable);
         messagePreparer.writeMessage(loggable);
     }
+    /**
+     * Processes and sends messages to Splunk.
+     */
+    private final SplunkMessagePreparer messagePreparer;
+
+
 }

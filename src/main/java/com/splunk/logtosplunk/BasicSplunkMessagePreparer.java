@@ -3,8 +3,7 @@ package com.splunk.logtosplunk;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import com.splunk.logtosplunk.actions.PlayerEventAction;
-import com.splunk.logtosplunk.event_loggers.PlayerMovementEventLogger;
+import com.splunk.logtosplunk.event_loggers.PlayerEventLogger;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableEvent;
@@ -36,7 +35,7 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
      * Keeps track players last positions, in a guava cache for it's eviction policy.
      */
     private final Cache<String, Vec3> lastKnownCoordinates = CacheBuilder.newBuilder().maximumSize(
-            PlayerMovementEventLogger.MAX_PLAYERS).build(
+            PlayerEventLogger.MAX_PLAYERS).build(
             new CacheLoader<String, Vec3>() {
                 @Override
                 public Vec3 load(String key) throws Exception {
@@ -96,7 +95,7 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
      * @param event The event to process.
      */
     private void writePlayerMessage(LoggablePlayerEvent event) {
-        if (event.getAction() == PlayerEventAction.LOCATION) {
+        if (event.getAction() == LoggablePlayerEvent.PlayerEventAction.LOCATION) {
             logLegacyMoveEvent(event);
             return;
         }

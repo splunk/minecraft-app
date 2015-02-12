@@ -1,7 +1,5 @@
 package com.splunk.logtosplunk.loggable_events;
 
-import com.splunk.logtosplunk.actions.BlockEventAction;
-
 import net.minecraft.util.Vec3;
 
 /**
@@ -142,5 +140,31 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         result = 31 * result + (baseType != null ? baseType.hashCode() : 0);
 
         return result;
+    }
+
+    /**
+     * Different types of actions that can occur as part of a BlockEvent.
+     */
+    public static enum BlockEventAction {
+        BREAK("block_broken"),
+        PLACE("block_placed");
+
+        /**
+         * The name of the action.
+         */
+        private String action;
+
+        BlockEventAction(String action) {
+            this.action = action;
+        }
+
+        /**
+         * String representation of the action.
+         *
+         * @return The action in friendly String format.
+         */
+        public String asString() {
+            return action;
+        }
     }
 }

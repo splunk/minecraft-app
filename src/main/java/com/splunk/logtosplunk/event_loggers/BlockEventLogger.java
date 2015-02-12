@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.splunk.logtosplunk.LogToSplunkMod;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
-import com.splunk.logtosplunk.actions.BlockEventAction;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 
 import net.minecraft.block.Block;
@@ -47,7 +46,7 @@ public class BlockEventLogger {
     @SubscribeEvent
     @SideOnly(Side.SERVER)
     public void captureBreakEvent(BlockEvent.BreakEvent event) {
-        logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.BREAK, event));
+        logAndSend(getLoggableBlockBreakPlaceEvent(LoggableBlockEvent.BlockEventAction.BREAK, event));
     }
 
     /**
@@ -58,10 +57,10 @@ public class BlockEventLogger {
     @SubscribeEvent
     @SideOnly(Side.SERVER)
     public void capturePlaceEvent(BlockEvent.PlaceEvent event) {
-        logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.PLACE, event));
+        logAndSend(getLoggableBlockBreakPlaceEvent(LoggableBlockEvent.BlockEventAction.PLACE, event));
     }
 
-    private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event) {
+    private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(LoggableBlockEvent.BlockEventAction action, BlockEvent event) {
 
         Block block = event.state.getBlock();
         String base_type = block.getUnlocalizedName();

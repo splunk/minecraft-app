@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.splunk.logtosplunk.SplunkMessagePreparerSpy;
-import com.splunk.logtosplunk.actions.BlockEventAction;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 
 import mockit.MockUp;
@@ -99,21 +98,21 @@ public class TestBlockEventLogger {
 
     @Test
     public void testCaptureBreakEvent() {
-        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(BlockEventAction.BREAK);
-
+        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction.BREAK);
+        System.out.println(expected.toJson());
         logger.captureBreakEvent(breakEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
     @Test
     public void testCapturePlaceEvent() {
-        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(BlockEventAction.PLACE);
+        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction.PLACE);
 
         logger.capturePlaceEvent(placeEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
-    private LoggableBlockEvent getExpectedLoggableBlockEvent(BlockEventAction action) {
+    private LoggableBlockEvent getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction action) {
         return new LoggableBlockEvent(action, 1000, "WoName", new Vec3(10, 10, 10)).setPlayerName("Bro!")
                 .setBlockName("I_hope_it_was_worth_it_block").setBaseType("chocolate");
     }
