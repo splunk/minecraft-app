@@ -14,17 +14,20 @@ import org.mockito.MockitoAnnotations;
 
 import com.splunk.logtosplunk.SplunkMessagePreparerSpy;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
+import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent.BlockEventAction;
 
 import mockit.MockUp;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 
 public class TestBlockEventLogger {
 
@@ -48,10 +51,10 @@ public class TestBlockEventLogger {
     World world = mock(World.class);
 
     @InjectMocks
-    private BlockEvent.BreakEvent breakEvent = mock(BlockEvent.BreakEvent.class);
+    private BreakEvent breakEvent = mock(BreakEvent.class);
 
     @InjectMocks
-    private BlockEvent.PlaceEvent placeEvent = mock(BlockEvent.PlaceEvent.class);
+    private PlaceEvent placeEvent = mock(PlaceEvent.class);
 
     /**
      * Milk was a bad choice.
@@ -82,7 +85,7 @@ public class TestBlockEventLogger {
 
         when(block.getUnlocalizedName()).thenReturn("chocolate");
         final Item item = mock(Item.class);
-        when(item.getItemStackDisplayName((net.minecraft.item.ItemStack) anyObject()))
+        when(item.getItemStackDisplayName((ItemStack) anyObject()))
                 .thenReturn("I hope it was worth it block");
 
         //Need Item's static method 'getItemFromBlock' because blocks'.getItem() fails in non-test situation. >:(
@@ -98,21 +101,20 @@ public class TestBlockEventLogger {
 
     @Test
     public void testCaptureBreakEvent() {
-        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction.BREAK);
-        System.out.println(expected.toJson());
+        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(BlockEventAction.BREAK);
         logger.captureBreakEvent(breakEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
     @Test
     public void testCapturePlaceEvent() {
-        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction.PLACE);
+        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(BlockEventAction.PLACE);
 
         logger.capturePlaceEvent(placeEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
-    private LoggableBlockEvent getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction action) {
+    private LoggableBlockEvent getExpectedLoggableBlockEvent(BlockEventAction action) {
         return new LoggableBlockEvent(action, 1000, "WoName", new Vec3(10, 10, 10)).setPlayerName("Bro!")
                 .setBlockName("I_hope_it_was_worth_it_block").setBaseType("chocolate");
     }

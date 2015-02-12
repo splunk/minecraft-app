@@ -1,11 +1,8 @@
 package com.splunk.logtosplunk.event_loggers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.splunk.logtosplunk.LogToSplunkMod;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
+import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent.DeathEventAction;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
@@ -18,9 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Handles the logging of death events.
  */
-public class DeathEventLogger {
-    private static final String LOG_NAME_MODIFIER = " - DEATH";
-    private static final Logger logger = LogManager.getLogger(LogToSplunkMod.LOGGER_NAME + LOG_NAME_MODIFIER);
+public class DeathEventLogger  extends AbstractEventLogger{
 
     /**
      * Whether to turn off logging non-player related monster deaths. Monsters causing their own death generates a lot
@@ -29,17 +24,12 @@ public class DeathEventLogger {
     public static final boolean IGNORE_MONSTER_ACCIDENTS = true;
 
     /**
-     * Prepares and forwards data to be sent to splunk.
-     */
-    private SplunkMessagePreparer messagePreparer;
-
-    /**
      * Constructor.
      *
      * @param messagePreparer used to process this class' captured data.
      */
     public DeathEventLogger(SplunkMessagePreparer messagePreparer) {
-        this.messagePreparer = messagePreparer;
+        super(messagePreparer);
     }
 
     /**
@@ -59,8 +49,8 @@ public class DeathEventLogger {
         } else {
             killer = event.source.getEntity().getName().replace(' ', '_');
         }
-        final LoggableDeathEvent.DeathEventAction
-                deathAction = playerDied ? LoggableDeathEvent.DeathEventAction.PLAYER_DIED : LoggableDeathEvent.DeathEventAction.MOB_DIED;
+        final DeathEventAction
+                deathAction = playerDied ? DeathEventAction.PLAYER_DIED : DeathEventAction.MOB_DIED;
 
         final String victim = event.entity.getName().replace(' ', '_');
         final String damageSource = event.source.getDamageType().replace(' ', '_');
@@ -76,15 +66,5 @@ public class DeathEventLogger {
         logAndSend(
                 new LoggableDeathEvent(deathAction, gameTime, worldName, position).setKiller(killer).setVicitim(victim)
                         .setDamageSource(damageSource));
-    }
-
-    /**
-     * Logs via Log4j and forwards the messgage to the message preparer.
-     *
-     * @param loggable The message to log.
-     */
-    private void logAndSend(LoggableDeathEvent loggable) {
-        logger.info(loggable);
-        messagePreparer.writeMessage(loggable);
     }
 }

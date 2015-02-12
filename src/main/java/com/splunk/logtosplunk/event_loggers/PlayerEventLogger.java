@@ -1,46 +1,38 @@
 package com.splunk.logtosplunk.event_loggers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import com.splunk.logtosplunk.LogToSplunkMod;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
+import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent.PlayerEventAction;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Handles the logging of player events.
  */
-public class PlayerEventLogger {
-    private static final String LOG_NAME_MODIFIER = " - PLAYER";
-    private static final Logger logger = LogManager.getLogger(LogToSplunkMod.LOGGER_NAME + LOG_NAME_MODIFIER);
+public class PlayerEventLogger extends AbstractEventLogger {
     public static final double GRANULARITY = 1.5;
     public static final int MAX_PLAYERS = 128;
 
     /**
-     * Processes and sends messages to Splunk.
-     */
-    private final SplunkMessagePreparer messagePreparer;
-
-    /**
-     * Constructor.
+     * Constructs a new PlayerEventLogger with the given SplunkMessagePreparer.
      *
      * @param splunkMessagePreparer Message preparer to send packaged raw messages to.
      */
     public PlayerEventLogger(SplunkMessagePreparer splunkMessagePreparer) {
-        this.messagePreparer = splunkMessagePreparer;
+        super(splunkMessagePreparer);
     }
 
     /**
@@ -50,9 +42,9 @@ public class PlayerEventLogger {
      */
     @SubscribeEvent
     @SideOnly(Side.SERVER)
-    public void onPlayerConnect(PlayerEvent.PlayerLoggedInEvent event) {
+    public void onPlayerConnect(PlayerLoggedInEvent event) {
         logAndSend(
-                generateLoggablePlayerEvent(event, LoggablePlayerEvent.PlayerEventAction.PLAYER_CONNECT, null, null));
+                generateLoggablePlayerEvent(event, PlayerEventAction.PLAYER_CONNECT, null, null));
     }
 
     /**
@@ -62,10 +54,10 @@ public class PlayerEventLogger {
      */
     @SubscribeEvent
     @SideOnly(Side.SERVER)
-    public void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event) {
+    public void onPlayerDisconnect(PlayerLoggedOutEvent event) {
         logAndSend(
                 generateLoggablePlayerEvent(
-                        event, LoggablePlayerEvent.PlayerEventAction.PLAYER_DISCONNECT, null, null));
+                        event, PlayerEventAction.PLAYER_DISCONNECT, null, null));
     }
 
     /**
@@ -77,11 +69,11 @@ public class PlayerEventLogger {
     @SideOnly(Side.SERVER)
     public void onPlayerChat(ServerChatEvent chatEvent) {
         logAndSend(
-                generateLoggablePlayerEvent(chatEvent, LoggablePlayerEvent.PlayerEventAction.CHAT, chatEvent.message));
+                generateLoggablePlayerEvent(chatEvent, PlayerEventAction.CHAT, chatEvent.message));
     }
 
     private LoggablePlayerEvent generateLoggablePlayerEvent(
-            PlayerEvent event, LoggablePlayerEvent.PlayerEventAction actionType, String reason, String message) {
+            PlayerEvent event, PlayerEventAction actionType, String reason, String message) {
         World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
@@ -95,7 +87,7 @@ public class PlayerEventLogger {
     }
 
     private LoggablePlayerEvent generateLoggablePlayerEvent(
-            ServerChatEvent event, LoggablePlayerEvent.PlayerEventAction actionType, String message) {
+            ServerChatEvent event, PlayerEventAction actionType, String message) {
         World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
@@ -115,7 +107,7 @@ public class PlayerEventLogger {
      */
     @SubscribeEvent
     @SideOnly(Side.SERVER)
-    public void onPlayerStatusReported(LivingEvent.LivingUpdateEvent playerMove) {
+    public void onPlayerStatusReported(LivingUpdateEvent playerMove) {
         if (playerMove.entity instanceof EntityPlayer) {
             final String playerName = playerMove.entity.getName();
             final Vec3 coordinates = playerMove.entity.getPositionVector();
@@ -132,7 +124,7 @@ public class PlayerEventLogger {
             final String worldName = world.getWorldInfo().getWorldName();
             logAndSend(
                     new LoggablePlayerEvent(
-                            LoggablePlayerEvent.PlayerEventAction.LOCATION, worldTime, worldName, coordinates)
+                            PlayerEventAction.LOCATION, worldTime, worldName, coordinates)
                             .setPlayerName(playerName));
         }
     }
@@ -147,14 +139,4 @@ public class PlayerEventLogger {
                     return lastKnownCoordinates.getIfPresent(key);
                 }
             });
-
-    /**
-     * Logs via Log4j and forwards the messgage to the message preparer.
-     *
-     * @param loggable The message to log.
-     */
-    private void logAndSend(LoggablePlayerEvent loggable) {
-        logger.info(loggable);
-        messagePreparer.writeMessage(loggable);
-    }
 }
