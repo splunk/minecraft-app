@@ -74,9 +74,9 @@ public class BlockEventLogger extends AbstractEventLogger {
         Vec3 coords = new Vec3(event.pos.getX(), event.pos.getY(), event.pos.getZ());
         String playerName = null;
         if (event instanceof BreakEvent) {
-            playerName = ((BreakEvent) event).getPlayer().getName();
+            playerName = ((BreakEvent) event).getPlayer().getDisplayNameString();
         } else if (event instanceof PlaceEvent) {
-            playerName = ((PlaceEvent) event).player.getName();
+            playerName = ((PlaceEvent) event).player.getDisplayNameString();
         }
         return new LoggableBlockEvent(action, w.getWorldTime(), w.getWorldInfo().getWorldName(), coords)
                 .setBlockName(blockName).setPlayerName(playerName).setBaseType(base_type);

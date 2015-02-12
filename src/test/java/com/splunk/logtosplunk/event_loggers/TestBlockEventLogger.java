@@ -65,7 +65,7 @@ public class TestBlockEventLogger {
         logger = new BlockEventLogger(spy);
 
         MockitoAnnotations.initMocks(this);
-        when(player.getName()).thenReturn("Bro!");
+        when(player.getDisplayNameString()).thenReturn("Bro!");
         when(player.getPositionVector()).thenReturn(new Vec3(10, 10, 10));
 
         //for some reason only break event has a getPlayer, placeevent you just

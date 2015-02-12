@@ -79,7 +79,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
         final String worldName = world.getWorldInfo().getWorldName();
         final Vec3 coordinates = event.player.getPositionVector();
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(actionType, worldTime, worldName, coordinates);
-        loggable.setPlayerName(event.player.getName());
+        loggable.setPlayerName(event.player.getDisplayNameString());
         loggable.setReason(reason);
         loggable.setMessage(message);
 
@@ -93,7 +93,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
         final String worldName = world.getWorldInfo().getWorldName();
         final Vec3 coordinates = event.player.getPositionVector();
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(actionType, worldTime, worldName, coordinates);
-        loggable.setPlayerName(event.player.getName());
+        loggable.setPlayerName(event.player.getDisplayNameString());
         loggable.setMessage(message);
 
         return loggable;
@@ -109,7 +109,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
     @SideOnly(Side.SERVER)
     public void onPlayerStatusReported(LivingUpdateEvent playerMove) {
         if (playerMove.entity instanceof EntityPlayer) {
-            final String playerName = playerMove.entity.getName();
+            final String playerName = ((EntityPlayer) playerMove.entity).getDisplayNameString();
             final Vec3 coordinates = playerMove.entity.getPositionVector();
 
             //Don't log if position hasn't changed significantly.

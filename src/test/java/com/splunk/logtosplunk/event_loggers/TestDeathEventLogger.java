@@ -8,11 +8,13 @@ import org.junit.Test;
 
 import com.splunk.logtosplunk.SplunkMessagePreparerSpy;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
+import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent.DeathEventAction;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
@@ -31,11 +33,15 @@ public class TestDeathEventLogger {
 
         when(source.getEntity()).thenReturn(null); //for illustration
         when(source.getDamageType()).thenReturn("FIERY DOOM");
-        when(victim.getName()).thenReturn("Waldo");
+
+        IChatComponent waldo = mock(IChatComponent.class);
+        when(waldo.getUnformattedText()).thenReturn("Waldo");
+
+        when(victim.getDisplayName()).thenReturn(waldo);
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, null, "Waldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(DeathEventAction.PLAYER_DIED, null, "Waldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
@@ -49,9 +55,12 @@ public class TestDeathEventLogger {
         DamageSource source = mock(DamageSource.class);
         EntityLiving victim = mock(EntityLiving.class);
 
+        IChatComponent waldo = mock(IChatComponent.class);
+        when(waldo.getUnformattedText()).thenReturn("Waldo");
+
         when(source.getEntity()).thenReturn(null); //for illustration
         when(source.getDamageType()).thenReturn("FIERY DOOM");
-        when(victim.getName()).thenReturn("Waldo");
+        when(victim.getDisplayName()).thenReturn(waldo);
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
@@ -65,15 +74,21 @@ public class TestDeathEventLogger {
         EntityPlayer victim = mock(EntityPlayer.class);
         EntityLiving killer = mock(EntityLiving.class);
 
+        IChatComponent waldo = mock(IChatComponent.class);
+        when(waldo.getUnformattedText()).thenReturn("Waldo");
+
+        IChatComponent antiWaldo = mock(IChatComponent.class);
+        when(antiWaldo.getUnformattedText()).thenReturn("anti-waldo");
+
         when(source.getEntity()).thenReturn(killer);
         when(source.getDamageType()).thenReturn("FIERY DOOM");
-        when(victim.getName()).thenReturn("Waldo");
-        when(killer.getName()).thenReturn("anti-waldo");
+        when(victim.getDisplayName()).thenReturn(waldo);
+        when(killer.getDisplayName()).thenReturn(antiWaldo);
 
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, "anti-waldo", "Waldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(DeathEventAction.PLAYER_DIED, "anti-waldo", "Waldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
@@ -85,22 +100,28 @@ public class TestDeathEventLogger {
         EntityLiving victim = mock(EntityLiving.class);
         EntityLiving killer = mock(EntityLiving.class);
 
+        IChatComponent monsterWaldo = mock(IChatComponent.class);
+        when(monsterWaldo.getUnformattedText()).thenReturn("MonsterWaldo");
+
+        IChatComponent antiWaldo = mock(IChatComponent.class);
+        when(antiWaldo.getUnformattedText()).thenReturn("anti-waldo");
+
         when(source.getEntity()).thenReturn(killer);
         when(source.getDamageType()).thenReturn("FIERY DOOM");
-        when(victim.getName()).thenReturn("MonsterWaldo");
-        when(killer.getName()).thenReturn("anti-waldo");
+        when(victim.getDisplayName()).thenReturn(monsterWaldo);
+        when(killer.getDisplayName()).thenReturn(antiWaldo);
 
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.MOB_DIED, "anti-waldo", "MonsterWaldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(DeathEventAction.MOB_DIED, "anti-waldo", "MonsterWaldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
     private LoggableDeathEvent getExpected(
-            LoggableDeathEvent.DeathEventAction actionType, String killer, String victim, String damageSource) {
+            DeathEventAction actionType, String killer, String victim, String damageSource) {
         return new LoggableDeathEvent(actionType, 1000, "woName", new Vec3(10, 10, 10)).setKiller(killer)
                 .setVicitim(victim).setDamageSource(damageSource);
     }

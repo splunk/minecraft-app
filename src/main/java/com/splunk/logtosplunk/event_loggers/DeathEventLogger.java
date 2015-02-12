@@ -47,12 +47,12 @@ public class DeathEventLogger  extends AbstractEventLogger{
                 return;
             }
         } else {
-            killer = event.source.getEntity().getName().replace(' ', '_');
+            killer = event.source.getEntity().getDisplayName().getUnformattedText().replace(' ', '_');
         }
         final DeathEventAction
                 deathAction = playerDied ? DeathEventAction.PLAYER_DIED : DeathEventAction.MOB_DIED;
 
-        final String victim = event.entity.getName().replace(' ', '_');
+        final String victim = event.entity.getDisplayName().getUnformattedText().replace(' ', '_');
         final String damageSource = event.source.getDamageType().replace(' ', '_');
 
         final World world = event.entity.getEntityWorld();
