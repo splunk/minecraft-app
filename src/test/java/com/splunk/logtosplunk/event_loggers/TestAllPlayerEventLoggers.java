@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.mojang.authlib.GameProfile;
+import com.splunk.logtosplunk.Point3dLong;
 import com.splunk.logtosplunk.SplunkMessagePreparerSpy;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent.PlayerEventAction;
@@ -141,10 +142,10 @@ public class TestAllPlayerEventLoggers {
     }
 
     private LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action) {
-        return new LoggablePlayerEvent(action, 1000, "WoName", new Vec3(10, 10, 10)).setPlayerName("Bro!");
+        return new LoggablePlayerEvent(action, 1000, "WoName", new Point3dLong(10, 10, 10)).setPlayerName("Bro!");
     }
 
     private LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action, Vec3 coords) {
-        return new LoggablePlayerEvent(action, 1000, "WoName", new Vec3(11, 11, 11)).setPlayerName("Bro!");
+        return new LoggablePlayerEvent(action, 1000, "WoName", new Point3dLong(11, 11, 11)).setPlayerName("Bro!");
     }
 }

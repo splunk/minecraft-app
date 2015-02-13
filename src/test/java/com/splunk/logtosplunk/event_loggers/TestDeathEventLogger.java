@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
+import com.splunk.logtosplunk.Point3dLong;
 import com.splunk.logtosplunk.SplunkMessagePreparerSpy;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent.DeathEventAction;
@@ -122,7 +123,7 @@ public class TestDeathEventLogger {
 
     private LoggableDeathEvent getExpected(
             DeathEventAction actionType, String killer, String victim, String damageSource) {
-        return new LoggableDeathEvent(actionType, 1000, "woName", new Vec3(10, 10, 10)).setKiller(killer)
+        return new LoggableDeathEvent(actionType, 1000, "woName", new Point3dLong(10, 10, 10)).setKiller(killer)
                 .setVicitim(victim).setDamageSource(damageSource);
     }
 

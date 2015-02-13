@@ -1,6 +1,6 @@
 package com.splunk.logtosplunk.loggable_events;
 
-import net.minecraft.util.Vec3;
+import com.splunk.logtosplunk.Point3dLong;
 
 /**
  * Almost pojo with fields for information that might be associated with a block event.
@@ -17,7 +17,7 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
      *
      * @param action The type of block action this represents, e.g. 'break'.
      */
-    public LoggableBlockEvent(BlockEventAction action, long gameTime, String worldName, Vec3 location) {
+    public LoggableBlockEvent(BlockEventAction action, long gameTime, String worldName, Point3dLong location) {
         super(LoggableEventType.BLOCK, gameTime, worldName, location);
         this.action = action;
     }

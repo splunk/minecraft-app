@@ -1,5 +1,6 @@
 package com.splunk.logtosplunk.event_loggers;
 
+import com.splunk.logtosplunk.Point3dLong;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent.BlockEventAction;
@@ -7,7 +8,6 @@ import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent.BlockEventActio
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
@@ -71,13 +71,14 @@ public class BlockEventLogger extends AbstractEventLogger {
                 blockName = ((PlaceEvent) event).itemInHand.getDisplayName();
             }
         }
-        Vec3 coords = new Vec3(event.pos.getX(), event.pos.getY(), event.pos.getZ());
+        Point3dLong coords = new Point3dLong(event.pos.getX(), event.pos.getY(), event.pos.getZ());
         String playerName = null;
         if (event instanceof BreakEvent) {
             playerName = ((BreakEvent) event).getPlayer().getDisplayNameString();
         } else if (event instanceof PlaceEvent) {
             playerName = ((PlaceEvent) event).player.getDisplayNameString();
         }
+
         return new LoggableBlockEvent(action, w.getWorldTime(), w.getWorldInfo().getWorldName(), coords)
                 .setBlockName(blockName).setPlayerName(playerName).setBaseType(base_type);
     }

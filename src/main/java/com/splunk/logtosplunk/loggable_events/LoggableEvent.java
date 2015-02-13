@@ -1,6 +1,6 @@
 package com.splunk.logtosplunk.loggable_events;
 
-import net.minecraft.util.Vec3;
+import com.splunk.logtosplunk.Point3dLong;
 
 public interface LoggableEvent {
 
@@ -42,7 +42,7 @@ public interface LoggableEvent {
      * String representation of where the event occurred.
      * @return If the event occurred at a location, the location it occurred at.
      */
-    Vec3 getCoordinates();
+    Point3dLong getCoordinates();
 
     /**
      * Gets a String representation of where this event occurred.

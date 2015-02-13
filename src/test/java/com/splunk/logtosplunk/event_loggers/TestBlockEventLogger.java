@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.splunk.logtosplunk.Point3dLong;
 import com.splunk.logtosplunk.SplunkMessagePreparerSpy;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent.BlockEventAction;
@@ -115,7 +116,7 @@ public class TestBlockEventLogger {
     }
 
     private LoggableBlockEvent getExpectedLoggableBlockEvent(BlockEventAction action) {
-        return new LoggableBlockEvent(action, 1000, "WoName", new Vec3(10, 10, 10)).setPlayerName("Bro!")
+        return new LoggableBlockEvent(action, 1000, "WoName", new Point3dLong(10, 10, 10)).setPlayerName("Bro!")
                 .setBlockName("I_hope_it_was_worth_it_block").setBaseType("chocolate");
     }
 }

@@ -1,6 +1,6 @@
 package com.splunk.logtosplunk.loggable_events;
 
-import net.minecraft.util.Vec3;
+import com.splunk.logtosplunk.Point3dLong;
 
 /**
  * Almost pojo with fields for information that might be associated with a player event.
@@ -16,7 +16,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
      *
      * @param action The type of player action this represents, e.g. 'player_disconnected'.
      */
-    public LoggablePlayerEvent(PlayerEventAction action, long gameTime, String worldName, Vec3 location) {
+    public LoggablePlayerEvent(PlayerEventAction action, long gameTime, String worldName, Point3dLong location) {
         super(LoggableEventType.PLAYER,gameTime,worldName,location);
         this.action = action;
     }

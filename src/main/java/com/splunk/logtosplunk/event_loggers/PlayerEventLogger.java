@@ -3,6 +3,7 @@ package com.splunk.logtosplunk.event_loggers;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.splunk.logtosplunk.Point3dLong;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent.PlayerEventAction;
@@ -77,7 +78,8 @@ public class PlayerEventLogger extends AbstractEventLogger {
         World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
-        final Vec3 coordinates = event.player.getPositionVector();
+        final Vec3 playerPos = event.player.getPositionVector();
+        final Point3dLong coordinates = new Point3dLong(playerPos.xCoord, playerPos.yCoord, playerPos.zCoord);
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(actionType, worldTime, worldName, coordinates);
         loggable.setPlayerName(event.player.getDisplayNameString());
         loggable.setReason(reason);
@@ -91,7 +93,8 @@ public class PlayerEventLogger extends AbstractEventLogger {
         World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
-        final Vec3 coordinates = event.player.getPositionVector();
+        final Vec3 playerPos = event.player.getPositionVector();
+        final Point3dLong coordinates = new Point3dLong(playerPos.xCoord, playerPos.yCoord, playerPos.zCoord);
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(actionType, worldTime, worldName, coordinates);
         loggable.setPlayerName(event.player.getDisplayNameString());
         loggable.setMessage(message);
@@ -110,22 +113,23 @@ public class PlayerEventLogger extends AbstractEventLogger {
     public void onPlayerStatusReported(LivingUpdateEvent playerMove) {
         if (playerMove.entity instanceof EntityPlayer) {
             final String playerName = ((EntityPlayer) playerMove.entity).getDisplayNameString();
-            final Vec3 coordinates = playerMove.entity.getPositionVector();
+            final Vec3 playerPos = playerMove.entity.getPositionVector();
 
             //Don't log if position hasn't changed significantly.
             Vec3 lastCoords = lastKnownCoordinates.getIfPresent(playerName);
-            if (lastCoords != null && coordinates.distanceTo(lastCoords) < GRANULARITY) {
+            if (lastCoords != null && playerPos.distanceTo(lastCoords) < GRANULARITY) {
                 return;
             }
 
-            lastKnownCoordinates.put(playerName, coordinates);
+            lastKnownCoordinates.put(playerName, playerPos);
+            final Point3dLong coordinates = new Point3dLong(playerPos.xCoord, playerPos.yCoord, playerPos.zCoord);
+
             World world = playerMove.entity.getEntityWorld();
             final long worldTime = world.getWorldTime();
             final String worldName = world.getWorldInfo().getWorldName();
             logAndSend(
                     new LoggablePlayerEvent(
-                            PlayerEventAction.LOCATION, worldTime, worldName, coordinates)
-                            .setPlayerName(playerName));
+                            PlayerEventAction.LOCATION, worldTime, worldName, coordinates).setPlayerName(playerName));
         }
     }
 

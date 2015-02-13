@@ -4,8 +4,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import net.minecraft.util.Vec3;
+import com.splunk.logtosplunk.Point3dLong;
 
 /**
  * Classes extending this benefit from a convenient way to get a Json representation, time of creation and event type,
@@ -37,14 +36,14 @@ public class AbstractLoggableEvent implements LoggableEvent {
     /**
      * Coordinates where the event occurred.
      */
-    private Vec3 coordinates;
+    private Point3dLong coordinates;
 
     /**
      * Constructor. Enforces that subclasses must have a loggable event type.
      *
      * @param type The type of event that this is.
      */
-    public AbstractLoggableEvent(LoggableEventType type, long worldTime, String worldName, Vec3 coordinates) {
+    public AbstractLoggableEvent(LoggableEventType type, long worldTime, String worldName, Point3dLong coordinates) {
         this.type = type;
         this.worldTime = worldTime;
         this.worldName = worldName;
@@ -78,7 +77,7 @@ public class AbstractLoggableEvent implements LoggableEvent {
 
     @Nullable
     @Override
-    public Vec3 getCoordinates() {
+    public Point3dLong getCoordinates() {
         return coordinates;
     }
 

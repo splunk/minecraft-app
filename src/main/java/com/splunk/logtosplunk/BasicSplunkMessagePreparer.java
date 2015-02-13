@@ -9,8 +9,6 @@ import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
 
-import net.minecraft.util.Vec3;
-
 /**
  * Based off of the original Splunk Minecraft app, this message preparer takes data from Minecraft events and prepares
  * them for Splunk.
@@ -34,11 +32,11 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
     /**
      * Keeps track players last positions, in a guava cache for it's eviction policy.
      */
-    private final Cache<String, Vec3> lastKnownCoordinates = CacheBuilder.newBuilder().maximumSize(
+    private final Cache<String, Point3dLong> lastKnownCoordinates = CacheBuilder.newBuilder().maximumSize(
             PlayerEventLogger.MAX_PLAYERS).build(
-            new CacheLoader<String, Vec3>() {
+            new CacheLoader<String, Point3dLong>() {
                 @Override
-                public Vec3 load(String key) throws Exception {
+                public Point3dLong load(String key) throws Exception {
                     return lastKnownCoordinates.getIfPresent(key);
                 }
             });
@@ -119,14 +117,14 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
      */
     private void logLegacyMoveEvent(LoggablePlayerEvent event) {
         String playerName = event.getPlayerName();
-        Vec3 lastCoords = lastKnownCoordinates.getIfPresent(playerName);
+        Point3dLong lastCoords = lastKnownCoordinates.getIfPresent(playerName);
         lastKnownCoordinates.put(playerName, event.getCoordinates());
 
         if (lastCoords == null) {
             return;
         }
 
-        // message in this format to support old craftbukkit style move events (and how they were loged in splunk).
+        // message in this format to support old craftbukkit style move events (and how they were logged in splunk).
         writeMessage(
                 "action=" + event.getAction().asString() +
                         " player=" + playerName +
