@@ -1,6 +1,7 @@
 package com.splunk.logtosplunk.event_loggers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,7 +69,7 @@ public class TestDeathEventLogger {
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
         logger.captureDeathEvent(deathEvent);
-        assertEquals(null, spy.getLoggable());
+        assertNull(spy.getLoggable());
     }
 
     @Test
@@ -123,7 +124,7 @@ public class TestDeathEventLogger {
         assertEquals(expected, spy.getLoggable());
     }
 
-    private LoggableDeathEvent getExpected(
+    private static LoggableDeathEvent getExpected(
             DeathEventAction actionType, String killer, String victim, String damageSource) {
         return new LoggableDeathEvent(actionType, 1000, "woName", new Point3dLong(10, 10, 10)).setKiller(killer)
                 .setVicitim(victim).setDamageSource(damageSource);

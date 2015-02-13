@@ -68,7 +68,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
 
             try {
                 Thread.sleep(1000 * RECONNECT_TIME);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 //eat exception.
             }
         }
@@ -81,7 +81,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
      */
     @Override
     public void sendToSplunk(String message) {
-        String stampedMsg = Calendar.getInstance().getTime().toString() + ' ' + message + "\r\n\r\n";
+        final String stampedMsg = Calendar.getInstance().getTime().toString() + ' ' + message + "\r\n\r\n";
 
         boolean sent = false;
         while (!sent) {
@@ -106,7 +106,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
      * @return True if the socket was successfully initialized.
      */
     private boolean connect() {
-        boolean wasConnected = socket != null;
+        final boolean wasConnected = socket != null;
         socket = getSocket();
         connected = socket != null;
 
@@ -129,7 +129,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
         final String errMsg = "Problem connecting to splunk";
         try {
             return new Socket(host, port);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(errMsg, e);
             return null;
         }
@@ -141,7 +141,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
      */
     private boolean sendData() {
         while (!data.isEmpty()) {
-            String message = data.peek();
+            final String message = data.peek();
             if (send(message)) {
                 synchronized (data) {
                     data.remove();
@@ -163,7 +163,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
         try {
             socket.getOutputStream().write(message.getBytes("UTF-8"));
             return true;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.debug("Unable to send message!");
             return false;
         }

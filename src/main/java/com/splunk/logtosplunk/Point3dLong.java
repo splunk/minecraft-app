@@ -1,12 +1,12 @@
 package com.splunk.logtosplunk;
 
 /**
- * Rolling our own point because we dont need decimals for position...
+ * Rolling our own point because we don't need decimals for position...
  */
 public class Point3dLong {
-    public long xCoord;
-    public long yCoord;
-    public long zCoord;
+    public final long xCoord;
+    public final long yCoord;
+    public final long zCoord;
 
     /**
      * Constructs a new point.

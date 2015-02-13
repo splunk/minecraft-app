@@ -21,7 +21,7 @@ public class AbstractLoggableEvent implements LoggableEvent {
     /**
      * Time of this objects initialization.
      */
-    private long time = System.currentTimeMillis();
+    private final long time = System.currentTimeMillis();
 
     /**
      * The in-game time of this event.
@@ -31,12 +31,12 @@ public class AbstractLoggableEvent implements LoggableEvent {
     /**
      * World the event occurred in.
      */
-    private String worldName;
+    private final String worldName;
 
     /**
      * Coordinates where the event occurred.
      */
-    private Point3dLong coordinates;
+    private final Point3dLong coordinates;
 
     /**
      * Constructor. Enforces that subclasses must have a loggable event type.
@@ -83,15 +83,13 @@ public class AbstractLoggableEvent implements LoggableEvent {
 
     @Override
     public String getLocation() {
-        StringBuilder b = new StringBuilder();
-        b.append("@ World: " + worldName);
+        final StringBuilder b = new StringBuilder();
+        b.append("@ World: ").append(worldName);
         if (getCoordinates() != null) {
-            b.append(
-                    ", " + "x:" + coordinates.xCoord +
-                            " " + "y:" + coordinates.yCoord +
-                            " " + "z:" + coordinates.zCoord);
+            b.append(", " + "x:").append(coordinates.xCoord).append(' ').append("y:").append(coordinates.yCoord)
+                    .append(' ').append("z:").append(coordinates.zCoord);
         }
-        b.append(", WorldTime:" + worldTime);
+        b.append(", WorldTime:").append(worldTime);
         return b.toString();
     }
 }

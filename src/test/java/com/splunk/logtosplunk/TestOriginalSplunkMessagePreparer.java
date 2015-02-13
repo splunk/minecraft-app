@@ -1,6 +1,7 @@
 package com.splunk.logtosplunk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +49,7 @@ public class TestOriginalSplunkMessagePreparer {
     @Test
     public void testPlayerMoveLogging(){
         writeEvent(PlayerEventAction.LOCATION, new Point3dLong(10,10,10),null);
-        assertEquals(null,spy.getMessage());
+        assertNull(spy.getMessage());
 
         writeEvent(PlayerEventAction.LOCATION, new Point3dLong(10,10,10),null);
 

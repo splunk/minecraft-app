@@ -34,18 +34,21 @@ public interface LoggableEvent {
 
     /**
      * Gets the name of the current world.
+     *
      * @return Name of the current world.
      */
     String getWorldName();
 
     /**
      * String representation of where the event occurred.
+     *
      * @return If the event occurred at a location, the location it occurred at.
      */
     Point3dLong getCoordinates();
 
     /**
      * Gets a String representation of where this event occurred.
+     *
      * @return A String ofwhere this event occurred.
      */
     String getLocation();

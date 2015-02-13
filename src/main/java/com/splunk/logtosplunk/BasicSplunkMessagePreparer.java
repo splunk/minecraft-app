@@ -10,6 +10,7 @@ import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableEvent;
 import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent;
+import com.splunk.logtosplunk.loggable_events.LoggablePlayerEvent.PlayerEventAction;
 
 /**
  * Based off of the original Splunk Minecraft app, this message preparer takes data from Minecraft events and prepares
@@ -51,9 +52,9 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
     }
 
     /**
-     * Constructor.
+     * Constructs a new BasicSplunkMessagePreparer with the given connection.
      *
-     * @param splunkConnection Connection to splunk to use.
+     * @param splunkConnection Connection to Splunk to use.
      */
     public BasicSplunkMessagePreparer(SplunkConnection splunkConnection) {
         this.connector = splunkConnection;
@@ -77,9 +78,10 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
 
     @Override
     public void init(Properties props) {
-        final String host = props.getProperty(LogToSplunkMod.SPLUNK_HOST_PROP_KEY,LogToSplunkMod.DEFAULT_HOST);
-        final int port = Integer.valueOf(props.getProperty(LogToSplunkMod.SPLUNK_PORT_PROP_KEY, LogToSplunkMod.DEFAULT_PORT));
-        connector = new SingleSplunkConnection(host,port,true);
+        final String host = props.getProperty(LogToSplunkMod.SPLUNK_HOST_PROP_KEY, LogToSplunkMod.DEFAULT_HOST);
+        final int port =
+                Integer.valueOf(props.getProperty(LogToSplunkMod.SPLUNK_PORT_PROP_KEY, LogToSplunkMod.DEFAULT_PORT));
+        connector = new SingleSplunkConnection(host, port, true);
     }
 
     /**
@@ -88,9 +90,9 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
      * @param event The event to process.
      */
     private void writeBlockMessage(LoggableBlockEvent event) {
-        StringBuilder b = new StringBuilder(
+        final StringBuilder b = new StringBuilder(
                 String.format(BASE_PLAYER_STRING, event.getAction().asString(), event.getPlayerName()));
-        b.append(' ' + extractLocation(event));
+        b.append(' ').append(extractLocation(event));
         b.append(String.format(BLOCK, event.getBlockName()));
         b.append(String.format(BASE_BLOCK_TYPE, event.getBaseType()));
         writeMessage(b.toString());
@@ -102,17 +104,17 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
      * @param event The event to process.
      */
     private void writePlayerMessage(LoggablePlayerEvent event) {
-        if (event.getAction() == LoggablePlayerEvent.PlayerEventAction.LOCATION) {
+        if (event.getAction() == PlayerEventAction.LOCATION) {
             logLegacyMoveEvent(event);
             return;
         }
 
-        StringBuilder b = new StringBuilder(
+        final StringBuilder b = new StringBuilder(
                 String.format(BASE_PLAYER_STRING, event.getAction().asString(), event.getPlayerName()));
         if (event.getReason() != null) {
             b.append(String.format(REASON, event.getReason()));
         }
-        b.append(' ' + extractLocation(event));
+        b.append(' ').append(extractLocation(event));
         if (event.getMessage() != null) {
             b.append(String.format(MESSAGE, event.getMessage()));
         }
@@ -120,13 +122,14 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
     }
 
     /**
-     * Log move data in the way of the original splunk minecraft app, which was based off of CraftBukkit's MoveEvent.
+     * Logs move data in the way of the craftbukkit splunk minecraft app, which was based off of craftbukkit's
+     * MoveEvent.
      *
      * @param event Movement event to be logged.
      */
     private void logLegacyMoveEvent(LoggablePlayerEvent event) {
-        String playerName = event.getPlayerName();
-        Point3dLong lastCoords = lastKnownCoordinates.getIfPresent(playerName);
+        final String playerName = event.getPlayerName();
+        final Point3dLong lastCoords = lastKnownCoordinates.getIfPresent(playerName);
         lastKnownCoordinates.put(playerName, event.getCoordinates());
 
         if (lastCoords == null) {
@@ -153,34 +156,33 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
      * @param event
      */
     private void writeDeathMessage(LoggableDeathEvent event) {
-        StringBuilder b = new StringBuilder();
+        final StringBuilder b = new StringBuilder();
         b.append(String.format(ACTION, event.getAction().asString()));
         b.append(String.format(VICTIM, event.getVictim()));
         if (event.getKiller() != null) {
             b.append(String.format(KILLER, event.getKiller()));
         }
         b.append(String.format(DAMAGE_SOURCE, event.getDamageSource()));
-        b.append(' ' + extractLocation(event));
+        b.append(' ').append(extractLocation(event));
 
         writeMessage(b.toString());
     }
 
     /**
-     * Produce a String representing location in the original Splunk Minecraft App format.
+     * Produces a String representing location in the original Splunk Minecraft App format.
      *
      * @param event The event to extract the location String from.
      * @return A String representing the location in the event.
      */
     private static String extractLocation(LoggableEvent event) {
-        StringBuilder b = new StringBuilder();
-        b.append("world=" + event.getWorldName());
+        final StringBuilder b = new StringBuilder();
+        b.append("world=").append(event.getWorldName());
         if (event.getCoordinates() != null) {
-            b.append(
-                    " " + "x=" + event.getCoordinates().xCoord +
-                            " " + "y=" + event.getCoordinates().yCoord +
-                            " " + "z=" + event.getCoordinates().zCoord);
+            b.append(' ' + "x=").append(event.getCoordinates().xCoord).append(' ').append("y=")
+                    .append(event.getCoordinates().yCoord).append(' ').append("z=")
+                    .append(event.getCoordinates().zCoord);
         }
-        b.append(" " + "game_time=" + event.getWorldTime());
+        b.append(' ' + "game_time=").append(event.getWorldTime());
         return b.toString();
     }
 }

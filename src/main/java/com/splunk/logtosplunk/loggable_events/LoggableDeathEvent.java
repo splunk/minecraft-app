@@ -9,7 +9,7 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
     private String killer;
     private String vicitim;
     private String damageSource;
-    private DeathEventAction action;
+    private final DeathEventAction action;
 
     /**
      * Constructor.
@@ -54,21 +54,21 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
 
     @Override
     public String toString() {
-        StringBuilder b = new StringBuilder();
+        final StringBuilder b = new StringBuilder();
         b.append(getType().getEventName()).append(": ").append(getAction().asString());
         if (killer != null) {
             b.append(", Killer: ").append(killer);
         }
 
         if (vicitim != null) {
-            b.append(", Victim: " + vicitim);
+            b.append(", Victim: ").append(vicitim);
         }
 
         if (damageSource != null) {
-            b.append(", source: " + damageSource);
+            b.append(", source: ").append(damageSource);
         }
 
-        b.append(" " + getLocation());
+        b.append(' ').append(getLocation());
 
         return b.toString();
     }
@@ -87,8 +87,7 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
         if (action != that.action) {
             return false;
         }
-        //Seems like vec3's equals is borked.
-        if (getCoordinates() != null ? !getCoordinates().toString().equals(that.getCoordinates().toString()) :
+        if (getCoordinates() != null ? !getCoordinates().equals(that.getCoordinates()) :
                 that.getCoordinates() != null) {
             return false;
         }
@@ -123,14 +122,14 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
     /**
      * Different types of actions that can occur as part of a DeathEvent.
      */
-    public static enum DeathEventAction {
+    public enum DeathEventAction {
         MOB_DIED("mob_died"),
         PLAYER_DIED("player_died");
 
         /**
          * The name of the action.
          */
-        private String action;
+        private final String action;
 
         DeathEventAction(String action) {
             this.action = action;

@@ -10,7 +10,7 @@ import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.loggable_events.LoggableEvent;
 
 /**
- * EventLoggers log to the minecraft server console and send data to Splunk.
+ * EventLoggers log to the Minecraft server console and send data to Splunk.
  */
 public class AbstractEventLogger {
     private static final Logger logger = LogManager.getLogger(LogToSplunkMod.LOGGER_NAME);
@@ -18,12 +18,12 @@ public class AbstractEventLogger {
     /**
      * If true, events will be logged to the server console.
      */
-    private boolean logEventsToConsole;
+    private final boolean logEventsToConsole;
 
     /**
      * Processes and sends messages to Splunk.
      */
-    protected final SplunkMessagePreparer messagePreparer;
+    private final SplunkMessagePreparer messagePreparer;
 
     public AbstractEventLogger(Properties properties, SplunkMessagePreparer splunkMessagePreparer) {
         this.messagePreparer = splunkMessagePreparer;

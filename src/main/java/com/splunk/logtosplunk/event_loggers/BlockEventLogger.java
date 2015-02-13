@@ -57,15 +57,15 @@ public class BlockEventLogger extends AbstractEventLogger {
 
     private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event) {
 
-        Block block = event.state.getBlock();
-        String base_type = block.getUnlocalizedName();
-        World w = event.world;
-        Item item = Item.getItemFromBlock(block);
+        final Block block = event.state.getBlock();
+        final String base_type = block.getUnlocalizedName();
+        final World w = event.world;
+        final Item item = Item.getItemFromBlock(block);
 
         String blockName = null;
         if (item != null) {
-            int damVal = block.getDamageValue(event.world, event.pos);
-            ItemStack stack = new ItemStack(block, 1, damVal);
+            final int damVal = block.getDamageValue(event.world, event.pos);
+            final ItemStack stack = new ItemStack(block, 1, damVal);
             blockName = item.getItemStackDisplayName(stack).replace(' ', '_');
         } else {
 
@@ -74,7 +74,7 @@ public class BlockEventLogger extends AbstractEventLogger {
                 blockName = ((PlaceEvent) event).itemInHand.getDisplayName();
             }
         }
-        Point3dLong coords = new Point3dLong(event.pos.getX(), event.pos.getY(), event.pos.getZ());
+        final Point3dLong coords = new Point3dLong(event.pos.getX(), event.pos.getY(), event.pos.getZ());
         String playerName = null;
         if (event instanceof BreakEvent) {
             playerName = ((BreakEvent) event).getPlayer().getDisplayNameString();

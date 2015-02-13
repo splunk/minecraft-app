@@ -4,10 +4,11 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Properties;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -42,22 +43,22 @@ public class TestBlockEventLogger {
      * For login logout event.
      */
     @Mock
-    EntityPlayer player = mock(EntityPlayer.class);
+    final EntityPlayer player = mock(EntityPlayer.class);
 
     @Mock
-    IBlockState state = mock(IBlockState.class);
+    final IBlockState state = mock(IBlockState.class);
 
     @Mock
-    BlockPos blockPos = mock(BlockPos.class);
+    final BlockPos blockPos = mock(BlockPos.class);
 
     @Mock
-    World world = mock(World.class);
+    final World world = mock(World.class);
 
     @InjectMocks
-    private BreakEvent breakEvent = mock(BreakEvent.class);
+    private final BreakEvent breakEvent = mock(BreakEvent.class);
 
     @InjectMocks
-    private PlaceEvent placeEvent = mock(PlaceEvent.class);
+    private final PlaceEvent placeEvent = mock(PlaceEvent.class);
 
     /**
      * Milk was a bad choice.
@@ -114,10 +115,10 @@ public class TestBlockEventLogger {
         LoggableBlockEvent expected = getExpectedLoggableBlockEvent(BlockEventAction.PLACE);
 
         logger.capturePlaceEvent(placeEvent);
-        assertEquals(expected, spy.getLoggable());
+        Assert.assertEquals(expected, spy.getLoggable());
     }
 
-    private LoggableBlockEvent getExpectedLoggableBlockEvent(BlockEventAction action) {
+    private static LoggableBlockEvent getExpectedLoggableBlockEvent(BlockEventAction action) {
         return new LoggableBlockEvent(action, 1000, "WoName", new Point3dLong(10, 10, 10)).setPlayerName("Bro!")
                 .setBlockName("I_hope_it_was_worth_it_block").setBaseType("chocolate");
     }

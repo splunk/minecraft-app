@@ -33,7 +33,7 @@ public class DeathEventLogger extends AbstractEventLogger {
      * @param props Properties to configure this EventLogger with.
      */
     public DeathEventLogger(Properties props, SplunkMessagePreparer messagePreparer) {
-        super(props,messagePreparer);
+        super(props, messagePreparer);
     }
 
     /**
@@ -44,7 +44,7 @@ public class DeathEventLogger extends AbstractEventLogger {
     @SubscribeEvent
     @SideOnly(Side.SERVER)
     public void captureDeathEvent(LivingDeathEvent event) {
-        Boolean playerDied = event.entity instanceof EntityPlayer;
+        final Boolean playerDied = event.entity instanceof EntityPlayer;
         String killer = null;
         if (event.source.getEntity() == null) {
             if (!playerDied && IGNORE_MONSTER_ACCIDENTS) {
@@ -60,7 +60,7 @@ public class DeathEventLogger extends AbstractEventLogger {
 
         final World world = event.entity.getEntityWorld();
         final long gameTime = world.getWorldTime();
-        Vec3 entityPos = event.entity.getPositionVector();
+        final Vec3 entityPos = event.entity.getPositionVector();
         final Point3dLong position = new Point3dLong(entityPos.xCoord, entityPos.yCoord, entityPos.zCoord);
         final String worldName = world.getWorldInfo().getWorldName();
 

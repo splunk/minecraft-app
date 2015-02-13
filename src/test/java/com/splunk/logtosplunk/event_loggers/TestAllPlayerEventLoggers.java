@@ -38,24 +38,24 @@ public class TestAllPlayerEventLoggers {
      * For login logout event.
      */
     @Mock
-    EntityPlayer player = mock(EntityPlayer.class);
+    final EntityPlayer player = mock(EntityPlayer.class);
 
     /**
      * For chat event.
      */
-    EntityPlayerMP mPlayer = mock(EntityPlayerMP.class);
+    final EntityPlayerMP mPlayer = mock(EntityPlayerMP.class);
 
     @InjectMocks
-    private PlayerLoggedInEvent loggedInEvent = mock(PlayerLoggedInEvent.class);
+    private final PlayerLoggedInEvent loggedInEvent = mock(PlayerLoggedInEvent.class);
 
     @InjectMocks
-    private PlayerLoggedOutEvent loggedOutEvent = mock(PlayerLoggedOutEvent.class);
+    private final PlayerLoggedOutEvent loggedOutEvent = mock(PlayerLoggedOutEvent.class);
 
     /**
      * For movement.
      */
     @InjectMocks
-    private LivingUpdateEvent updateEvent = mock(LivingUpdateEvent.class);
+    private final LivingUpdateEvent updateEvent = mock(LivingUpdateEvent.class);
 
     @Before
     public void setUp() {
@@ -143,11 +143,11 @@ public class TestAllPlayerEventLoggers {
         assertEquals(expected, spy.getLoggable());
     }
 
-    private LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action) {
+    private static LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action) {
         return new LoggablePlayerEvent(action, 1000, "WoName", new Point3dLong(10, 10, 10)).setPlayerName("Bro!");
     }
 
-    private LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action, Vec3 coords) {
+    private static LoggablePlayerEvent getExpectedLoggablePlayerEvent(PlayerEventAction action, Vec3 coords) {
         return new LoggablePlayerEvent(action, 1000, "WoName", new Point3dLong(11, 11, 11)).setPlayerName("Bro!");
     }
 }

@@ -7,7 +7,7 @@ import com.splunk.logtosplunk.Point3dLong;
  */
 public class LoggablePlayerEvent extends AbstractLoggableEvent {
     private String playerName;
-    private PlayerEventAction action;
+    private final PlayerEventAction action;
     private String message;
     private String reason;
 
@@ -17,7 +17,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
      * @param action The type of player action this represents, e.g. 'player_disconnected'.
      */
     public LoggablePlayerEvent(PlayerEventAction action, long gameTime, String worldName, Point3dLong location) {
-        super(LoggableEventType.PLAYER,gameTime,worldName,location);
+        super(LoggableEventType.PLAYER, gameTime, worldName, location);
         this.action = action;
     }
 
@@ -53,18 +53,18 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     }
 
     @Override
-    public String toString(){
-        StringBuilder b = new StringBuilder();
+    public String toString() {
+        final StringBuilder b = new StringBuilder();
         b.append(getType().getEventName()).append(": ").append(getAction().asString());
-        if(playerName != null){
+        if (playerName != null) {
             b.append(", By: ").append(playerName);
         }
-        b.append(" " + getLocation());
+        b.append(' ').append(getLocation());
 
-        if(reason != null){
+        if (reason != null) {
             b.append(", Reason: ").append(reason);
         }
-        if(message != null){
+        if (message != null) {
             b.append(", Message: ").append(message);
         }
         return b.toString();
@@ -84,8 +84,9 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         if (action != that.action) {
             return false;
         }
-        //Seems like vec3's equals is borked.
-        if (getCoordinates() != null ? !getCoordinates().toString().equals(that.getCoordinates().toString()) : that.getCoordinates() != null) {
+
+        if (getCoordinates() != null ? !getCoordinates().equals(that.getCoordinates()) :
+                that.getCoordinates() != null) {
             return false;
         }
         if (message != null ? !message.equals(that.message) : that.message != null) {
@@ -100,10 +101,9 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         if (this.getWorldTime() != that.getWorldTime()) {
             return false;
         }
-        if ( getWorldName() != null ? !getWorldName().equals(that.getWorldName()) : that.getWorldName() != null) {
+        if (getWorldName() != null ? !getWorldName().equals(that.getWorldName()) : that.getWorldName() != null) {
             return false;
         }
-
 
         return true;
     }
@@ -120,7 +120,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     /**
      * Different types of actions that can occur as part of a PlayerEvent.
      */
-    public static enum PlayerEventAction {
+    public enum PlayerEventAction {
         PLAYER_CONNECT("player_connect"),
         PLAYER_DISCONNECT("player_disconnect"),
         CHAT("chat"),
@@ -129,7 +129,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         /**
          * The name of the action.
          */
-        private String action;
+        private final String action;
 
         PlayerEventAction(String action) {
             this.action = action;

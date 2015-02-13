@@ -8,7 +8,7 @@ import com.splunk.logtosplunk.Point3dLong;
 public class LoggableBlockEvent extends AbstractLoggableEvent {
     private String playerName;
     private String cause;
-    private BlockEventAction action;
+    private final BlockEventAction action;
     private String blockName;
     private String baseType;
 
@@ -70,21 +70,21 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
 
     @Override
     public String toString() {
-        StringBuilder b = new StringBuilder();
+        final StringBuilder b = new StringBuilder();
         b.append(getType().getEventName()).append(": ").append(getAction().asString());
         if (playerName != null) {
             b.append(", By: ").append(playerName);
         }
         if (blockName != null) {
-            b.append(", Block: " + blockName);
+            b.append(", Block: ").append(blockName);
         }
         if (cause != null) {
-            b.append(", Cause: " + cause);
+            b.append(", Cause: ").append(cause);
         }
         if (baseType != null) {
-            b.append(", Material: " + baseType);
+            b.append(", Material: ").append(baseType);
         }
-        b.append(" " + getLocation());
+        b.append(' ').append(getLocation());
 
         return b.toString();
     }
@@ -104,8 +104,7 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
             return false;
         }
 
-        //Seems like vec3's equals is borked.
-        if (getCoordinates() != null ? !getCoordinates().toString().equals(that.getCoordinates().toString()) :
+        if (getCoordinates() != null ? !getCoordinates().equals(that.getCoordinates()) :
                 that.getCoordinates() != null) {
             return false;
         }
@@ -145,14 +144,14 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
     /**
      * Different types of actions that can occur as part of a BlockEvent.
      */
-    public static enum BlockEventAction {
+    public enum BlockEventAction {
         BREAK("block_broken"),
         PLACE("block_placed");
 
         /**
          * The name of the action.
          */
-        private String action;
+        private final String action;
 
         BlockEventAction(String action) {
             this.action = action;

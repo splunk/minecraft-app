@@ -7,6 +7,7 @@ public interface SplunkConnection {
 
     /**
      * Sends a message to Splunk(s).
+     *
      * @param message The message to send.
      */
     public void sendToSplunk(String message);

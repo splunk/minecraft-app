@@ -16,6 +16,7 @@ import com.splunk.logtosplunk.event_loggers.PlayerEventLogger;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 
@@ -73,15 +74,15 @@ public class LogToSplunkMod {
     /**
      * Called when the mod is initialized.
      */
-    @Mod.EventHandler
+    @EventHandler
     @SuppressWarnings("unused")
     public void init(FMLInitializationEvent event) {
         final Properties properties = new Properties();
         final String path = System.getProperty("user.dir") + SPLUNK_MOD_PROPERTIES;
         try {
-            FileReader reader = new FileReader(new File(path));
+            final FileReader reader = new FileReader(new File(path));
             properties.load(reader);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn(
                     String.format(
                             "Unable to load properties for LogToSplunkMod at %s! Default values will be used.", path),
@@ -90,14 +91,14 @@ public class LogToSplunkMod {
 
         messagePreparer.init(properties);
 
-        PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties, messagePreparer);
+        final PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties, messagePreparer);
         fmlBus.register(playerEventLogger);
         mcBus.register(playerEventLogger);
 
-        BlockEventLogger blockLogger = new BlockEventLogger(properties, messagePreparer);
+        final BlockEventLogger blockLogger = new BlockEventLogger(properties, messagePreparer);
         mcBus.register(blockLogger);
 
-        DeathEventLogger deathLogger = new DeathEventLogger(properties, messagePreparer);
+        final DeathEventLogger deathLogger = new DeathEventLogger(properties, messagePreparer);
         mcBus.register(deathLogger);
 
         logAndSend("Splunk for Minecraft initialized.");

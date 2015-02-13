@@ -76,9 +76,9 @@ public class PlayerEventLogger extends AbstractEventLogger {
                 generateLoggablePlayerEvent(chatEvent, PlayerEventAction.CHAT, chatEvent.message));
     }
 
-    private LoggablePlayerEvent generateLoggablePlayerEvent(
+    private static LoggablePlayerEvent generateLoggablePlayerEvent(
             PlayerEvent event, PlayerEventAction actionType, String reason, String message) {
-        World world = event.player.getEntityWorld();
+        final World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
         final Vec3 playerPos = event.player.getPositionVector();
@@ -91,9 +91,9 @@ public class PlayerEventLogger extends AbstractEventLogger {
         return loggable;
     }
 
-    private LoggablePlayerEvent generateLoggablePlayerEvent(
+    private static LoggablePlayerEvent generateLoggablePlayerEvent(
             ServerChatEvent event, PlayerEventAction actionType, String message) {
-        World world = event.player.getEntityWorld();
+        final World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
         final Vec3 playerPos = event.player.getPositionVector();
@@ -119,7 +119,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
             final Vec3 playerPos = playerMove.entity.getPositionVector();
 
             //Don't log if position hasn't changed significantly.
-            Vec3 lastCoords = lastKnownCoordinates.getIfPresent(playerName);
+            final Vec3 lastCoords = lastKnownCoordinates.getIfPresent(playerName);
             if (lastCoords != null && playerPos.distanceTo(lastCoords) < GRANULARITY) {
                 return;
             }
@@ -127,7 +127,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
             lastKnownCoordinates.put(playerName, playerPos);
             final Point3dLong coordinates = new Point3dLong(playerPos.xCoord, playerPos.yCoord, playerPos.zCoord);
 
-            World world = playerMove.entity.getEntityWorld();
+            final World world = playerMove.entity.getEntityWorld();
             final long worldTime = world.getWorldTime();
             final String worldName = world.getWorldInfo().getWorldName();
             logAndSend(
