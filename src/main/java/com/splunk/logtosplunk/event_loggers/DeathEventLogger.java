@@ -1,5 +1,7 @@
 package com.splunk.logtosplunk.event_loggers;
 
+import java.util.Properties;
+
 import com.splunk.logtosplunk.Point3dLong;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.loggable_events.LoggableDeathEvent;
@@ -28,9 +30,10 @@ public class DeathEventLogger extends AbstractEventLogger {
      * Constructor.
      *
      * @param messagePreparer used to process this class' captured data.
+     * @param props Properties to configure this EventLogger with.
      */
-    public DeathEventLogger(SplunkMessagePreparer messagePreparer) {
-        super(messagePreparer);
+    public DeathEventLogger(Properties props, SplunkMessagePreparer messagePreparer) {
+        super(props,messagePreparer);
     }
 
     /**
@@ -60,9 +63,6 @@ public class DeathEventLogger extends AbstractEventLogger {
         Vec3 entityPos = event.entity.getPositionVector();
         final Point3dLong position = new Point3dLong(entityPos.xCoord, entityPos.yCoord, entityPos.zCoord);
         final String worldName = world.getWorldInfo().getWorldName();
-
-        // Death messages can be inferred so no need to get the death message...
-        //System.out.println(event.source.getDeathMessage(event.entityLiving).getUnformattedTextForChat());
 
         logAndSend(
                 new LoggableDeathEvent(deathAction, gameTime, worldName, position).setKiller(killer).setVicitim(victim)

@@ -1,6 +1,7 @@
 package com.splunk.logtosplunk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
@@ -24,5 +25,6 @@ public class TestLogToSplunkMod {
     public void testInit() {
         mod.init(null);//init event not used.
         assertEquals("Splunk for Minecraft initialized.", spy.getMessage());
+        assertTrue(spy.isInitCalled());
     }
 }

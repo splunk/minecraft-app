@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import static junit.framework.Assert.assertEquals;
 
+import java.util.Properties;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -63,7 +65,7 @@ public class TestBlockEventLogger {
     @Before
     public void setUp() {
         spy = new SplunkMessagePreparerSpy();
-        logger = new BlockEventLogger(spy);
+        logger = new BlockEventLogger(new Properties(),spy);
 
         MockitoAnnotations.initMocks(this);
         when(player.getDisplayNameString()).thenReturn("Bro!");

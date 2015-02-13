@@ -1,5 +1,7 @@
 package com.splunk.logtosplunk;
 
+import java.util.Properties;
+
 import com.splunk.logtosplunk.loggable_events.LoggableEvent;
 
 /**
@@ -7,12 +9,17 @@ import com.splunk.logtosplunk.loggable_events.LoggableEvent;
  */
 public class SplunkMessagePreparerSpy implements SplunkMessagePreparer {
     private String message;
-
+    private boolean initCalled;
     private LoggableEvent loggable;
 
     @Override
     public void writeMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public void init(Properties props) {
+        initCalled = true;
     }
 
     @Override
@@ -26,5 +33,9 @@ public class SplunkMessagePreparerSpy implements SplunkMessagePreparer {
 
     public LoggableEvent getLoggable() {
         return loggable;
+    }
+
+    public boolean isInitCalled() {
+        return initCalled;
     }
 }

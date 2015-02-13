@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Properties;
+
 import org.junit.Test;
 
 import com.splunk.logtosplunk.Point3dLong;
@@ -129,7 +131,7 @@ public class TestDeathEventLogger {
 
     private void setUpStandardMock(Entity entity) {
         spy = new SplunkMessagePreparerSpy();
-        logger = new DeathEventLogger(spy);
+        logger = new DeathEventLogger(new Properties(), spy);
 
         when(entity.getPositionVector()).thenReturn(new Vec3(10, 10, 10));
 

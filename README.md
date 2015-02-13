@@ -1,35 +1,35 @@
 # Minecraft App
 
-#### Version 0.1 Alpha
+#### Version 0.9.0 Beta
 
 The Minecraft App lets you visualize the minecraft world from the guts side. Wondering how many blocks have been dug up by your buddies? Not a problem. Wondering who's found the most diamonds? Yep, got it covered. Have you been planting enough wheat? Carrots? Pototoes? The Minecraft App will let you know.
 
 ### Getting Started
-This section provides information about installing and using the Minecraft App. 
+This section provides information about installing and using the Minecraft App.
 
 #### Requirements
 
 * Operating System: Windows, Linux, or Mac OS X.
-* Web browsers: Latest versions of Chrome, Safari, or Firefox, Internet Explorer 9 or later. 
+* Web browsers: Latest versions of Chrome, Safari, or Firefox, Internet Explorer 9 or later.
 * Forge: The open source minecraft server from [Forge](link here)
-* LogToSplunk Plugin: The log to splunk plugin that allows input of more detailed minecraft data to splunk from [Forge](link here)
-* The Splunk Web Framework: The Web Framework is included in Splunk 6 and is available for Splunk 5 from the 
+* LogToSplunk Mod: The log to splunk mod that allows input of more detailed minecraft data to splunk from [Forge](link here)
+* The Splunk Web Framework: The Web Framework is included in Splunk 6 and is available for Splunk 5 from the
 [Splunk Developer Portal](http://dev.splunk.com/view/webframework-standalone/SP-CAAAEMA).
 * Minecraft Overviewer (Optional): The Google Maps based minecraft word renderer from [Overviewer](http://overviewer.org)
 
-#### Installing the Minecraft App 
-The Minecraft App is built as a Splunk App on the Splunk Web Framework and must be installed on top of it. 
+#### Installing the Minecraft App
+The Minecraft App is built as a Splunk App on the Splunk Web Framework and must be installed on top of it.
 
 ##### Installing from Splunk Web
-If you downloaded the Minecraft App from [Splunk Apps](http://apps.splunk.com), you can install the app within Splunk Web. 
+If you downloaded the Minecraft App from [Splunk Apps](http://apps.splunk.com), you can install the app within Splunk Web.
 
 * For more, see [Where to get more apps and add-ons](http://docs.splunk.com/Documentation/Splunk/latest/Admin/Wheretogetmoreapps).
 
 ##### Installing from a ZIP Source File
 
-1. [Download and unzip the Minecraft App](https://github.com/splunk/minecraft-app/archive/develop.zip) 
-or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.git). 
-2. Copy the entire `/minecraft-app` subdirectory into `$SPLUNK_HOME/etc/apps/`. 
+1. [Download and unzip the Minecraft App](https://github.com/splunk/minecraft-app/archive/develop.zip)
+or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.git).
+2. Copy the entire `/minecraft-app` subdirectory into `$SPLUNK_HOME/etc/apps/`.
 3. Restart Splunk.
 4. In Splunk Web, navigate to the Minecraft App (*http://localhost:8000/dj/minecraft-app*).
 

@@ -1,5 +1,7 @@
 package com.splunk.logtosplunk.event_loggers;
 
+import java.util.Properties;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -31,9 +33,10 @@ public class PlayerEventLogger extends AbstractEventLogger {
      * Constructs a new PlayerEventLogger with the given SplunkMessagePreparer.
      *
      * @param splunkMessagePreparer Message preparer to send packaged raw messages to.
+     * @param props Properties to configure this EventLogger with.
      */
-    public PlayerEventLogger(SplunkMessagePreparer splunkMessagePreparer) {
-        super(splunkMessagePreparer);
+    public PlayerEventLogger(Properties props, SplunkMessagePreparer splunkMessagePreparer) {
+        super(props, splunkMessagePreparer);
     }
 
     /**

@@ -2,6 +2,10 @@ package com.splunk.logtosplunk;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
 
+import java.io.File;
+import java.io.FileReader;
+import java.util.Properties;
+
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -18,9 +22,15 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 @Mod(modid = LogToSplunkMod.MODID, version = LogToSplunkMod.VERSION, name = LogToSplunkMod.NAME)
 public class LogToSplunkMod {
     public static final String MODID = "logtosplunk";
-    public static final String VERSION = "0.1 Alpha";
+    public static final String VERSION = "0.9.0 Beta";
     public static final String NAME = "Splunk for Minecraft";
     public static final String LOGGER_NAME = "LogToSplunk";
+    public static final String LOG_EVENTS_TO_CONSOLE_PROP_KEY = "mod.splunk.enable.consolelog";
+    public static final String SPLUNK_HOST_PROP_KEY = "mod.splunk.connection.host";
+    public static final String SPLUNK_PORT_PROP_KEY = "mod.splunk.connection.port";
+    public static final String DEFAULT_HOST = "localhost";
+    public static final String DEFAULT_PORT = "8888";
+    public static final String SPLUNK_MOD_PROPERTIES = "/config/splunk_mod.properties";
 
     private static final Logger logger = getLogger(LOGGER_NAME);
 
@@ -66,15 +76,28 @@ public class LogToSplunkMod {
     @Mod.EventHandler
     @SuppressWarnings("unused")
     public void init(FMLInitializationEvent event) {
+        final Properties properties = new Properties();
+        final String path = System.getProperty("user.dir") + SPLUNK_MOD_PROPERTIES;
+        try {
+            FileReader reader = new FileReader(new File(path));
+            properties.load(reader);
+        } catch (Exception e) {
+            logger.warn(
+                    String.format(
+                            "Unable to load properties for LogToSplunkMod at %s! Default values will be used.", path),
+                    e);
+        }
 
-        PlayerEventLogger playerEventLogger = new PlayerEventLogger(messagePreparer);
+        messagePreparer.init(properties);
+
+        PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties, messagePreparer);
         fmlBus.register(playerEventLogger);
         mcBus.register(playerEventLogger);
 
-        BlockEventLogger blockLogger = new BlockEventLogger(messagePreparer);
+        BlockEventLogger blockLogger = new BlockEventLogger(properties, messagePreparer);
         mcBus.register(blockLogger);
 
-        DeathEventLogger deathLogger = new DeathEventLogger(messagePreparer);
+        DeathEventLogger deathLogger = new DeathEventLogger(properties, messagePreparer);
         mcBus.register(deathLogger);
 
         logAndSend("Splunk for Minecraft initialized.");

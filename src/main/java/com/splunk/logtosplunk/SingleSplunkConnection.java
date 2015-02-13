@@ -32,13 +32,13 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     private boolean connected;
 
     /**
-     * This class' data buffer.
+     * This objects' data buffer.
      */
     private final Queue<String> data = new LinkedList<String>();
 
     /**
      * Constructor. Determines which Splunk instance this will connect to based on the host:port passed in. Set up a
-     * shutdown hook to send any remaining messages to Splunk on close..
+     * shutdown hook to send any remaining messages to Splunk on close.
      *
      * @param host Host of Splunk to connect to.
      * @param port Port of Splunk to connect to.

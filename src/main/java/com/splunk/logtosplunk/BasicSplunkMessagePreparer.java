@@ -1,5 +1,7 @@
 package com.splunk.logtosplunk;
 
+import java.util.Properties;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -27,7 +29,7 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
     /**
      * Connection(s) to Splunk.
      */
-    private final SplunkConnection connector;
+    private SplunkConnection connector;
 
     /**
      * Keeps track players last positions, in a guava cache for it's eviction policy.
@@ -42,10 +44,10 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
             });
 
     /**
-     * Constructor, uses default Splunk connection.
+     * Constructor, uses default Splunk connection which is initialized in the {@code init()} method.
      */
     public BasicSplunkMessagePreparer() {
-        this(new SingleSplunkConnection("localhost",8888,true));
+
     }
 
     /**
@@ -71,6 +73,13 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
     @Override
     public void writeMessage(String message) {
         connector.sendToSplunk(message);
+    }
+
+    @Override
+    public void init(Properties props) {
+        final String host = props.getProperty(LogToSplunkMod.SPLUNK_HOST_PROP_KEY,LogToSplunkMod.DEFAULT_HOST);
+        final int port = Integer.valueOf(props.getProperty(LogToSplunkMod.SPLUNK_PORT_PROP_KEY, LogToSplunkMod.DEFAULT_PORT));
+        connector = new SingleSplunkConnection(host,port,true);
     }
 
     /**

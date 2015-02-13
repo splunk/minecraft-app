@@ -1,5 +1,7 @@
 package com.splunk.logtosplunk.event_loggers;
 
+import java.util.Properties;
+
 import com.splunk.logtosplunk.Point3dLong;
 import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
@@ -24,10 +26,11 @@ public class BlockEventLogger extends AbstractEventLogger {
     /**
      * Constructor.
      *
-     * @param messagePreparer used to process this classes captured data.
+     * @param messagePreparer Used to process this classes captured data.
+     * @param props Properties to configure this EventLogger with.
      */
-    public BlockEventLogger(SplunkMessagePreparer messagePreparer) {
-        super(messagePreparer);
+    public BlockEventLogger(Properties props, SplunkMessagePreparer messagePreparer) {
+        super(props, messagePreparer);
     }
 
     /**
