@@ -20,7 +20,8 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 
-@Mod(modid = LogToSplunkMod.MODID, version = LogToSplunkMod.VERSION, name = LogToSplunkMod.NAME)
+@Mod(modid = LogToSplunkMod.MODID, version = LogToSplunkMod.VERSION, name = LogToSplunkMod.NAME,
+        acceptableRemoteVersions = "*")
 public class LogToSplunkMod {
     public static final String MODID = "logtosplunk";
     public static final String VERSION = "0.9.0 Beta";
