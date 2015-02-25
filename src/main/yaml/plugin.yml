@@ -1,3 +1,0 @@
-name: LogToSplunk
-main: com.splunk.logtosplunk.LogToSplunkPlugin
-version: 0.8

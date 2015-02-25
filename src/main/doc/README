@@ -1,21 +1,20 @@
-Splunk logger for CraftBukkit Minecraft 0.8
+Splunk logger for Minecraft Forge 0.1 Alpha
 
-The Splunk logger for CraftBukkit Minecraft provides additional logging
-functionality to the CraftBukkit Minecraft server. The logs are written
+The Splunk logger for Minecraft Forge provides additional logging
+functionality to the Minecraft Forge server. The logs are written
 to the console and the Minecraft server log, and to any number of Splunk
 TCP input ports declared in config.yml.
 
 The messages conform to Splunk's logging best practices:
 
      http://dev.splunk.com/view/logging-best-practices/SP-CAAADP6
-     
+
 INSTALLATION
 
-Copy the log_to_splunk_plugin-0.8.jar to your CraftBukkit's plugins/ directory,
-and create a directory plugins/LogToSplunk. In that directory write a config.yml
+**SPECIFY CONFIG DIRECTORY HERE*** In that directory write a config.yml
 file specifying what Splunk TCP ports to log to, e.g.,
 
 splunks: localhost:10000, mc.splunk.local:10000, pq.5f.as.23:111
 
-Then start your CraftBukkit server or, if it is already running, run the command
-'reload' in the server console.
+Then start your Forge server or, if it is already running, run the command
+'reload' in the server console *** DOES FORGE HAVE RELOAD?***.

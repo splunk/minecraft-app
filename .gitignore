@@ -3,3 +3,11 @@
 *.swp
 build
 .gradle
+bin/
+.project
+*.iml
+.idea/
+eclipse/
+.classpath
+logs/
+.settings
