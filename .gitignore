@@ -11,3 +11,4 @@ eclipse/
 .classpath
 logs/
 .settings
+target/
