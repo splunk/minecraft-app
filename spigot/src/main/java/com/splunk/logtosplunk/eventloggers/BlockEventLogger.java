@@ -1,5 +1,7 @@
 package com.splunk.logtosplunk.eventloggers;
 
+import java.util.Properties;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -9,8 +11,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import com.splunk.logtosplunk.LogToSplunkPlugin;
 import com.splunk.logtosplunk.Point3dLong;
+import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.event_loggers.AbstractEventLogger;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent;
 import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent.BlockEventAction;
@@ -22,8 +24,8 @@ import com.splunk.logtosplunk.loggable_events.LoggableBlockEvent.BlockEventActio
 public class BlockEventLogger extends AbstractEventLogger implements Listener {
 
 
-    public BlockEventLogger() {
-        super(LogToSplunkPlugin.properties, LogToSplunkPlugin.messagePreparer);
+    public BlockEventLogger(Properties properties, SplunkMessagePreparer messagePreparer) {
+        super(properties, messagePreparer);
     }
 
     /**
@@ -33,6 +35,7 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
      */
     @EventHandler
     public void captureBreakEvent(BlockBreakEvent event) {
+        logger.info(event.getBlock().getType().name());
         logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.BREAK, event));
     }
 

@@ -1,11 +1,13 @@
 package com.splunk.logtosplunk.eventloggers;
 
-import org.bukkit.entity.Player;
+import java.util.Properties;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
-import com.splunk.logtosplunk.LogToSplunkPlugin;
+import com.splunk.logtosplunk.SplunkMessagePreparer;
 import com.splunk.logtosplunk.event_loggers.AbstractEventLogger;
 
 /**
@@ -20,8 +22,8 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
     public static final boolean IGNORE_MONSTER_ACCIDENTS = true;
 
 
-    public DeathEventLogger() {
-        super(LogToSplunkPlugin.properties, LogToSplunkPlugin.messagePreparer);
+    public DeathEventLogger(Properties properties, SplunkMessagePreparer messagePreparer) {
+        super(properties, messagePreparer);
     }
 
     /**
@@ -32,11 +34,15 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
     @EventHandler
     public void captureDeathEvent(EntityDeathEvent event) {
                 event.getEventName();
-        final Boolean playerDied = event.getEntity() instanceof Player;
         String killer = null;
         logger.info("death event: " + event.getEventName() + "  " + event.getEntity().getKiller());
 //        logAndSend(
 //                new LoggableDeathEvent(deathAction, gameTime, worldName, position).setKiller(killer).setVicitim(victim)
 //                        .setDamageSource(damageSource));
+        if(event instanceof PlayerDeathEvent){
+            event.getEntity().getLastDamageCause();
+            logger.info("DAMAGE CAUSE:" + event.getEntity().getLastDamageCause().getCause().name());
+            logger.info("PLAYER DEATH (womp womp): " + ((PlayerDeathEvent)event).getDeathMessage());
+        }
     }
 }

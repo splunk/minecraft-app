@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.splunk.logtosplunk.eventloggers.BlockEventLogger;
+import com.splunk.logtosplunk.eventloggers.DeathEventLogger;
 
 public class LogToSplunkPlugin extends JavaPlugin implements Listener{
     public static final String MODID = "logtosplunk";
@@ -17,8 +19,8 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener{
     public static final String NAME = "Splunk for Minecraft";
     public static final String SPLUNK_MOD_PROPERTIES = "/config/splunk_mod.properties";
 
-    public static Properties properties;
-    public static SplunkMessagePreparer messagePreparer;
+    private Properties properties;
+    private SplunkMessagePreparer messagePreparer;
 
     private static final Logger logger = LoggerFactory.getLogger(LogToSplunkPlugin.class.getName());
 
@@ -62,6 +64,9 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener{
         //final PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties, messagePreparer);
         //final BlockEventLogger blockLogger = new BlockEventLogger(properties, messagePreparer);
         //final DeathEventLogger deathLogger = new DeathEventLogger(properties, messagePreparer);
+
+        getServer().getPluginManager().registerEvents(new BlockEventLogger(properties, messagePreparer), this);
+        getServer().getPluginManager().registerEvents(new DeathEventLogger(properties, messagePreparer), this);
 
         logAndSend("Splunk for Minecraft initialized.");
     }
