@@ -9,7 +9,7 @@
         <module>spigot</module>
         <module>shared-mc</module>
         <module>forge</module>
-        <module>uber-plugin</module>
+        <module>logtosplunk-plugin</module>
     </modules>
     <packaging>pom</packaging>
 
