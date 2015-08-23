@@ -2,14 +2,18 @@ package com.splunk.logtosplunk.loggable_events;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.splunk.logging.SplunkCimLogEvent;
 import com.splunk.logtosplunk.Point3dLong;
 
 /**
  * Classes extending this benefit from a convenient way to get a Json representation, time of creation and event type,
  * world name, coordinates and location.
  */
-public class AbstractLoggableEvent implements LoggableEvent {
+public class AbstractLoggableEvent extends SplunkCimLogEvent implements LoggableEvent {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public static final String PLAYER_NAME = "player";
+    public static final String CAUSE = "cause";
+    public static final String ACTION = "action";
 
     /**
      * General event type. Can be used to categorize events.
@@ -42,10 +46,18 @@ public class AbstractLoggableEvent implements LoggableEvent {
      * @param type The type of event that this is.
      */
     public AbstractLoggableEvent(LoggableEventType type, long worldTime, String worldName, Point3dLong coordinates) {
+        super(type.getEventName(), null);
+
         this.type = type;
         this.worldTime = worldTime;
         this.worldName = worldName;
         this.coordinates = coordinates;
+
+        this.addField("game_time", worldTime);
+        this.addField("world", worldName);
+        this.addField("x", coordinates.xCoord);
+        this.addField("y", coordinates.yCoord);
+        this.addField("z", coordinates.zCoord);
     }
 
     @Override

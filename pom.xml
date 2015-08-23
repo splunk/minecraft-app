@@ -7,11 +7,12 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>spigot</module>
-        <module>shared</module>
+        <module>shared-mc</module>
+        <module>forge</module>
+        <module>uber-plugin</module>
     </modules>
     <packaging>pom</packaging>
 
-    <name>Maven Quick Start Archetype</name>
     <url>http://maven.apache.org</url>
 
     <dependencies>
@@ -33,6 +34,30 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>install splunkmc</id>
+                        <phase>compile</phase>
+                        <inherited>false</inherited>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <!--TODO: will we be able to get this from central eventually?-->
+                            <!--TODO: Can we commit this to private repo -not sure if we can  get access splunk remote repo-->
+                            <file>${project.basedir}/lib/splunk-library-javalogging-1.0.1.jar</file>
+                            <groupId>com.splunk</groupId>
+                            <artifatId>splunk-library-javalogging</artifatId>
+                            <version>1.0.1</version>
+                            <createChecksum>true</createChecksum>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

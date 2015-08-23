@@ -1,0 +1,16 @@
+[
+{
+  "modid": "logtosplunk",
+  "name": "Splunk for Minecraft",
+  "description": "Adds amazingness with Splunk",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/splunk/minecraft-app",
+  "updateUrl": "",
+  "authorList": [""],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
