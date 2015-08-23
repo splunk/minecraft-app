@@ -15,15 +15,21 @@
 
     <url>http://maven.apache.org</url>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.6</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.8.2</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
@@ -48,11 +54,10 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <!--TODO: will we be able to get this from central eventually?-->
-                            <!--TODO: Can we commit this to private repo -not sure if we can  get access splunk remote repo-->
+                            <!--TODO: will we be able to get this from central eventually?--><!--TODO: Can we commit this to private repo -not sure if we can  get access splunk remote repo-->
                             <file>${project.basedir}/lib/splunk-library-javalogging-1.0.1.jar</file>
                             <groupId>com.splunk</groupId>
-                            <artifatId>splunk-library-javalogging</artifatId>
+                            <artifactId>splunk-library-javalogging</artifactId>
                             <version>1.0.1</version>
                             <createChecksum>true</createChecksum>
                         </configuration>

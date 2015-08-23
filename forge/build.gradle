@@ -25,9 +25,9 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "0.9.0 Beta"
 group= "com.splunk"
-archivesBaseName = "logtosplunk"
+archivesBaseName = "logtosplunk-forge"
+version = "1.0-SNAPSHOT"
 
 minecraft {
     version = "1.8-11.14.1.1309"
@@ -59,7 +59,7 @@ repositories {
 
 
 dependencies {
-    compile files('./lib/splunk-library-javalogging-1.0.1.jar')
+    compile 'com.splunk:splunk-library-javalogging:1.0.1'
     compile 'com.splunk:shared-mc:1.0-SNAPSHOT'
     compile 'org.slf4j:slf4j-api:1.7.6'
 
