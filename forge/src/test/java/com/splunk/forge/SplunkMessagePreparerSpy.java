@@ -2,8 +2,8 @@ package com.splunk.forge;
 
 import java.util.Properties;
 
-import com.splunk.forge.SplunkMessagePreparer;
-import com.splunk.forge.loggable_events.LoggableEvent;
+import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.loggable_events.LoggableEvent;
 
 /**
  * Standard testing spy, makes available input sent to it and does nothing else.

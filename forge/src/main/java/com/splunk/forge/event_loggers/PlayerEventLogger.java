@@ -5,10 +5,9 @@ import java.util.Properties;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import com.splunk.forge.Point3dLong;
-import com.splunk.forge.SplunkMessagePreparer;
-import com.splunk.forge.loggable_events.LoggablePlayerEvent;
-import com.splunk.forge.loggable_events.LoggablePlayerEvent.PlayerEventAction;
+import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
@@ -48,7 +47,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
     @SideOnly(Side.SERVER)
     public void onPlayerConnect(PlayerLoggedInEvent event) {
         logAndSend(
-                generateLoggablePlayerEvent(event, PlayerEventAction.PLAYER_CONNECT, null, null));
+                generateLoggablePlayerEvent(event, LoggablePlayerEvent.PlayerEventAction.PLAYER_CONNECT, null, null));
     }
 
     /**
@@ -61,7 +60,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
     public void onPlayerDisconnect(PlayerLoggedOutEvent event) {
         logAndSend(
                 generateLoggablePlayerEvent(
-                        event, PlayerEventAction.PLAYER_DISCONNECT, null, null));
+                        event, LoggablePlayerEvent.PlayerEventAction.PLAYER_DISCONNECT, null, null));
     }
 
     /**
@@ -73,11 +72,11 @@ public class PlayerEventLogger extends AbstractEventLogger {
     @SideOnly(Side.SERVER)
     public void onPlayerChat(ServerChatEvent chatEvent) {
         logAndSend(
-                generateLoggablePlayerEvent(chatEvent, PlayerEventAction.CHAT, chatEvent.message));
+                generateLoggablePlayerEvent(chatEvent, LoggablePlayerEvent.PlayerEventAction.CHAT, chatEvent.message));
     }
 
     private static LoggablePlayerEvent generateLoggablePlayerEvent(
-            PlayerEvent event, PlayerEventAction actionType, String reason, String message) {
+            PlayerEvent event, LoggablePlayerEvent.PlayerEventAction actionType, String reason, String message) {
         final World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
@@ -92,7 +91,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
     }
 
     private static LoggablePlayerEvent generateLoggablePlayerEvent(
-            ServerChatEvent event, PlayerEventAction actionType, String message) {
+            ServerChatEvent event, LoggablePlayerEvent.PlayerEventAction actionType, String message) {
         final World world = event.player.getEntityWorld();
         final long worldTime = world.getWorldTime();
         final String worldName = world.getWorldInfo().getWorldName();
@@ -132,7 +131,7 @@ public class PlayerEventLogger extends AbstractEventLogger {
             final String worldName = world.getWorldInfo().getWorldName();
             logAndSend(
                     new LoggablePlayerEvent(
-                            PlayerEventAction.LOCATION, worldTime, worldName, coordinates).setPlayerName(playerName));
+                            LoggablePlayerEvent.PlayerEventAction.LOCATION, worldTime, worldName, coordinates).setPlayerName(playerName));
         }
     }
 

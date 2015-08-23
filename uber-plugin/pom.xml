@@ -20,11 +20,11 @@
             <artifactId>splunk-library-javalogging</artifactId>
             <version>1.0.1</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.splunk</groupId>-->
-            <!--<artifactId>shared-mc</artifactId>-->
-            <!--<version>${project.version}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.splunk</groupId>
+            <artifactId>shared-mc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.splunk</groupId>
             <artifactId>spigot</artifactId>
@@ -37,6 +37,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <configuration>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                </configuration>
                 <!--todo check how old this version is-->
                 <version>2.3</version>
                 <executions>

@@ -10,10 +10,8 @@ import java.util.Properties;
 import org.junit.Test;
 
 import com.splunk.forge.event_loggers.DeathEventLogger;
-import com.splunk.forge.Point3dLong;
-import com.splunk.spigot.SplunkMessagePreparerSpy;
-import com.splunk.forge.loggable_events.LoggableDeathEvent;
-import com.splunk.forge.loggable_events.LoggableDeathEvent.DeathEventAction;
+import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.loggable_events.LoggableDeathEvent;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -46,7 +44,7 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(DeathEventAction.PLAYER_DIED, null, "Waldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, null, "Waldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
@@ -93,7 +91,7 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(DeathEventAction.PLAYER_DIED, "anti-waldo", "Waldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, "anti-waldo", "Waldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
@@ -119,14 +117,14 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(DeathEventAction.MOB_DIED, "anti-waldo", "MonsterWaldo", "FIERY_DOOM");
+        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.MOB_DIED, "anti-waldo", "MonsterWaldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
     private static LoggableDeathEvent getExpected(
-            DeathEventAction actionType, String killer, String victim, String damageSource) {
+            LoggableDeathEvent.DeathEventAction actionType, String killer, String victim, String damageSource) {
         return new LoggableDeathEvent(actionType, 1000, "woName", new Point3dLong(10, 10, 10)).setKiller(killer)
                 .setVictim(victim).setDamageSource(damageSource);
     }

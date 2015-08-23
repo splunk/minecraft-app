@@ -1,7 +1,5 @@
 package com.splunk.forge;
 
-import com.splunk.forge.SplunkConnection;
-
 /**
  * Standard spy.  Returns input values from getters.
  */

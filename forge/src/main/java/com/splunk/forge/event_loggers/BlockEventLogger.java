@@ -2,10 +2,9 @@ package com.splunk.forge.event_loggers;
 
 import java.util.Properties;
 
-import com.splunk.forge.Point3dLong;
-import com.splunk.forge.SplunkMessagePreparer;
-import com.splunk.forge.loggable_events.LoggableBlockEvent;
-import com.splunk.forge.loggable_events.LoggableBlockEvent.BlockEventAction;
+import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -41,7 +40,7 @@ public class BlockEventLogger extends AbstractEventLogger {
     @SubscribeEvent
     @SideOnly(Side.SERVER)
     public void captureBreakEvent(BreakEvent event) {
-        logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.BREAK, event));
+        logAndSend(getLoggableBlockBreakPlaceEvent(LoggableBlockEvent.BlockEventAction.BREAK, event));
     }
 
     /**
@@ -52,10 +51,10 @@ public class BlockEventLogger extends AbstractEventLogger {
     @SubscribeEvent
     @SideOnly(Side.SERVER)
     public void capturePlaceEvent(PlaceEvent event) {
-        logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.PLACE, event));
+        logAndSend(getLoggableBlockBreakPlaceEvent(LoggableBlockEvent.BlockEventAction.PLACE, event));
     }
 
-    private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event) {
+    private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(LoggableBlockEvent.BlockEventAction action, BlockEvent event) {
 
         final Block block = event.state.getBlock();
         final String base_type = block.getUnlocalizedName();

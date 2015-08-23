@@ -6,12 +6,14 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.splunk.spigot.loggable_events.LoggableBlockEvent;
-import com.splunk.spigot.loggable_events.LoggableBlockEvent.BlockEventAction;
-import com.splunk.spigot.loggable_events.LoggableDeathEvent;
-import com.splunk.spigot.loggable_events.LoggableDeathEvent.DeathEventAction;
-import com.splunk.spigot.loggable_events.LoggablePlayerEvent;
-import com.splunk.spigot.loggable_events.LoggablePlayerEvent.PlayerEventAction;
+import com.splunk.sharedmc.BasicSplunkMessagePreparer;
+import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
+import com.splunk.sharedmc.loggable_events.LoggableBlockEvent.BlockEventAction;
+import com.splunk.sharedmc.loggable_events.LoggableDeathEvent;
+import com.splunk.sharedmc.loggable_events.LoggableDeathEvent.DeathEventAction;
+import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent;
+import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent.PlayerEventAction;
 
 
 public class TestOriginalSplunkMessagePreparer {
@@ -83,7 +85,7 @@ public class TestOriginalSplunkMessagePreparer {
 
     private void writeEvent(DeathEventAction action) {
         LoggableDeathEvent event =
-                new LoggableDeathEvent(action, 1000, "woName", new Point3dLong(10,10,10)).setVicitim("veectim").setKiller("keeler").setDamageSource("deemage_source");
+                new LoggableDeathEvent(action, 1000, "woName", new Point3dLong(10,10,10)).setVictim("veectim").setKiller("keeler").setDamageSource("deemage_source");
 
         messagePreparer.writeMessage(event);
     }

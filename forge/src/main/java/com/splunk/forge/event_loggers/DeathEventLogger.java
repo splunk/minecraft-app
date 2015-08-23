@@ -2,10 +2,9 @@ package com.splunk.forge.event_loggers;
 
 import java.util.Properties;
 
-import com.splunk.forge.Point3dLong;
-import com.splunk.forge.SplunkMessagePreparer;
-import com.splunk.forge.loggable_events.LoggableDeathEvent;
-import com.splunk.forge.loggable_events.LoggableDeathEvent.DeathEventAction;
+import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.loggable_events.LoggableDeathEvent;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
@@ -53,7 +52,7 @@ public class DeathEventLogger extends AbstractEventLogger {
         } else {
             killer = event.source.getEntity().getDisplayName().getUnformattedText().replace(' ', '_');
         }
-        final DeathEventAction deathAction = playerDied ? DeathEventAction.PLAYER_DIED : DeathEventAction.MOB_DIED;
+        final LoggableDeathEvent.DeathEventAction deathAction = playerDied ? LoggableDeathEvent.DeathEventAction.PLAYER_DIED : LoggableDeathEvent.DeathEventAction.MOB_DIED;
 
         final String victim = event.entity.getDisplayName().getUnformattedText().replace(' ', '_');
         final String damageSource = event.source.getDamageType().replace(' ', '_');

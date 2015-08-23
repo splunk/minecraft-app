@@ -5,12 +5,12 @@
 //import com.google.common.cache.Cache;
 //import com.google.common.cache.CacheBuilder;
 //import com.google.common.cache.CacheLoader;
-//import com.splunk.spigot.Constants;
-//import com.splunk.spigot.Point3dLong;
-//import com.splunk.spigot.SplunkMessagePreparer;
-//import com.splunk.spigot.event_loggers.AbstractEventLogger;
-//import com.splunk.spigot.loggable_events.LoggablePlayerEvent;
-//import com.splunk.spigot.loggable_events.LoggablePlayerEvent.PlayerEventAction;
+//import com.splunk.sharedmc.Constants;
+//import com.splunk.sharedmc.Point3dLong;
+//import com.splunk.sharedmc.SplunkMessagePreparer;
+//import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
+//import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent;
+//import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent.PlayerEventAction;
 //
 //import net.minecraft.entity.player.EntityPlayer;
 //import net.minecraft.util.Vec3;

@@ -1,5 +1,7 @@
 package com.splunk.spigot;
 
+import com.splunk.sharedmc.SplunkConnection;
+
 /**
  * Standard spy.  Returns input values from getters.
  */

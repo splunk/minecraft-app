@@ -2,18 +2,18 @@ package com.splunk.forge.event_loggers;
 
 import java.util.Properties;
 
-import com.splunk.forge.LogToSplunkMod;
-import com.splunk.forge.SplunkMessagePreparer;
-import com.splunk.forge.loggable_events.LoggableEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import sun.util.logging.resources.logging.log4j.LogManager;
-import sun.util.logging.resources.logging.log4j.Logger;
+import com.splunk.forge.LogToSplunkMod;
+import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.loggable_events.LoggableEvent;
 
 /**
  * EventLoggers log to the Minecraft server console and send data to Splunk.
  */
 public class AbstractEventLogger {
-    private static final Logger logger = LogManager.getLogger(LogToSplunkMod.LOGGER_NAME);
+    private static final Logger logger = LoggerFactory.getLogger(LogToSplunkMod.LOGGER_NAME);
 
     /**
      * If true, events will be logged to the server console.
@@ -38,7 +38,7 @@ public class AbstractEventLogger {
      */
     protected void logAndSend(LoggableEvent loggable) {
         if (logEventsToConsole) {
-            logger.info(loggable);
+            logger.info(loggable.toString());
         }
         messagePreparer.writeMessage(loggable);
     }

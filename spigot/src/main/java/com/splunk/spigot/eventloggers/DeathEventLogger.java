@@ -7,8 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import com.splunk.spigot.SplunkMessagePreparer;
-import com.splunk.spigot.event_loggers.AbstractEventLogger;
+import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 
 /**
  * Handles the logging of death events.

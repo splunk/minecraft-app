@@ -11,11 +11,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import com.splunk.spigot.Point3dLong;
-import com.splunk.spigot.SplunkMessagePreparer;
-import com.splunk.spigot.event_loggers.AbstractEventLogger;
-import com.splunk.spigot.loggable_events.LoggableBlockEvent;
-import com.splunk.spigot.loggable_events.LoggableBlockEvent.BlockEventAction;
+import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
+import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
+import com.splunk.sharedmc.loggable_events.LoggableBlockEvent.BlockEventAction;
 
 
 /**

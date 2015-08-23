@@ -1,14 +1,12 @@
 package com.splunk.forge;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Properties;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -16,10 +14,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.splunk.forge.event_loggers.BlockEventLogger;
-import com.splunk.forge.Point3dLong;
-import com.splunk.spigot.SplunkMessagePreparerSpy;
-import com.splunk.forge.loggable_events.LoggableBlockEvent;
-import com.splunk.forge.loggable_events.LoggableBlockEvent.BlockEventAction;
+import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
 
 import mockit.MockUp;
 import net.minecraft.block.Block;
@@ -106,20 +102,20 @@ public class TestBlockEventLogger {
 
     @Test
     public void testCaptureBreakEvent() {
-        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(BlockEventAction.BREAK);
+        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction.BREAK);
         logger.captureBreakEvent(breakEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
     @Test
     public void testCapturePlaceEvent() {
-        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(BlockEventAction.PLACE);
+        LoggableBlockEvent expected = getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction.PLACE);
 
         logger.capturePlaceEvent(placeEvent);
-        Assert.assertEquals(expected, spy.getLoggable());
+        assertEquals(expected, spy.getLoggable());
     }
 
-    private static LoggableBlockEvent getExpectedLoggableBlockEvent(BlockEventAction action) {
+    private static LoggableBlockEvent getExpectedLoggableBlockEvent(LoggableBlockEvent.BlockEventAction action) {
         return new LoggableBlockEvent(action, 1000, "WoName", new Point3dLong(10, 10, 10)).setPlayerName("Bro!")
                 .setBlockName("I_hope_it_was_worth_it_block").setBaseType("chocolate");
     }

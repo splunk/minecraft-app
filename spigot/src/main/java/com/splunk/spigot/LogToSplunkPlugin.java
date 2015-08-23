@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.splunk.sharedmc.BasicSplunkMessagePreparer;
+import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.spigot.eventloggers.BlockEventLogger;
 import com.splunk.spigot.eventloggers.DeathEventLogger;
 
