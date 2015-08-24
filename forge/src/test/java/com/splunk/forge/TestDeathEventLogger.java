@@ -44,7 +44,8 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, null, "Waldo", "FIERY_DOOM");
+        LoggableDeathEvent expected =
+                getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, null, "Waldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
@@ -72,7 +73,7 @@ public class TestDeathEventLogger {
     }
 
     @Test
-    public void testPlayerVictim(){
+    public void testPlayerVictim() {
         DamageSource source = mock(DamageSource.class);
         EntityPlayer victim = mock(EntityPlayer.class);
         EntityLiving killer = mock(EntityLiving.class);
@@ -91,14 +92,15 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, "anti-waldo", "Waldo", "FIERY_DOOM");
+        LoggableDeathEvent expected =
+                getExpected(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, "anti-waldo", "Waldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());
     }
 
     @Test
-    public void testMonsterVictim(){
+    public void testMonsterVictim() {
         DamageSource source = mock(DamageSource.class);
         EntityLiving victim = mock(EntityLiving.class);
         EntityLiving killer = mock(EntityLiving.class);
@@ -117,7 +119,8 @@ public class TestDeathEventLogger {
         setUpStandardMock(victim);
         LivingDeathEvent deathEvent = new LivingDeathEvent(victim, source);
 
-        LoggableDeathEvent expected = getExpected(LoggableDeathEvent.DeathEventAction.MOB_DIED, "anti-waldo", "MonsterWaldo", "FIERY_DOOM");
+        LoggableDeathEvent expected =
+                getExpected(LoggableDeathEvent.DeathEventAction.MOB_DIED, "anti-waldo", "MonsterWaldo", "FIERY_DOOM");
 
         logger.captureDeathEvent(deathEvent);
         assertEquals(expected, spy.getLoggable());

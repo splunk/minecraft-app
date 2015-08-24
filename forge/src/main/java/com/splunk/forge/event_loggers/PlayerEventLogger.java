@@ -131,7 +131,8 @@ public class PlayerEventLogger extends AbstractEventLogger {
             final String worldName = world.getWorldInfo().getWorldName();
             logAndSend(
                     new LoggablePlayerEvent(
-                            LoggablePlayerEvent.PlayerEventAction.LOCATION, worldTime, worldName, coordinates).setPlayerName(playerName));
+                            LoggablePlayerEvent.PlayerEventAction.LOCATION, worldTime, worldName, coordinates)
+                            .setPlayerName(playerName));
         }
     }
 

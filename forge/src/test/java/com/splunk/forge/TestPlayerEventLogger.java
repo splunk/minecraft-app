@@ -59,7 +59,7 @@ public class TestPlayerEventLogger {
     @Before
     public void setUp() {
         spy = new SplunkMessagePreparerSpy();
-        logger = new PlayerEventLogger(new Properties(),spy);
+        logger = new PlayerEventLogger(new Properties(), spy);
 
         MockitoAnnotations.initMocks(this);
         when(player.getDisplayNameString()).thenReturn("Bro!");
@@ -84,7 +84,8 @@ public class TestPlayerEventLogger {
 
     @Test
     public void testOnPlayerLogin() {
-        LoggablePlayerEvent expected = getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction.PLAYER_CONNECT);
+        LoggablePlayerEvent expected =
+                getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction.PLAYER_CONNECT);
         logger.onPlayerConnect(loggedInEvent);
 
         assertEquals(expected, spy.getLoggable());
@@ -92,7 +93,8 @@ public class TestPlayerEventLogger {
 
     @Test
     public void testOnPlayerLogout() {
-        LoggablePlayerEvent expected = getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction.PLAYER_DISCONNECT);
+        LoggablePlayerEvent expected =
+                getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction.PLAYER_DISCONNECT);
         logger.onPlayerDisconnect(loggedOutEvent);
 
         assertEquals(expected, spy.getLoggable());
@@ -101,7 +103,8 @@ public class TestPlayerEventLogger {
     @Test
     public void testOnPlayerChat() {
         LoggablePlayerEvent expected =
-                getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction.CHAT).setMessage("message").setPlayerName("Bro!");
+                getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction.CHAT).setMessage("message")
+                        .setPlayerName("Bro!");
 
         ServerChatEvent chatEvent = new ServerChatEvent(mPlayer, "message", null);
         logger.onPlayerChat(chatEvent);
@@ -146,7 +149,8 @@ public class TestPlayerEventLogger {
         return new LoggablePlayerEvent(action, 1000, "WoName", new Point3dLong(10, 10, 10)).setPlayerName("Bro!");
     }
 
-    private static LoggablePlayerEvent getExpectedLoggablePlayerEvent(LoggablePlayerEvent.PlayerEventAction action, Vec3 coords) {
+    private static LoggablePlayerEvent getExpectedLoggablePlayerEvent(
+            LoggablePlayerEvent.PlayerEventAction action, Vec3 coords) {
         return new LoggablePlayerEvent(action, 1000, "WoName", new Point3dLong(11, 11, 11)).setPlayerName("Bro!");
     }
 }

@@ -17,12 +17,10 @@ import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
 import com.splunk.sharedmc.loggable_events.LoggableBlockEvent.BlockEventAction;
 
-
 /**
  * Handles the logging of block events.
  */
 public class BlockEventLogger extends AbstractEventLogger implements Listener {
-
 
     public BlockEventLogger(Properties properties, SplunkMessagePreparer messagePreparer) {
         super(properties, messagePreparer);
@@ -56,7 +54,6 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
         final String name = block.getType().name();
         final World w = block.getWorld();
 
-
         final Point3dLong coords = new Point3dLong(location.getX(), location.getY(), location.getZ());
         String playerName = null;
         if (event instanceof BlockBreakEvent) {
@@ -65,7 +62,7 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
             playerName = ((BlockPlaceEvent) event).getPlayer().getName();
         }
         logger.info("LOGGING A BLOCK EVENT");
-        return new LoggableBlockEvent(action, w.getFullTime(), w.getWorldType().getName(), coords)
-                .setBlockName(name).setPlayerName(playerName).setBaseType(name);
+        return new LoggableBlockEvent(action, w.getFullTime(), w.getWorldType().getName(), coords).setBlockName(name)
+                .setPlayerName(playerName).setBaseType(name);
     }
 }

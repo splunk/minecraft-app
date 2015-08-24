@@ -82,8 +82,7 @@ public class BasicSplunkMessagePreparer implements SplunkMessagePreparer {
     @Override
     public void init(Properties props) {
         final String host = props.getProperty(SPLUNK_HOST_PROP_KEY, DEFAULT_HOST);
-        final int port =
-                Integer.valueOf(props.getProperty(SPLUNK_PORT_PROP_KEY, DEFAULT_PORT));
+        final int port = Integer.valueOf(props.getProperty(SPLUNK_PORT_PROP_KEY, DEFAULT_PORT));
         connector = new SingleSplunkConnection(host, port, true);
     }
 

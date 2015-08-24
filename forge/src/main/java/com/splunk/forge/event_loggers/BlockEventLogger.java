@@ -54,7 +54,8 @@ public class BlockEventLogger extends AbstractEventLogger {
         logAndSend(getLoggableBlockBreakPlaceEvent(LoggableBlockEvent.BlockEventAction.PLACE, event));
     }
 
-    private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(LoggableBlockEvent.BlockEventAction action, BlockEvent event) {
+    private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(
+            LoggableBlockEvent.BlockEventAction action, BlockEvent event) {
 
         final Block block = event.state.getBlock();
         final String base_type = block.getUnlocalizedName();

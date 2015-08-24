@@ -104,7 +104,8 @@
 //    }
 //
 //    /**
-//     * Living update seems to get called about 10x/sec. We check if the update belongs to a player and if so we check if
+//     * Living update seems to get called about 10x/sec. We check if the update belongs to a player and if so we
+// check if
 //     * the players position has changed significantly based on {@code GRANULARITY}.
 //     *
 //     * @param playerMove The captured event.

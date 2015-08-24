@@ -52,7 +52,9 @@ public class DeathEventLogger extends AbstractEventLogger {
         } else {
             killer = event.source.getEntity().getDisplayName().getUnformattedText().replace(' ', '_');
         }
-        final LoggableDeathEvent.DeathEventAction deathAction = playerDied ? LoggableDeathEvent.DeathEventAction.PLAYER_DIED : LoggableDeathEvent.DeathEventAction.MOB_DIED;
+        final LoggableDeathEvent.DeathEventAction deathAction =
+                playerDied ? LoggableDeathEvent.DeathEventAction.PLAYER_DIED :
+                        LoggableDeathEvent.DeathEventAction.MOB_DIED;
 
         final String victim = event.entity.getDisplayName().getUnformattedText().replace(' ', '_');
         final String damageSource = event.source.getDamageType().replace(' ', '_');

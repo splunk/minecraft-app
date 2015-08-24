@@ -21,7 +21,6 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
      */
     public static final boolean IGNORE_MONSTER_ACCIDENTS = true;
 
-
     public DeathEventLogger(Properties properties, SplunkMessagePreparer messagePreparer) {
         super(properties, messagePreparer);
     }
@@ -33,16 +32,17 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
      */
     @EventHandler
     public void captureDeathEvent(EntityDeathEvent event) {
-                event.getEventName();
+        event.getEventName();
         String killer = null;
         logger.info("death event: " + event.getEventName() + "  " + event.getEntity().getKiller());
-//        logAndSend(
-//                new LoggableDeathEvent(deathAction, gameTime, worldName, position).setKiller(killer).setVicitim(victim)
-//                        .setDamageSource(damageSource));
-        if(event instanceof PlayerDeathEvent){
+        //        logAndSend(
+        //                new LoggableDeathEvent(deathAction, gameTime, worldName,
+        // position).setKiller(killer).setVicitim(victim)
+        //                        .setDamageSource(damageSource));
+        if (event instanceof PlayerDeathEvent) {
             event.getEntity().getLastDamageCause();
             logger.info("DAMAGE CAUSE:" + event.getEntity().getLastDamageCause().getCause().name());
-            logger.info("PLAYER DEATH (womp womp): " + ((PlayerDeathEvent)event).getDeathMessage());
+            logger.info("PLAYER DEATH (womp womp): " + ((PlayerDeathEvent) event).getDeathMessage());
         }
     }
 }

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.sharedmc.loggable_events.LoggableEvent;
 
-
 /**
  * EventLoggers log to the Minecraft server console and send data to Splunk.
  */
@@ -30,8 +29,7 @@ public class AbstractEventLogger {
 
     public AbstractEventLogger(Properties properties, SplunkMessagePreparer splunkMessagePreparer) {
         this.messagePreparer = splunkMessagePreparer;
-        logEventsToConsole =
-                Boolean.valueOf(properties.getProperty(LOG_EVENTS_TO_CONSOLE_PROP_KEY, "false"));
+        logEventsToConsole = Boolean.valueOf(properties.getProperty(LOG_EVENTS_TO_CONSOLE_PROP_KEY, "false"));
     }
 
     /**

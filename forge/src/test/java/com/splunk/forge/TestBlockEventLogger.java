@@ -63,7 +63,7 @@ public class TestBlockEventLogger {
     @Before
     public void setUp() {
         spy = new SplunkMessagePreparerSpy();
-        logger = new BlockEventLogger(new Properties(),spy);
+        logger = new BlockEventLogger(new Properties(), spy);
 
         MockitoAnnotations.initMocks(this);
         when(player.getDisplayNameString()).thenReturn("Bro!");
@@ -86,8 +86,7 @@ public class TestBlockEventLogger {
 
         when(block.getUnlocalizedName()).thenReturn("chocolate");
         final Item item = mock(Item.class);
-        when(item.getItemStackDisplayName((ItemStack) anyObject()))
-                .thenReturn("I hope it was worth it block");
+        when(item.getItemStackDisplayName((ItemStack) anyObject())).thenReturn("I hope it was worth it block");
 
         //Need Item's static method 'getItemFromBlock' because blocks'.getItem() fails in non-test situation. >:(
         new MockUp<Item>() {

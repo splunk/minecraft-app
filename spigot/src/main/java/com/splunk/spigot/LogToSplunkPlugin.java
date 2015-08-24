@@ -15,7 +15,7 @@ import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.spigot.eventloggers.BlockEventLogger;
 import com.splunk.spigot.eventloggers.DeathEventLogger;
 
-public class LogToSplunkPlugin extends JavaPlugin implements Listener{
+public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     public static final String MODID = "logtosplunk";
     public static final String VERSION = "0.9.0 Beta";
     public static final String NAME = "Splunk for Minecraft";
@@ -26,11 +26,10 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener{
 
     private static final Logger logger = LoggerFactory.getLogger(LogToSplunkPlugin.class.getName());
 
-
     /**
      * Constructor that is called by Forge. Uses the default SplunkMessagePreparer.
      */
-    public LogToSplunkPlugin()  {
+    public LogToSplunkPlugin() {
         this(new BasicSplunkMessagePreparer());
     }
 
@@ -51,7 +50,7 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener{
     public void onEnable() {
         properties = new Properties();
         final String path = System.getProperty("user.dir") + SPLUNK_MOD_PROPERTIES;
-        try (final FileReader reader = new FileReader(new File(path))){
+        try (final FileReader reader = new FileReader(new File(path))) {
 
             properties.load(reader);
         } catch (final Exception e) {
