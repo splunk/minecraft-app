@@ -6,14 +6,14 @@ import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Location;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.splunk.sharedmc.SplunkMessagePreparer;
-import com.splunk.sharedmc.loggable_events.LoggableEvent;
+import com.splunk.sharedmc.Point3dLong;
 import com.splunk.spigot.eventloggers.BlockEventLogger;
 import com.splunk.spigot.eventloggers.DeathEventLogger;
+import com.splunk.spigot.eventloggers.PlayerEventLogger;
 
 public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     public static final String MODID = "logtosplunk";
@@ -22,41 +22,8 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     public static final String SPLUNK_MOD_PROPERTIES = "/config/splunk_mod.properties";
 
     private Properties properties;
-    private SplunkMessagePreparer messagePreparer;
 
     private static final Logger logger = LogManager.getLogger(LogToSplunkPlugin.class.getName());
-
-    /**
-     * Constructor that is called by Forge. Uses the default SplunkMessagePreparer.
-     */
-    public LogToSplunkPlugin() {
-        this(new SplunkMessagePreparer() {
-                 @Override
-                 public void writeMessage(LoggableEvent loggable) {
-
-                 }
-
-                 @Override
-                 public void writeMessage(String message) {
-
-                 }
-
-                 @Override
-                 public void init(Properties props) {
-
-                 }
-             });
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param splunkMessagePreparer The message preparer to use.
-     */
-    @VisibleForTesting
-    public LogToSplunkPlugin(SplunkMessagePreparer splunkMessagePreparer) {
-        this.messagePreparer = splunkMessagePreparer;
-    }
 
     /**
      * Called when the mod is initialized.
@@ -75,14 +42,11 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
                     e);
         }
 
-        messagePreparer.init(properties);
 
-        //final PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties, messagePreparer);
-        //final BlockEventLogger blockLogger = new BlockEventLogger(properties, messagePreparer);
-        //final DeathEventLogger deathLogger = new DeathEventLogger(properties, messagePreparer);
 
-        getServer().getPluginManager().registerEvents(new BlockEventLogger(properties, messagePreparer), this);
-        getServer().getPluginManager().registerEvents(new DeathEventLogger(properties, messagePreparer), this);
+        getServer().getPluginManager().registerEvents(new BlockEventLogger(properties), this);
+        getServer().getPluginManager().registerEvents(new DeathEventLogger(properties), this);
+        getServer().getPluginManager().registerEvents(new PlayerEventLogger(properties), this);
 
         logAndSend("Splunk for Minecraft initialized.");
     }
@@ -94,6 +58,9 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
      */
     private void logAndSend(String message) {
         logger.info(message);
-        messagePreparer.writeMessage(message);
+    }
+
+    public static Point3dLong locationAsPoint(Location location){
+        return new Point3dLong(location.getX(),location.getY(),location.getZ());
     }
 }

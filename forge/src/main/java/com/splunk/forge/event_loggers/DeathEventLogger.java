@@ -3,7 +3,6 @@ package com.splunk.forge.event_loggers;
 import java.util.Properties;
 
 import com.splunk.sharedmc.Point3dLong;
-import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggableDeathEvent;
 
@@ -29,11 +28,10 @@ public class DeathEventLogger extends AbstractEventLogger {
     /**
      * Constructor.
      *
-     * @param messagePreparer used to process this class' captured data.
      * @param props Properties to configure this EventLogger with.
      */
-    public DeathEventLogger(Properties props, SplunkMessagePreparer messagePreparer) {
-        super(props, messagePreparer);
+    public DeathEventLogger(Properties props) {
+        super(props);
     }
 
     /**

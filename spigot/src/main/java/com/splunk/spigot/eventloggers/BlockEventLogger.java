@@ -12,7 +12,6 @@ import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.splunk.sharedmc.Point3dLong;
-import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
 import com.splunk.sharedmc.loggable_events.LoggableBlockEvent.BlockEventAction;
@@ -22,12 +21,12 @@ import com.splunk.sharedmc.loggable_events.LoggableBlockEvent.BlockEventAction;
  */
 public class BlockEventLogger extends AbstractEventLogger implements Listener {
 
-    public BlockEventLogger(Properties properties, SplunkMessagePreparer messagePreparer) {
-        super(properties, messagePreparer);
+    public BlockEventLogger(Properties properties) {
+        super(properties);
     }
 
     /**
-     * Captures Block BreakEvents and sends them to the message preparer.
+     * Captures Block BreakEvents.
      *
      * @param event The captured BreakEvent.
      */

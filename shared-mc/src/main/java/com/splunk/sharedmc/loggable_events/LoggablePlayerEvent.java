@@ -13,6 +13,9 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     private String message;
     private String reason;
 
+    private Point3dLong from;
+    private Point3dLong to;
+
     /**
      * Constructor.
      *
@@ -58,12 +61,37 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         return this;
     }
 
+
+    public Point3dLong getTo() {
+        return to;
+    }
+
+    public LoggablePlayerEvent setTo(Point3dLong to) {
+        this.to = to;
+        this.addField("to_x", to.xCoord);
+        this.addField("to_y", to.yCoord);
+        this.addField("to_z", to.zCoord);
+        return this;
+    }
+
+    public Point3dLong getFrom() {
+        return from;
+    }
+
+    public LoggablePlayerEvent setFrom(Point3dLong from) {
+        this.from = from;
+        this.addField("from_x", from.xCoord);
+        this.addField("from_y", from.yCoord);
+        this.addField("from_z", from.zCoord);
+
+        return this;    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof LoggablePlayerEvent)) {
             return false;
         }
 
@@ -72,9 +100,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         if (action != that.action) {
             return false;
         }
-
-        if (getCoordinates() != null ? !getCoordinates().equals(that.getCoordinates()) :
-                that.getCoordinates() != null) {
+        if (from != null ? !from.equals(that.from) : that.from != null) {
             return false;
         }
         if (message != null ? !message.equals(that.message) : that.message != null) {
@@ -86,10 +112,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         if (reason != null ? !reason.equals(that.reason) : that.reason != null) {
             return false;
         }
-        if (this.getWorldTime() != that.getWorldTime()) {
-            return false;
-        }
-        if (getWorldName() != null ? !getWorldName().equals(that.getWorldName()) : that.getWorldName() != null) {
+        if (to != null ? !to.equals(that.to) : that.to != null) {
             return false;
         }
 
@@ -102,6 +125,8 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         result = 31 * result + (action != null ? action.hashCode() : 0);
         result = 31 * result + (message != null ? message.hashCode() : 0);
         result = 31 * result + (reason != null ? reason.hashCode() : 0);
+        result = 31 * result + (from != null ? from.hashCode() : 0);
+        result = 31 * result + (to != null ? to.hashCode() : 0);
         return result;
     }
 

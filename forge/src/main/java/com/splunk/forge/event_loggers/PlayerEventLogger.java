@@ -6,7 +6,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.splunk.sharedmc.Point3dLong;
-import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent;
 
@@ -30,13 +29,12 @@ public class PlayerEventLogger extends AbstractEventLogger {
     public static final int MAX_PLAYERS = 128;
 
     /**
-     * Constructs a new PlayerEventLogger with the given SplunkMessagePreparer.
+     * Constructs a new PlayerEventLogger.
      *
-     * @param splunkMessagePreparer Message preparer to send packaged raw messages to.
      * @param props Properties to configure this EventLogger with.
      */
-    public PlayerEventLogger(Properties props, SplunkMessagePreparer splunkMessagePreparer) {
-        super(props, splunkMessagePreparer);
+    public PlayerEventLogger(Properties props) {
+        super(props);
     }
 
     /**
@@ -130,10 +128,18 @@ public class PlayerEventLogger extends AbstractEventLogger {
             final World world = playerMove.entity.getEntityWorld();
             final long worldTime = world.getWorldTime();
             final String worldName = world.getWorldInfo().getWorldName();
-            logAndSend(
-                    new LoggablePlayerEvent(
-                            LoggablePlayerEvent.PlayerEventAction.LOCATION, worldTime, worldName, coordinates)
-                            .setPlayerName(playerName));
+
+            // TODO: this needs to be in the from/to format.
+
+            LoggablePlayerEvent playerEvent =new LoggablePlayerEvent(
+                    LoggablePlayerEvent.PlayerEventAction.LOCATION, worldTime, worldName, coordinates)
+                    .setPlayerName(playerName);
+
+            if(lastCoords != null){
+                playerEvent.setFrom(new Point3dLong(lastCoords.xCoord, lastCoords.yCoord, lastCoords.zCoord));
+                playerEvent.setTo(coordinates);
+                logAndSend(playerEvent);
+            }
         }
     }
 

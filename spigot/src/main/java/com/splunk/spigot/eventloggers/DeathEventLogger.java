@@ -7,7 +7,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 
 /**
@@ -21,12 +20,12 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
      */
     public static final boolean IGNORE_MONSTER_ACCIDENTS = true;
 
-    public DeathEventLogger(Properties properties, SplunkMessagePreparer messagePreparer) {
-        super(properties, messagePreparer);
+    public DeathEventLogger(Properties properties) {
+        super(properties);
     }
 
     /**
-     * Captures DeathEvents and sends them to the message preparer.
+     * Captures DeathEvents.
      *
      * @param event The captured BreakEvent.
      */

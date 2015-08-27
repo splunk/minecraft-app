@@ -5,7 +5,6 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.sharedmc.loggable_events.LoggableEvent;
 
 /**
@@ -22,13 +21,7 @@ public class AbstractEventLogger {
      */
     private final boolean logEventsToConsole;
 
-    /**
-     * Processes and sends messages to Splunk.
-     */
-    private final SplunkMessagePreparer messagePreparer;
-
-    public AbstractEventLogger(Properties properties, SplunkMessagePreparer splunkMessagePreparer) {
-        this.messagePreparer = splunkMessagePreparer;
+    public AbstractEventLogger(Properties properties) {
         logEventsToConsole = Boolean.valueOf(properties.getProperty(LOG_EVENTS_TO_CONSOLE_PROP_KEY, "false"));
     }
 

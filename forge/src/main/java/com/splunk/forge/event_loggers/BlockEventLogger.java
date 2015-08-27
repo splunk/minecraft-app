@@ -3,7 +3,6 @@ package com.splunk.forge.event_loggers;
 import java.util.Properties;
 
 import com.splunk.sharedmc.Point3dLong;
-import com.splunk.sharedmc.SplunkMessagePreparer;
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
 
@@ -26,15 +25,14 @@ public class BlockEventLogger extends AbstractEventLogger {
     /**
      * Constructor.
      *
-     * @param messagePreparer Used to process this classes captured data.
      * @param props Properties to configure this EventLogger with.
      */
-    public BlockEventLogger(Properties props, SplunkMessagePreparer messagePreparer) {
-        super(props, messagePreparer);
+    public BlockEventLogger(Properties props) {
+        super(props);
     }
 
     /**
-     * Captures Block BreakEvents and sends them to the message preparer.
+     * Captures Block BreakEvents.
      *
      * @param event The captured BreakEvent.
      */

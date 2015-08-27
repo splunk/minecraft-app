@@ -11,8 +11,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.splunk.forge.event_loggers.BlockEventLogger;
 import com.splunk.forge.event_loggers.DeathEventLogger;
 import com.splunk.forge.event_loggers.PlayerEventLogger;
-import com.splunk.sharedmc.SplunkMessagePreparer;
-import com.splunk.sharedmc.loggable_events.LoggableEvent;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -49,44 +47,21 @@ public class LogToSplunkMod {
     private final EventBus mcBus;
 
     /**
-     * Used for processing messages from the various Minecraft event handlers.
-     */
-    private final SplunkMessagePreparer messagePreparer;
-
-    /**
      * Constructor that is called by Forge. Uses the default SplunkMessagePreparer.
      */
     public LogToSplunkMod() {
         //TODO: This is a 'dummy' splunk message preparer that should be om
-        this(
-                new SplunkMessagePreparer() {
-                    @Override
-                    public void writeMessage(LoggableEvent loggableEvent) {
-
-                    }
-
-                    @Override
-                    public void writeMessage(String s) {
-
-                    }
-
-                    @Override
-                    public void init(Properties properties) {
-
-                    }
-                }, FMLCommonHandler.instance().bus(), MinecraftForge.EVENT_BUS);
+        this(FMLCommonHandler.instance().bus(), MinecraftForge.EVENT_BUS);
     }
 
     /**
      * Constructor.
      *
-     * @param splunkMessagePreparer The message preparer to use.
      * @param fmlBus EventBus to register FML event listeners on. For when you're having a bad day.
      * @param mcBus Used to register MinecraftForge event listeners. Not actually Irish.
      */
     @VisibleForTesting
-    public LogToSplunkMod(SplunkMessagePreparer splunkMessagePreparer, EventBus fmlBus, EventBus mcBus) {
-        this.messagePreparer = splunkMessagePreparer;
+    public LogToSplunkMod(EventBus fmlBus, EventBus mcBus) {
         this.fmlBus = fmlBus;
         this.mcBus = mcBus;
     }
@@ -103,23 +78,21 @@ public class LogToSplunkMod {
             final FileReader reader = new FileReader(new File(path));
             properties.load(reader);
         } catch (final Exception e) {
-                        logger.warn(
-                                String.format(
-                                        "Unable to load properties for LogToSplunkMod at %s! Default values will be used.", path),
-                                e);
+            logger.warn(
+                    String.format(
+                            "Unable to load properties for LogToSplunkMod at %s! Default values will be used.", path),
+                    e);
         }
 
-        messagePreparer.init(properties);
+        final PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties);
+        fmlBus.register(playerEventLogger);
+        mcBus.register(playerEventLogger);
 
-                final PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties, messagePreparer);
-                fmlBus.register(playerEventLogger);
-                mcBus.register(playerEventLogger);
+        final BlockEventLogger blockLogger = new BlockEventLogger(properties);
+        mcBus.register(blockLogger);
 
-                final BlockEventLogger blockLogger = new BlockEventLogger(properties, messagePreparer);
-                mcBus.register(blockLogger);
-
-                final DeathEventLogger deathLogger = new DeathEventLogger(properties, messagePreparer);
-                mcBus.register(deathLogger);
+        final DeathEventLogger deathLogger = new DeathEventLogger(properties);
+        mcBus.register(deathLogger);
 
         logAndSend("Splunk for Minecraft initialized.");
     }
@@ -131,7 +104,8 @@ public class LogToSplunkMod {
      */
     private void logAndSend(String message) {
         System.out.println(message);
-        logger.info(message);
-        messagePreparer.writeMessage(message);
+
+        // no reason to log this to splunk?
+        // logger.info(message);
     }
 }
