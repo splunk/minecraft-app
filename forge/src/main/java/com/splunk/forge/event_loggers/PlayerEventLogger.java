@@ -7,6 +7,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.splunk.sharedmc.Point3dLong;
 import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,8 +23,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Handles the logging of player events.
- */
+* Handles the logging of player events.
+*/
 public class PlayerEventLogger extends AbstractEventLogger {
     public static final double GRANULARITY = 1.5;
     public static final int MAX_PLAYERS = 128;

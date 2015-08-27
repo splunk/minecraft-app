@@ -12,3 +12,7 @@ eclipse/
 logs/
 .settings
 target/
+
+#forge .idea things:
+*.ipr
+*.iws

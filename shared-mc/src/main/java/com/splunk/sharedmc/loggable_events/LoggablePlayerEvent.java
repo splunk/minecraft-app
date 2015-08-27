@@ -20,6 +20,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
      */
     public LoggablePlayerEvent(PlayerEventAction action, long gameTime, String worldName, Point3dLong location) {
         super(LoggableEventType.PLAYER, gameTime, worldName, location);
+        this.addField(ACTION, action.asString());
         this.action = action;
     }
 
@@ -55,24 +56,6 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         this.reason = reason;
         this.addField(REASON, reason);
         return this;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder b = new StringBuilder();
-        b.append(getType().getEventName()).append(": ").append(getAction().asString());
-        if (playerName != null) {
-            b.append(", By: ").append(playerName);
-        }
-        b.append(' ').append(getLocation());
-
-        if (reason != null) {
-            b.append(", Reason: ").append(reason);
-        }
-        if (message != null) {
-            b.append(", Message: ").append(message);
-        }
-        return b.toString();
     }
 
     @Override

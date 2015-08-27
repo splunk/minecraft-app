@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import com.splunk.sharedmc.Point3dLong;
 import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
 
 import net.minecraft.block.Block;
@@ -18,8 +19,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Handles the logging of block events.
- */
+* Handles the logging of block events.
+*/
 public class BlockEventLogger extends AbstractEventLogger {
 
     /**

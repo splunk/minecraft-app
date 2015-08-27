@@ -4,15 +4,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.splunk.forge.event_loggers.BlockEventLogger;
 import com.splunk.forge.event_loggers.DeathEventLogger;
 import com.splunk.forge.event_loggers.PlayerEventLogger;
-import com.splunk.sharedmc.BasicSplunkMessagePreparer;
 import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.loggable_events.LoggableEvent;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -36,8 +36,8 @@ public class LogToSplunkMod {
     public static final String SPLUNK_MOD_PROPERTIES = "/config/splunk_mod.properties";
 
     // TODO: Add splunk appender.
-    private static final Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
-
+    //    private static final Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
+    private static final Logger logger = LogManager.getLogger(LogToSplunkMod.class);
     /**
      * Used for registering listeners to FML events.
      */
@@ -57,7 +57,24 @@ public class LogToSplunkMod {
      * Constructor that is called by Forge. Uses the default SplunkMessagePreparer.
      */
     public LogToSplunkMod() {
-        this(new BasicSplunkMessagePreparer(), FMLCommonHandler.instance().bus(), MinecraftForge.EVENT_BUS);
+        //TODO: This is a 'dummy' splunk message preparer that should be om
+        this(
+                new SplunkMessagePreparer() {
+                    @Override
+                    public void writeMessage(LoggableEvent loggableEvent) {
+
+                    }
+
+                    @Override
+                    public void writeMessage(String s) {
+
+                    }
+
+                    @Override
+                    public void init(Properties properties) {
+
+                    }
+                }, FMLCommonHandler.instance().bus(), MinecraftForge.EVENT_BUS);
     }
 
     /**
@@ -86,23 +103,23 @@ public class LogToSplunkMod {
             final FileReader reader = new FileReader(new File(path));
             properties.load(reader);
         } catch (final Exception e) {
-            logger.warn(
-                    String.format(
-                            "Unable to load properties for LogToSplunkMod at %s! Default values will be used.", path),
-                    e);
+                        logger.warn(
+                                String.format(
+                                        "Unable to load properties for LogToSplunkMod at %s! Default values will be used.", path),
+                                e);
         }
 
         messagePreparer.init(properties);
 
-        final PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties, messagePreparer);
-        fmlBus.register(playerEventLogger);
-        mcBus.register(playerEventLogger);
+                final PlayerEventLogger playerEventLogger = new PlayerEventLogger(properties, messagePreparer);
+                fmlBus.register(playerEventLogger);
+                mcBus.register(playerEventLogger);
 
-        final BlockEventLogger blockLogger = new BlockEventLogger(properties, messagePreparer);
-        mcBus.register(blockLogger);
+                final BlockEventLogger blockLogger = new BlockEventLogger(properties, messagePreparer);
+                mcBus.register(blockLogger);
 
-        final DeathEventLogger deathLogger = new DeathEventLogger(properties, messagePreparer);
-        mcBus.register(deathLogger);
+                final DeathEventLogger deathLogger = new DeathEventLogger(properties, messagePreparer);
+                mcBus.register(deathLogger);
 
         logAndSend("Splunk for Minecraft initialized.");
     }
@@ -113,6 +130,7 @@ public class LogToSplunkMod {
      * @param message The message to log.
      */
     private void logAndSend(String message) {
+        System.out.println(message);
         logger.info(message);
         messagePreparer.writeMessage(message);
     }

@@ -11,14 +11,38 @@
     <packaging>pom</packaging>
 
     <artifactId>forge</artifactId>
+    <!--POM dependencies probably not really needed since gradle is used to build the artifact, this pom just installs it-->
 
     <profiles>
         <profile>
             <id>install-forge-libs</id>
-            <!--TODO: I think something needs to be done to install the forge libraries once before this can build--><!--It may happen on a regular build, and then gets skipped on subsequent exectuions, find out later..-->
+            <!--TODO: I think something needs to be done to install the forge libraries once before this can build?--><!--It may happen on a regular build, and then gets skipped on subsequent exectuions, find out later..-->
         </profile>
         <profile>
             <id>include-forge</id>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </dependency>
+
+                <!--installed by a module in this project:-->
+                <dependency>
+                    <groupId>com.splunk</groupId>
+                    <artifactId>splunk-library-javalogging</artifactId>
+                    <version>1.0.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.splunk</groupId>
+                    <artifactId>shared-mc</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -48,6 +72,7 @@
                         <version>1.4.0</version>
                         <executions>
                             <execution>
+                                <id>gradle-build</id>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
@@ -69,7 +94,6 @@
                             <execution>
                                 <id>install-splunkforge</id>
                                 <phase>package</phase>
-                                <inherited>false</inherited>
                                 <goals>
                                     <goal>install-file</goal>
                                 </goals>
@@ -77,9 +101,10 @@
                                     <file>${project.basedir}/build/libs/logtosplunk-forge-1.0-SNAPSHOT.jar</file>
                                     <groupId>com.splunk</groupId>
                                     <artifactId>logtosplunk-forge</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
+                                    <version>${project.version}</version>
                                     <createChecksum>true</createChecksum>
                                     <packaging>jar</packaging>
+                                    <pomFile>${project.basedir}/pom.xml</pomFile>
                                 </configuration>
                             </execution>
                         </executions>

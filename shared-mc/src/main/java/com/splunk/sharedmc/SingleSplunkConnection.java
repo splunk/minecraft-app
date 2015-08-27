@@ -6,8 +6,8 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 //TODO: tests?
 
@@ -46,7 +46,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     public SingleSplunkConnection(String host, int port, boolean startImmediately) {
         this.host = host;
         this.port = port;
-        logger = LoggerFactory.getLogger(LOGGER_PREFIX + host + ':' + port);
+        logger = LogManager.getLogger(LOGGER_PREFIX + host + ':' + port);
         connected = false;
 
         addFlushShutdownHook();

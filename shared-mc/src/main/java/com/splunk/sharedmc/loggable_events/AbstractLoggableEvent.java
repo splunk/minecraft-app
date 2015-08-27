@@ -46,15 +46,18 @@ public class AbstractLoggableEvent extends SplunkCimLogEvent implements Loggable
      * @param type The type of event that this is.
      */
     public AbstractLoggableEvent(LoggableEventType type, long worldTime, String worldName, Point3dLong coordinates) {
-        super(type.getEventName(), null);
+        super(type.getEventName(), "");
 
         this.type = type;
         this.worldTime = worldTime;
         this.worldName = worldName;
         this.coordinates = coordinates;
 
+
         this.addField("game_time", worldTime);
-        this.addField("world", worldName);
+        if(worldName != null) {
+            this.addField("world", worldName);
+        }
         this.addField("x", coordinates.xCoord);
         this.addField("y", coordinates.yCoord);
         this.addField("z", coordinates.zCoord);
@@ -100,5 +103,13 @@ public class AbstractLoggableEvent extends SplunkCimLogEvent implements Loggable
         }
         b.append(", WorldTime:").append(worldTime);
         return b.toString();
+    }
+
+    @Override
+    public void addField(String key, Object value){
+        if(value == null){
+            return;
+        }
+        super.addField(key, value);
     }
 }

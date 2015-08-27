@@ -59,27 +59,6 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
         return action;
     }
 
-    //    @Override
-    //    public String toString() {
-    //        final StringBuilder b = new StringBuilder();
-    //        b.append(getType().getEventName()).append(": ").append(getAction().asString());
-    //        if (killer != null) {
-    //            b.append(", Killer: ").append(killer);
-    //        }
-    //
-    //        if (vicitim != null) {
-    //            b.append(", Victim: ").append(vicitim);
-    //        }
-    //
-    //        if (damageSource != null) {
-    //            b.append(", source: ").append(damageSource);
-    //        }
-    //
-    //        b.append(' ').append(getLocation());
-    //
-    //        return b.toString();
-    //    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

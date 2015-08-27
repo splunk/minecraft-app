@@ -76,27 +76,6 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         return this;
     }
 
-    //    @Override
-    //    public String toString() {
-    //        final StringBuilder b = new StringBuilder();
-    //        b.append(getType().getEventName()).append(": ").append(getAction().asString());
-    //        if (playerName != null) {
-    //            b.append(", By: ").append(playerName);
-    //        }
-    //        if (blockName != null) {
-    //            b.append(", Block: ").append(blockName);
-    //        }
-    //        if (cause != null) {
-    //            b.append(", Cause: ").append(cause);
-    //        }
-    //        if (baseType != null) {
-    //            b.append(", Material: ").append(baseType);
-    //        }
-    //        b.append(' ').append(getLocation());
-    //
-    //        return b.toString();
-    //    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

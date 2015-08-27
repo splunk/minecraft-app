@@ -1,14 +1,14 @@
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.2.1'
+    gradleVersion = '2.5'
 }
 
 buildscript {
     repositories {
         mavenCentral()
         mavenLocal()
+
         maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url "https://plugins.gradle.org/m2/"
         }
         maven {
             name = "sonatype"
@@ -16,21 +16,40 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'gradle.plugin.net.minecraftforge.gradle:ForgeGradle:2.0.0'
         classpath 'org.mockito:mockito-all:1.8.4'
         classpath 'junit:junit:4.4'
         classpath 'org.jmockit:jmockit:1.13'
     }
 }
 
-apply plugin: 'forge'
+//apply plugin: 'forge'
+
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//        maven {
+//            name = "forge"
+//            url = "http://files.minecraftforge.net/maven"
+//        }
+//        maven {
+//            name = "sonatype"
+//            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+//        }
+//    }
+//    dependencies {
+//        classpath 'net.minecraftforge.gradle:ForgeGradle:2.0-SNAPSHOT'
+//    }
+//}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 group = "com.splunk"
 archivesBaseName = "logtosplunk-forge"
 version = "1.0-SNAPSHOT"
 
 minecraft {
-    version = "1.8-11.14.1.1309"
+    version = "1.8-11.14.3.1504"
     runDir = "eclipse"
 
     // the mappings can be changed at any time, and must be in the following format.
@@ -38,7 +57,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_nodoc_20150211"
+    mappings = "snapshot_nodoc_20150826"
 }
 
 
@@ -48,8 +67,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven {
-        name = "forge"
-        url = "http://files.minecraftforge.net/maven"
+        url "https://plugins.gradle.org/m2/"
     }
     maven {
         name = "sonatype"
@@ -62,6 +80,8 @@ dependencies {
     compile 'com.splunk:splunk-library-javalogging:1.0.1'
     compile 'com.splunk:shared-mc:1.0-SNAPSHOT'
     compile 'org.slf4j:slf4j-api:1.7.6'
+    compile 'org.apache.logging.log4j:log4j-api:2.3'
+    compile 'org.apache.logging.log4j:log4j-core:2.3'
 
     testCompile 'junit:junit:4.4'
     testCompile 'org.mockito:mockito-all:1.8.4'

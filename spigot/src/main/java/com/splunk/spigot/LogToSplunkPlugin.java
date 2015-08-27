@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.splunk.sharedmc.BasicSplunkMessagePreparer;
 import com.splunk.sharedmc.SplunkMessagePreparer;
+import com.splunk.sharedmc.loggable_events.LoggableEvent;
 import com.splunk.spigot.eventloggers.BlockEventLogger;
 import com.splunk.spigot.eventloggers.DeathEventLogger;
 
@@ -24,13 +24,28 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     private Properties properties;
     private SplunkMessagePreparer messagePreparer;
 
-    private static final Logger logger = LoggerFactory.getLogger(LogToSplunkPlugin.class.getName());
+    private static final Logger logger = LogManager.getLogger(LogToSplunkPlugin.class.getName());
 
     /**
      * Constructor that is called by Forge. Uses the default SplunkMessagePreparer.
      */
     public LogToSplunkPlugin() {
-        this(new BasicSplunkMessagePreparer());
+        this(new SplunkMessagePreparer() {
+                 @Override
+                 public void writeMessage(LoggableEvent loggable) {
+
+                 }
+
+                 @Override
+                 public void writeMessage(String message) {
+
+                 }
+
+                 @Override
+                 public void init(Properties props) {
+
+                 }
+             });
     }
 
     /**
