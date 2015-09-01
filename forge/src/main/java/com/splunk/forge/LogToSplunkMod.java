@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
         acceptableRemoteVersions = "*")
 public class LogToSplunkMod {
     public static final String MODID = "logtosplunk";
-    public static final String VERSION = "0.9.0 Beta";
+    public static final String VERSION = "1.0-SNAPSHOT";
     public static final String NAME = "Splunk for Minecraft";
     public static final String LOGGER_NAME = "LogToSplunk";
     public static final String LOG_EVENTS_TO_CONSOLE_PROP_KEY = "mod.splunk.enable.consolelog";
@@ -33,8 +33,6 @@ public class LogToSplunkMod {
     public static final String DEFAULT_PORT = "8888";
     public static final String SPLUNK_MOD_PROPERTIES = "/config/splunk_mod.properties";
 
-    // TODO: Add splunk appender.
-    //    private static final Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
     private static final Logger logger = LogManager.getLogger(LogToSplunkMod.class);
     /**
      * Used for registering listeners to FML events.
@@ -103,9 +101,6 @@ public class LogToSplunkMod {
      * @param message The message to log.
      */
     private void logAndSend(String message) {
-        System.out.println(message);
-
-        // no reason to log this to splunk?
-        // logger.info(message);
+        logger.info(message);
     }
 }

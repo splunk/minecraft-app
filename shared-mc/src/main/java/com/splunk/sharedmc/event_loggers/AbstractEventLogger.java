@@ -5,6 +5,7 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.splunk.sharedmc.SingleSplunkConnection;
 import com.splunk.sharedmc.loggable_events.LoggableEvent;
 
 /**
@@ -13,16 +14,27 @@ import com.splunk.sharedmc.loggable_events.LoggableEvent;
 public class AbstractEventLogger {
     public static final String LOGGER_NAME = "LogToSplunk";
     public static final String LOG_EVENTS_TO_CONSOLE_PROP_KEY = "mod.splunk.enable.consolelog";
+    public static final String SPLUNK_HOST = "mod.splunk.connection.host";
+    public static final String SPLUNK_PORT = "mod.splunk.connection.port";
 
     protected static final Logger logger = LogManager.getLogger(LOGGER_NAME);
+
+    private static SingleSplunkConnection connection;
 
     /**
      * If true, events will be logged to the server console.
      */
-    private final boolean logEventsToConsole;
+    private static boolean logEventsToConsole;
+    private static String host;
+    private static int port;
 
     public AbstractEventLogger(Properties properties) {
-        logEventsToConsole = Boolean.valueOf(properties.getProperty(LOG_EVENTS_TO_CONSOLE_PROP_KEY, "false"));
+        if(connection == null) {
+            logEventsToConsole = Boolean.valueOf(properties.getProperty(LOG_EVENTS_TO_CONSOLE_PROP_KEY, "true"));
+            host = properties.getProperty(SPLUNK_HOST, "127.0.0.1");
+            port = Integer.valueOf(properties.getProperty(SPLUNK_PORT, "8888"));
+            connection = new SingleSplunkConnection(host,port,true);
+        }
     }
 
     /**
@@ -31,6 +43,10 @@ public class AbstractEventLogger {
      * @param loggable The message to log.
      */
     protected void logAndSend(LoggableEvent loggable) {
-        logger.info(loggable.toString());
+        String message = loggable.toString().replace("\"", "").replaceAll("\\r\\n", "");
+       // if(logEventsToConsole) {
+            logger.info(message);
+        //}
+        connection.sendToSplunk(message);
     }
 }

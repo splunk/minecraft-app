@@ -15,8 +15,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
-* Handles the logging of death events.
-*/
+ * Handles the logging of death events.
+ */
 public class DeathEventLogger extends AbstractEventLogger {
 
     /**
@@ -63,6 +63,10 @@ public class DeathEventLogger extends AbstractEventLogger {
         final Vec3 entityPos = event.entity.getPositionVector();
         final Point3dLong position = new Point3dLong(entityPos.xCoord, entityPos.yCoord, entityPos.zCoord);
         final String worldName = world.getWorldInfo().getWorldName();
+
+        if (killer == null) {
+            killer = damageSource;
+        }
 
         logAndSend(
                 new LoggableDeathEvent(deathAction, gameTime, worldName, position).setKiller(killer).setVictim(victim)
