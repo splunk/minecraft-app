@@ -1,6 +1,6 @@
 # Overview
 
-Run `mvn clean package` from the root directory to package the LogToSplunk plugmod.
+Run `mvn clean package -Pinclude-forge` from the root directory to package the LogToSplunk plugmod.
 
 The forge mod / spigot plugin that this project builds can be found in `logtosplunk-plugin/target` and is called `logtosplunk-plugin-{version}.jar`
 
