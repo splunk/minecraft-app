@@ -59,10 +59,10 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${project.basedir}/lib/splunk-library-javalogging-1.0.1.jar</file>
+                            <file>${project.basedir}/lib/splunk-library-javalogging-1.5.0.jar</file>
                             <groupId>com.splunk</groupId>
                             <artifactId>splunk-library-javalogging</artifactId>
-                            <version>1.0.1</version>
+                            <version>1.5.0</version>
                             <createChecksum>true</createChecksum>
                         </configuration>
                     </execution>
