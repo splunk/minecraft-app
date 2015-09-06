@@ -29,6 +29,17 @@ public class PlayerEventLogger extends AbstractEventLogger {
     public static final int MAX_PLAYERS = 128;
 
     /**
+     * Keeps track players last positions, in a guava cache for it's eviction policy.
+     */
+    private final Cache<String, Vec3> lastKnownCoordinates = CacheBuilder.newBuilder().maximumSize(MAX_PLAYERS).build(
+            new CacheLoader<String, Vec3>() {
+                @Override
+                public Vec3 load(String key) throws Exception {
+                    return lastKnownCoordinates.getIfPresent(key);
+                }
+            });
+
+    /**
      * Constructs a new PlayerEventLogger.
      *
      * @param props Properties to configure this EventLogger with.
@@ -142,15 +153,4 @@ public class PlayerEventLogger extends AbstractEventLogger {
             }
         }
     }
-
-    /**
-     * Keeps track players last positions, in a guava cache for it's eviction policy.
-     */
-    private final Cache<String, Vec3> lastKnownCoordinates = CacheBuilder.newBuilder().maximumSize(MAX_PLAYERS).build(
-            new CacheLoader<String, Vec3>() {
-                @Override
-                public Vec3 load(String key) throws Exception {
-                    return lastKnownCoordinates.getIfPresent(key);
-                }
-            });
 }

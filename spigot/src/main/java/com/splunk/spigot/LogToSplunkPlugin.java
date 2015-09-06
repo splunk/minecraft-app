@@ -60,7 +60,11 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
         logger.info(message);
     }
 
+    // nullable...
     public static Point3dLong locationAsPoint(Location location){
+        if(location == null){
+            return null;
+        }
         return new Point3dLong(location.getX(),location.getY(),location.getZ());
     }
 }

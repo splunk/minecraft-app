@@ -67,6 +67,9 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     }
 
     public LoggablePlayerEvent setTo(Point3dLong to) {
+        if(to == null){
+            return this;
+        }
         this.to = to;
         this.addField("to_x", to.xCoord);
         this.addField("to_y", to.yCoord);
@@ -79,6 +82,9 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     }
 
     public LoggablePlayerEvent setFrom(Point3dLong from) {
+        if(from == null){
+            return this;
+        }
         this.from = from;
         this.addField("from_x", from.xCoord);
         this.addField("from_y", from.yCoord);

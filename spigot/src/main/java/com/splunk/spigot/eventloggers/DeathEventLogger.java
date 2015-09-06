@@ -1,5 +1,8 @@
 package com.splunk.spigot.eventloggers;
 
+import static com.splunk.spigot.LogToSplunkPlugin.locationAsPoint;
+
+import java.util.List;
 import java.util.Properties;
 
 import org.bukkit.event.EventHandler;
@@ -7,7 +10,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import com.google.common.collect.Lists;
+import com.splunk.sharedmc.Point3dLong;
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
+import com.splunk.sharedmc.loggable_events.LoggableDeathEvent;
 
 /**
  * Handles the logging of death events.
@@ -20,6 +26,12 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
      */
     public static final boolean IGNORE_MONSTER_ACCIDENTS = true;
 
+    // ouch:
+    public static final List<String> monsterNames = Lists.newArrayList(
+            "Wolf", "Creeper", "Skeleton", "Blaze", "Cave Spider", "Spider", "Zombie Pigman", "Zombie", "Endermite",
+            "Enderman", "Magma Cube", "Witch", "Wither", "Guardian", "Ghast", "Slime", "Silverfish");
+
+
     public DeathEventLogger(Properties properties) {
         super(properties);
     }
@@ -31,17 +43,42 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
      */
     @EventHandler
     public void captureDeathEvent(EntityDeathEvent event) {
-        event.getEventName();
+        String victim = event.getEntity().getName();
         String killer = null;
-        logger.info("death event: " + event.getEventName() + "  " + event.getEntity().getKiller());
-        //        logAndSend(
-        //                new LoggableDeathEvent(deathAction, gameTime, worldName,
-        // position).setKiller(killer).setVicitim(victim)
-        //                        .setDamageSource(damageSource));
+        long gameTime = event.getEntity().getWorld().getTime();
+        String world = event.getEntity().getWorld().getName();
+        Point3dLong location = locationAsPoint(event.getEntity().getLocation());
+
         if (event instanceof PlayerDeathEvent) {
             event.getEntity().getLastDamageCause();
-            logger.info("DAMAGE CAUSE:" + event.getEntity().getLastDamageCause().getCause().name());
-            logger.info("PLAYER DEATH (womp womp): " + ((PlayerDeathEvent) event).getDeathMessage());
+            if(event.getEntity().getKiller() != null){
+                killer = event.getEntity().getKiller().getDisplayName();
+            }else{
+                for(String mob : monsterNames){
+                    if(((PlayerDeathEvent) event).getDeathMessage().contains(mob)){
+                        killer = mob;
+                        break;
+                    }
+                }
+            }
+
+            if(killer == null){
+                killer = event.getEntity().getLastDamageCause().getCause().name();
+            }
+            LoggableDeathEvent deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, gameTime, world, location);
+            deathEvent.setKiller(killer);
+            deathEvent.setVictim(victim);
+            deathEvent.setDamageSource(event.getEntity().getLastDamageCause().getCause().name());
+            logAndSend(deathEvent);
+        } else {
+            if (event.getEntity().getKiller() != null) {
+                killer = event.getEntity().getKiller().getDisplayName();
+                LoggableDeathEvent deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.MOB_DIED, gameTime, world, location);
+                deathEvent.setKiller(killer);
+                deathEvent.setVictim(victim);
+                deathEvent.setDamageSource(event.getEntity().getLastDamageCause().getCause().name());
+                logAndSend(deathEvent);
+            }
         }
     }
 }
