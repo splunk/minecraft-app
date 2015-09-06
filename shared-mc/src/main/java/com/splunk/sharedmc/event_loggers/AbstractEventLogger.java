@@ -13,6 +13,8 @@ import com.splunk.sharedmc.loggable_events.LoggableEvent;
  */
 public class AbstractEventLogger {
     public static final String LOGGER_NAME = "LogToSplunk";
+
+    //TODO: rename these so neither mod nor plugin are in the key? (mod=forge, plugin=spigot)...
     public static final String LOG_EVENTS_TO_CONSOLE_PROP_KEY = "mod.splunk.enable.consolelog";
     public static final String SPLUNK_HOST = "mod.splunk.connection.host";
     public static final String SPLUNK_PORT = "mod.splunk.connection.port";
@@ -29,11 +31,11 @@ public class AbstractEventLogger {
     private static int port;
 
     public AbstractEventLogger(Properties properties) {
-        if(connection == null) {
+        if (connection == null) {
             logEventsToConsole = Boolean.valueOf(properties.getProperty(LOG_EVENTS_TO_CONSOLE_PROP_KEY, "true"));
             host = properties.getProperty(SPLUNK_HOST, "127.0.0.1");
             port = Integer.valueOf(properties.getProperty(SPLUNK_PORT, "8888"));
-            connection = new SingleSplunkConnection(host,port,true);
+            connection = new SingleSplunkConnection(host, port, true);
         }
     }
 
@@ -44,8 +46,9 @@ public class AbstractEventLogger {
      */
     protected void logAndSend(LoggableEvent loggable) {
         String message = loggable.toString().replace("\"", "").replaceAll("\\r\\n", "");
-       // if(logEventsToConsole) {
-            logger.info(message);
+        // TODO: reimplement...?
+        // if(logEventsToConsole) {
+        logger.info(message);
         //}
         connection.sendToSplunk(message);
     }

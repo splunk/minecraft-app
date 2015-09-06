@@ -59,7 +59,6 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <!--TODO: will we be able to get this from central eventually?--><!--TODO: Can we commit this to private repo -not sure if we can  get access splunk remote repo-->
                             <file>${project.basedir}/lib/splunk-library-javalogging-1.0.1.jar</file>
                             <groupId>com.splunk</groupId>
                             <artifactId>splunk-library-javalogging</artifactId>
