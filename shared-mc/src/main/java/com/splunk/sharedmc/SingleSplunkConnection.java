@@ -1,13 +1,21 @@
 package com.splunk.sharedmc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.Queue;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
 
 /**
  * Knows a single Splunk instance by its host:port and forwards data to it.
@@ -15,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 public class SingleSplunkConnection implements SplunkConnection, Runnable {
     private static final String LOGGER_PREFIX = "SplunkConnection - ";
     private static final String DEFAULT_RECONNECT_TIME = "10";
+    private String BASE_URL = "http://%s:%s/services/collector/event/1.0";
 
     /**
      * Interval in seconds between attempts to connect to Splunk.
@@ -23,15 +32,15 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
             Integer.valueOf(System.getProperty("splunk_mc.reconnect_time", DEFAULT_RECONNECT_TIME));
 
     private final Logger logger;
-    private final String host;
-    private final int port;
-    private Socket socket;
-    private boolean connected;
+    private final String url;
 
-    /**
-     * This objects' data buffer.
-     */
-    private final Queue<String> data = new LinkedList<String>();
+    private CloseableHttpClient httpClient;
+
+    private String token;
+
+    // lazy
+    private StringBuilder messagesToSend = new StringBuilder();
+    private StringBuilder messagesOnRunway;
 
     /**
      * Constructor. Determines which Splunk instance this will connect to based on the host:port passed in. Set up a
@@ -41,11 +50,11 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
      * @param port Port of Splunk to connect to.
      * @param startImmediately If true, creates a thread and starts this Splunk on construction.
      */
-    public SingleSplunkConnection(String host, int port, boolean startImmediately) {
-        this.host = host;
-        this.port = port;
+    public SingleSplunkConnection(String host, int port, String token, boolean startImmediately) {
         logger = LogManager.getLogger(LOGGER_PREFIX + host + ':' + port);
-        connected = false;
+        this.token = token;
+        url = String.format(BASE_URL, host, port);
+        httpClient = HttpClients.createDefault();
 
         addFlushShutdownHook();
 
@@ -57,12 +66,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     @Override
     public void run() {
         while (true) {
-            if (connect()) {
-                if (!sendData()) {
-                    logger.error(String.format("Failed to send a message, will retry in %s seconds", RECONNECT_TIME));
-                }
-            }
-
+            sendData();
             try {
                 Thread.sleep(1000 * RECONNECT_TIME);
             } catch (final InterruptedException e) {
@@ -78,92 +82,50 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
      */
     @Override
     public void sendToSplunk(String message) {
-        final String stampedMsg = Calendar.getInstance().getTime().toString() + ' ' + message + "\r\n\r\n";
+        JSONObject event = new JSONObject();
+        message = Calendar.getInstance().getTime().toString() + ' ' + message;
+        event.put("event", message);
 
-        boolean sent = false;
-        while (!sent) {
-            synchronized (data) {
-                sent = data.offer(stampedMsg);
-            }
-        }
+        messagesToSend.append(event.toString());
     }
 
-    /**
-     * Access if this SplunkConnection is connected to its Splunk instance.
-     *
-     * @return True if it is connected to its Splunk instance.
-     */
-    public boolean isConnected() {
-        return socket != null && socket.isConnected();
-    }
-
-    /**
-     * Tries to connect to this Splunk Connections associated Splunk @ its {@code host:port}.
-     *
-     * @return True if the socket was successfully initialized.
-     */
-    private boolean connect() {
-        final boolean wasConnected = socket != null;
-        socket = getSocket();
-        connected = socket != null;
-
-        if (connected && !wasConnected) {
-            logger.info(
-                    "LogToSplunk connected with Splunk instance " + host + ':' + port);
-        } else if (!connected && wasConnected) {
-            logger.error(String.format("Lost connection to splunk instance: %s:%s!", host, port));
-        }
-
-        return connected;
-    }
-
-    /**
-     * Attempts to open a socket to the desired Splunk.
-     *
-     * @return A Socket if opened successfully, or null if not.
-     */
-    private Socket getSocket() {
-        final String errMsg = "Problem connecting to splunk";
-        try {
-            return new Socket(host, port);
-        } catch (final Exception e) {
-            logger.error(errMsg, e);
-            return null;
-        }
-    }
-
-    /**
-     * Tries to send this Splunk connection's payload {@code data} to a Splunk via the {@link
-     * SingleSplunkConnection#send(String)} method. Aborts if it fails to send a message.
-     */
     private boolean sendData() {
-        while (!data.isEmpty()) {
-            final String message = data.peek();
-            if (send(message)) {
-                synchronized (data) {
-                    data.remove();
-                }
-            } else {
-                return false;
-            }
+        boolean success = false;
+        // probably a better way to do this.
+        if (messagesOnRunway == null && messagesToSend.length() > 0) {
+            messagesOnRunway = messagesToSend;
+            messagesToSend = new StringBuilder();
+        }else{
+            // no messages to send, so safe to say messages have been sent.
+            return messagesOnRunway == null;
         }
-        return true;
-    }
-
-    /**
-     * Ships a message off to a Splunk.
-     *
-     * @param message The message to send to Splunk.
-     * @return True if the operation succeeded.
-     */
-    private boolean send(String message) {
         try {
-            socket.getOutputStream().write(message.getBytes("UTF-8"));
-            return true;
+            logger.info("Sending data to splunk...");
+            HttpPost post = new HttpPost(url);
+            post.setHeader("Authorization", "Splunk " + token);
+            StringEntity entity = new StringEntity(messagesOnRunway.toString(), ContentType.APPLICATION_JSON);
+            post.setEntity(entity);
+            CloseableHttpResponse response = httpClient.execute(post);
+            int responseCode = response.getStatusLine().getStatusCode();
+
+            if (responseCode > 199 && responseCode < 300) {
+                messagesOnRunway = null;
+                success = true;
+            } else {
+                ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+                response.getEntity().writeTo(outstream);
+                byte[] responseBody = outstream.toByteArray();
+                logger.error(new String(responseBody));
+            }
+
+            response.close();
+            post.completed();
         } catch (final IOException e) {
-            logger.debug("Unable to send message!");
-            return false;
+            logger.error("Unable to send message!", e);
+            success = false;
         }
+
+        return success;
     }
 
     /**
@@ -183,5 +145,9 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
                         }
                     }
                 });
+    }
+
+    private void initHttpClient() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+
     }
 }

@@ -14,10 +14,10 @@ import com.splunk.sharedmc.loggable_events.LoggableEvent;
 public class AbstractEventLogger {
     public static final String LOGGER_NAME = "LogToSplunk";
 
-    //TODO: rename these so neither mod nor plugin are in the key? (mod=forge, plugin=spigot)...
-    public static final String LOG_EVENTS_TO_CONSOLE_PROP_KEY = "mod.splunk.enable.consolelog";
-    public static final String SPLUNK_HOST = "mod.splunk.connection.host";
-    public static final String SPLUNK_PORT = "mod.splunk.connection.port";
+    public static final String LOG_EVENTS_TO_CONSOLE_PROP_KEY = "splunk.craft.enable.consolelog";
+    public static final String SPLUNK_HOST = "splunk.craft.connection.host";
+    public static final String SPLUNK_PORT = "splunk.craft.connection.port";
+    public static final String SPLUNK_TOKEN = "splunk.craft.token";
 
     protected static final Logger logger = LogManager.getLogger(LOGGER_NAME);
 
@@ -29,13 +29,21 @@ public class AbstractEventLogger {
     private static boolean logEventsToConsole;
     private static String host;
     private static int port;
+    private static String token;
 
     public AbstractEventLogger(Properties properties) {
+        //  brittle way to do this
         if (connection == null) {
             logEventsToConsole = Boolean.valueOf(properties.getProperty(LOG_EVENTS_TO_CONSOLE_PROP_KEY, "true"));
             host = properties.getProperty(SPLUNK_HOST, "127.0.0.1");
-            port = Integer.valueOf(properties.getProperty(SPLUNK_PORT, "8888"));
-            connection = new SingleSplunkConnection(host, port, true);
+            port = Integer.valueOf(properties.getProperty(SPLUNK_PORT, "8088"));
+            token = properties.getProperty(SPLUNK_TOKEN);
+            if(token == null){
+                throw new IllegalArgumentException("The property `splunk.craft.token` must be set with the value of a" +
+                        " splunk token in order to use the Splunk minecraft plugin/mod!");
+            }
+
+            connection = new SingleSplunkConnection(host, port, token, true);
         }
     }
 
@@ -46,10 +54,9 @@ public class AbstractEventLogger {
      */
     protected void logAndSend(LoggableEvent loggable) {
         String message = loggable.toString().replace("\"", "").replaceAll("\\r\\n", "");
-        // TODO: reimplement...?
-        // if(logEventsToConsole) {
-        logger.info(message);
-        //}
+        if(logEventsToConsole) {
+            logger.info(message);
+        }
         connection.sendToSplunk(message);
     }
 }

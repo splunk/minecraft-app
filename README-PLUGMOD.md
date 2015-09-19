@@ -12,13 +12,15 @@ This library is currently hacked into the build because I don't have access to t
 
 # Config
 
-Place properties at `config/splunk_mod.properties` (works for both plugin and mod); path is relative to directory where minecraft is executed from (generally where minecraft server jar is...).
+Place properties at `config/splunk.properties` (works for both plugin and mod); path is relative to directory where minecraft is executed from (generally where minecraft server jar is...).
 
-The splunk host and port can be configured with the properties: `mod.splunk.connection.host` and `mod.splunk.connection.port`; for example:
+The splunk host, port, and tokencan be configured with the properties: `splunk.craft.connection.host`, `splunk.craft.connection.port` and `splunk.craft.token`; for example:
 
 ```
-mod.splunk.connection.host=127.0.0.1
-mod.splunk.connection.port=8888
+splunk.craft.connection.host=127.0.0.1
+splunk.craft.connection.port=8088
+splunk.craft.token=12345678-1234-5678-1234-123456789012
+splunk.craft.enable.consolelog=true
 ```
 
 Note that the values listed here are the defaults.

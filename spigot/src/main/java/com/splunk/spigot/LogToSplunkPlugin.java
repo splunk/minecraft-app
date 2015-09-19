@@ -17,9 +17,9 @@ import com.splunk.spigot.eventloggers.PlayerEventLogger;
 
 public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     public static final String MODID = "logtosplunk";
-    public static final String VERSION = "0.9.0 Beta";
+    public static final String VERSION = "1.0-SNAPSHOT";
     public static final String NAME = "Splunk for Minecraft";
-    public static final String SPLUNK_MOD_PROPERTIES = "/config/splunk_mod.properties";
+    public static final String SPLUNK_PROPERTIES = "/config/splunk.properties";
 
     private Properties properties;
 
@@ -30,8 +30,9 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
      */
     @Override
     public void onEnable() {
+        // Could probably move this to the AbstractEventLogger in shared
         properties = new Properties();
-        final String path = System.getProperty("user.dir") + SPLUNK_MOD_PROPERTIES;
+        final String path = System.getProperty("user.dir") + SPLUNK_PROPERTIES;
         try (final FileReader reader = new FileReader(new File(path))) {
 
             properties.load(reader);
@@ -41,8 +42,6 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
                             "Unable to load properties for LogToSplunkMod at %s! Default values will be used.", path),
                     e);
         }
-
-
 
         getServer().getPluginManager().registerEvents(new BlockEventLogger(properties), this);
         getServer().getPluginManager().registerEvents(new DeathEventLogger(properties), this);
@@ -61,10 +60,10 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     }
 
     // nullable...
-    public static Point3dLong locationAsPoint(Location location){
-        if(location == null){
+    public static Point3dLong locationAsPoint(Location location) {
+        if (location == null) {
             return null;
         }
-        return new Point3dLong(location.getX(),location.getY(),location.getZ());
+        return new Point3dLong(location.getX(), location.getY(), location.getZ());
     }
 }
