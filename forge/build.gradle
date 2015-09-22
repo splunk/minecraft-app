@@ -58,7 +58,7 @@ repositories {
 
 
 dependencies {
-    compile 'com.splunk:splunk-library-javalogging:1.0.1'
+    compile(group: 'com.splunk.logging', name: 'splunk-library-javalogging', version: '1.5.0')
     compile 'com.splunk:shared-mc:1.0-SNAPSHOT'
     compile 'org.slf4j:slf4j-api:1.7.6'
     compile 'org.apache.logging.log4j:log4j-api:2.3'
