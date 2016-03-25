@@ -11,3 +11,8 @@ eclipse/
 .classpath
 logs/
 .settings
+target/
+
+#forge .idea things:
+*.ipr
+*.iws
