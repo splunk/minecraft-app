@@ -1,7 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.splunk</groupId>
     <artifactId>splunk.minecraft.app</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -12,7 +10,6 @@
         <module>logtosplunk-plugin</module>
     </modules>
     <packaging>pom</packaging>
-
     <repositories>
         <repository>
             <snapshots>
@@ -22,10 +19,19 @@
             <name>libs-releases</name>
             <url>http://splunk.artifactoryonline.com/splunk/libs-releases</url>
         </repository>
+        <repository>
+            <id>splunk-artifactory</id>
+            <name>Splunk Releases</name>
+            <url>http://splunk.artifactoryonline.com/splunk/ext-releases-local</url>
+        </repository>
     </repositories>
-
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.splunk.logging</groupId>
+                <artifactId>splunk-library-javalogging</artifactId>
+                <version>1.5.0</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
@@ -40,11 +46,6 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.splunk.logging</groupId>
-                <artifactId>splunk-library-javalogging</artifactId>
-                <version>1.5.0</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
