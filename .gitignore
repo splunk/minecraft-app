@@ -13,6 +13,8 @@ logs/
 .settings
 target/
 
+*.DS_Store
+
 #forge .idea things:
 *.ipr
 *.iws
