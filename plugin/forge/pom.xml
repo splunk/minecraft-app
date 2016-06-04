@@ -33,9 +33,9 @@
 
                 <!--installed by a module in this project:-->
                 <dependency>
-                    <groupId>com.splunk</groupId>
+                    <groupId>com.splunk.logging</groupId>
                     <artifactId>splunk-library-javalogging</artifactId>
-                    <version>1.0.1</version>
+                    <version>1.5.0</version>
                 </dependency>
                 <dependency>
                     <groupId>com.splunk</groupId>
