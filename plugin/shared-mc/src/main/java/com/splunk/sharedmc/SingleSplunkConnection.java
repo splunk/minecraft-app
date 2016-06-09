@@ -36,6 +36,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
 
     private CloseableHttpClient httpClient;
 
+    private String server;
     private String token;
 
     // lazy
@@ -48,13 +49,16 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
      *
      * @param host Host of Splunk to connect to.
      * @param port Port of Splunk to connect to.
+     * @param server Name of Minecraft server.
      * @param startImmediately If true, creates a thread and starts this Splunk on construction.
      */
-    public SingleSplunkConnection(String host, int port, String token, boolean startImmediately) {
+    public SingleSplunkConnection(String host, int port, String server, String token, boolean startImmediately) {
         logger = LogManager.getLogger(LOGGER_PREFIX + host + ':' + port);
         this.token = token;
         url = String.format(BASE_URL, host, port);
         httpClient = HttpClients.createDefault();
+
+        this.server = server;
 
         addFlushShutdownHook();
 
@@ -83,7 +87,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     @Override
     public void sendToSplunk(String message) {
         JSONObject event = new JSONObject();
-        message = Calendar.getInstance().getTime().toString() + ' ' + message;
+        message = Calendar.getInstance().getTime().toString() + ' ' + message + " server=" + (this.server).trim();
         event.put("event", message);
 
         messagesToSend.append(event.toString());
