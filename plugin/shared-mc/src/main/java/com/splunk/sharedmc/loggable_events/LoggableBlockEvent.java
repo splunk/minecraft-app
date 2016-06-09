@@ -8,12 +8,14 @@ import com.splunk.sharedmc.Point3dLong;
 public class LoggableBlockEvent extends AbstractLoggableEvent {
     public static final String BASE_TYPE = "base_type";
     public static final String BLOCK_NAME = "block_type";
+    public static final String TOOL_USED = "tool_used";
 
     private String playerName;
     private String cause;
     private final BlockEventAction action;
     private String blockName;
     private String baseType;
+    private String toolUsed;
 
     /**
      * Constructor.
@@ -76,6 +78,14 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         return this;
     }
 
+    public String getToolUsed() { return toolUsed;}
+
+    public LoggableBlockEvent setToolUsed(String toolUsed){
+        this.toolUsed = toolUsed;
+        this.addField(TOOL_USED, toolUsed);
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -107,6 +117,10 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
             return false;
         }
 
+        if (baseType != null ? !baseType.equals(that.toolUsed) : that.toolUsed != null){
+            return false;
+        }
+
         if (this.getWorldTime() != that.getWorldTime()) {
             return false;
         }
@@ -124,6 +138,7 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
         result = 31 * result + (cause != null ? cause.hashCode() : 0);
         result = 31 * result + (blockName != null ? blockName.hashCode() : 0);
         result = 31 * result + (baseType != null ? baseType.hashCode() : 0);
+        result = 31 * result + (toolUsed != null ? baseType.hashCode(): 0);
 
         return result;
     }
