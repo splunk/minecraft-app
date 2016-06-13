@@ -3,7 +3,6 @@ package com.splunk.spigot.eventloggers;
 import java.util.Properties;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -16,6 +15,7 @@ import com.splunk.sharedmc.Point3dLong;
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggableBlockEvent;
 import com.splunk.sharedmc.loggable_events.LoggableBlockEvent.BlockEventAction;
+
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -36,7 +36,7 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
     public void captureBreakEvent(BlockBreakEvent event) {
 
         // only log successful log breaks
-        if ( !event.isCancelled() ) {
+        if (!event.isCancelled()) {
             event.getPlayer().getInventory().getItemInMainHand();
             logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.BREAK, event, event.getPlayer().getInventory().getItemInMainHand()));
         }
@@ -54,25 +54,28 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
 
 
     private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event) {
-       return  getLoggableBlockBreakPlaceEvent(action,event,null);
+        return getLoggableBlockBreakPlaceEvent(action, event, null);
     }
 
     private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event, ItemStack items) {
 
+        String tool_used = "";
+
         final Block block = event.getBlock();
         final Location location = event.getBlock().getLocation();
-
-        // TODO: There are things we can do with item stacks to get more accurate names;
-        // This should probably be done eventually as *hopefully* this api will remain fairly constant.
-
-        //final String name = block.getType().name();
         final String baseType = block.getType().name();
-        final World w = block.getWorld();
+
+        final World world = block.getWorld();
 
         // Find out how the block was broken
-       final String tool_used = items.getType().toString();
+        if (items != null) {
+            tool_used = items.getType().toString();
 
-        String name = "";
+            if (tool_used == "AIR") {
+                tool_used = "FIST";
+            }
+        }
+        String name;
         switch (block.getType()) {
             case STONE:
                 String[] StoneBlockNames = {
@@ -176,6 +179,15 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
                 };
                 name = HardenedClayBlockNames[block.getState().getData().toItemStack(1).getDurability()];
                 break;
+            case STAINED_CLAY:
+                String[] StainedClayBlockNames = {
+                        "WHITE_STAINED_CLAY", "ORANGE_STAINED_CLAY", "MAGENTA_STAINED_CLAY", "LIGHTBLUE_STAINED_CLAY",
+                        "YELLOW_STAINED_CLAY", "LIME_STAINED_CLAY", "PINK_STAINED_CLAY", "GRAY_STAINED_CLAY",
+                        "LIGHTGRAY_STAINED_CLAY", "CYAN_STAINED_CLAY", "PURPLE_STAINED_CLAY", "BLUE_STAINED_CLAY",
+                        "BROWN_STAINED_CLAY", "GREEN_STAINED_CLAY", "RED_STAINED_CLAY", "BLACK_STAINED_CLAY"
+                };
+                name = StainedClayBlockNames[block.getState().getData().toItemStack(1).getDurability()];
+                break;
             case WOOL:
                 String[] WoolBlockNames = {
                         "WHITE_WOOL", "ORANGE_WOOL", "MAGENTA_WOOL", "LIGHTBLUE_WOOL",
@@ -214,6 +226,12 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
                 };
                 name = WoodSlabBlockNames[block.getState().getData().toItemStack(1).getDurability()];
                 break;
+            case PRISMARINE:
+                String[] PrismarineBLockNames = {
+                        "PRISMARINE", "PRISMARINE_BRICKS", "DARK_PRISMARINE"
+                };
+                name = PrismarineBLockNames[block.getState().getData().toItemStack(1).getDurability()];
+                break;
             default:
                 name = block.getType().name();
                 break;
@@ -229,7 +247,7 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
             playerName = ((BlockPlaceEvent) event).getPlayer().getName();
         }
 
-        return new LoggableBlockEvent(action, w.getFullTime(), w.getWorldType().getName(), coords).setBlockName(name)
+        return new LoggableBlockEvent(action, world.getFullTime(), world.getName(), coords).setBlockName(name)
                 .setPlayerName(playerName).setBaseType(baseType).setToolUsed(tool_used);
     }
 }
