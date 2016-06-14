@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent;
 import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent.PlayerEventAction;
@@ -83,7 +84,7 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Location previous = lastKnownCoordinates.getIfPresent(event.getPlayer().getDisplayName());
 
-        if (previous != null && previous.distance(event.getTo()) < GRANULARITY) {
+        if (previous != null && event.getFrom().getWorld().getName() == previous.getWorld().getName() && previous.distance(event.getTo()) < GRANULARITY) {
             return;
         }
 
