@@ -1,8 +1,16 @@
 # Minecraft App
 
-#### Version 0.8 Beta
+### Version 1.0
 
 The Minecraft App lets you visualize the minecraft world from the guts side. Wondering how many blocks have been dug up by your buddies? Not a problem. Wondering who's found the most diamonds? Yep, got it covered. Have you been planting enough wheat? Carrots? Pototoes? The Minecraft App will let you know.
+
+### Release Notes
+
+* Uses the new Splunk HTTP Event Collector as it's input instead of TCP.
+* Now supports Spigot and Forge as well as Craftbukkit as a unified plugin jar.
+* Plugin will cache items that the server does not acknowledge so restarting Splunk is no longer an issue
+* Ore images in the "Mined Blocks" page of the app now display correctly.
+* Minor bug fixes.
 
 ### Getting Started
 This section provides information about installing and using the Minecraft App. 
@@ -11,9 +19,12 @@ This section provides information about installing and using the Minecraft App.
 
 * Operating System: Windows, Linux, or Mac OS X.
 * Web browsers: Latest versions of Chrome, Safari, or Firefox, Internet Explorer 9 or later. 
-* Craftbukkit: The open source minecraft server from [Craftbukkit](http://bukkit.org/)
+* Craftbukkit, Spigot or Forge
+  * [Craftbukkit](http://bukkit.org/)
+  * [Spigot](https://www.spigotmc.org)
+  * [Forge](http://www.minecraftforge.net/)
 * LogToSplunk Plugin: The log to splunk plugin that allows input of more detailed minecraft data to splunk from [CraftBukkit](http://dev.bukkit.org/bukkit-plugins/logtosplunk/)
-* The Splunk Web Framework: The Web Framework is included in Splunk 6 and is available for Splunk 5 from the 
+* The Splunk Web Framework: The Web Framework is included in Splunk 6 and is available for download for Splunk 5 from the 
 [Splunk Developer Portal](http://dev.splunk.com/view/webframework-standalone/SP-CAAAEMA).
 * Minecraft Overviewer (Optional): The Google Maps based minecraft word renderer from [Overviewer](http://overviewer.org)
 
@@ -33,19 +44,26 @@ or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.gi
 3. Restart Splunk.
 4. In Splunk Web, navigate to the Minecraft App (*http://localhost:8000/dj/minecraft-app*).
 
-##### Input Configuration
+#### Event Collector Configuration
 
-1. Confgiure a TCP input as noted in the [Documentation](http://docs.splunk.com/Documentation/Splunk/6.0/Data/Monitornetworkports) for whatever port you like.
+1. Confgiure the Splunk Http Event Collector as noted in the [Documentation](http://dev.splunk.com/view/event-collector/SP-CAAAE6M) for whatever port you like.
 2. Ensure firewalls and NAT are properly configured if applicable
+3. Take note of the application key as you will need it later on
 
 
 #### Installing the LogToSplunk Plugin
 
-1. Downlod the jar from [Craftbukkit](http://dev.bukkit.org/bukkit-plugins/logtosplunk/)
-2. Copy the LogToSplunk jar into your craftbukkit server's `/plugins` folder.
-3. Create a `/LogToSplunk` directory in the `/plugins` folder
-4. Create a and edit `/config.yml` text file in the `/LogToSplunk` directory created in 3
-   * The text file should contain one line in the format of "splunks: \<Splunk Server\>:\<TCP Input Port\>" (ie. "splunks: localhost:8888"). Multiple servers can be added as comma separated values between the server:port entries. A port must be specified.
+1. Copy the LogToSplunk jar from the app tgz or app directory into your craftbukkit server's `plugins` directory.
+2. Create a `config` directory in the root server folder (the directory that contains the `plugins` folder).
+3. Create and edit a `splunk.properties` text file in the `config` directory created in 3. Replace the port and application in your `splunk.properties` and adjust other options as necessary.
+
+ * Use the app token from the Event Collector Configuration above for this property `splunk.craft.token=BEEFCAFE-1337-F00D-8BDA-2410D44E3453`
+
+ * If you're running splunk on a separate machine from your minecraft server update this property `splunk.craft.connection.host=127.0.0.1`
+
+ * Use the app token from the Event Collector Configuration above for this property `splunk.craft.connection.port=8088`
+
+ * If you wish to log the output to a local log as well set this property to "true" `mod.splunk.enable.consolelog=false`
 
 #### Configuring The Livemap
 
@@ -60,9 +78,8 @@ NOTE: The minecraft-app does not refresh overviewer renders automatically. This 
 
 #### Known Issues
 
-1) LogToSplunk does not maintain connecton across Splunk restarts. The minecraft server must be restarted if Splunk is restarted
-2) Time calculations and active players may be mis-reported if player disconnects are not logged properly (ie. due to a server crash). Orphaned sessions may be estimated by running sessions from connection to the subsequent server start.
-3) The live map may appear to "shift" as the minecraft world expands and overviewer resets it's origin in future renders. This can be corrected by recopying and modifying the overviewerConfig.js script with the same steps as the installation.
+1) Time calculations and active players may be mis-reported if player disconnects are not logged properly (ie. due to a server crash). Orphaned sessions may be estimated by running sessions from connection to the subsequent server start.
+2) The live map may appear to "shift" as the minecraft world expands and overviewer resets it's origin in future renders. This can be corrected by recopying and modifying the overviewerConfig.js script with the same steps as the installation.
 
 
 
@@ -70,9 +87,13 @@ NOTE: The minecraft-app does not refresh overviewer renders automatically. This 
 
 When you need to know more:
 
-* For CraftBukkit documentation, see [Craftbukkit](http://bukkit.org/)
-
 * For Overviewer documentation, see [Overviewer](http://overviewer.org)
+
+* For Spigt documentation, see [Spigot](https://www.spigotmc.org)
+
+* For Forge documentation, see [Forge](http://www.minecraftforge.net/)
+
+* For CraftBukkit documentation, see [Craftbukkit](http://bukkit.org/)
 
 * For all things developer with Splunk, your main resource is the [Splunk Developer Portal](http://dev.splunk.com).
 
