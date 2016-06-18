@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.splunk.sharedmc.Point3dLong;
@@ -37,8 +38,8 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
 
         // only log successful log breaks
         if (!event.isCancelled()) {
-            event.getPlayer().getInventory().getItemInMainHand();
-            logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.BREAK, event, event.getPlayer().getInventory().getItemInMainHand()));
+
+            logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.BREAK, event, event.getPlayer().getInventory().getItemInMainHand().getType().toString()));
         }
     }
 
@@ -52,14 +53,45 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.PLACE, event));
     }
 
+    @EventHandler
+    public void captureIgniteEvent(BlockIgniteEvent event) {
+
+        String cause = null;
+        switch ( event.getCause())
+        {
+            case ENDER_CRYSTAL:
+                cause = "ENDER_CRYSTAL";
+                break;
+            case EXPLOSION:
+                cause = "EXPLOSION";
+                break;
+            case FIREBALL:
+                cause = "FIREBALL";
+                break;
+            case FLINT_AND_STEEL:
+                cause = "FLINT_AND_STEEL";
+                break;
+            case LAVA:
+                cause = "LAVA";
+                break;
+            case LIGHTNING:
+                cause = "LIGHTNING";
+                break;
+            case SPREAD:
+                cause = "SPREAD";
+                break;
+        }
+        logAndSend(getLoggableBlockBreakPlaceEvent(BlockEventAction.IGNITE, event,cause));
+
+    }
 
     private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event) {
         return getLoggableBlockBreakPlaceEvent(action, event, null);
     }
 
-    private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event, ItemStack items) {
+    private LoggableBlockEvent getLoggableBlockBreakPlaceEvent(BlockEventAction action, BlockEvent event, String tool_used) {
 
-        String tool_used = "";
+
 
         final Block block = event.getBlock();
         final Location location = event.getBlock().getLocation();
@@ -67,14 +99,11 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
 
         final World world = block.getWorld();
 
-        // Find out how the block was broken
-        if (items != null) {
-            tool_used = items.getType().toString();
 
             if (tool_used == "AIR") {
                 tool_used = "FIST";
             }
-        }
+
         String name;
         switch (block.getType()) {
             case STONE:

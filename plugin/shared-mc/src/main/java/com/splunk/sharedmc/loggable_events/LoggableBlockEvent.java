@@ -148,7 +148,8 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
      */
     public enum BlockEventAction {
         BREAK("block_broken"),
-        PLACE("block_placed");
+        PLACE("block_placed"),
+        IGNITE("block_ignite");
 
         /**
          * The name of the action.
