@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -81,6 +83,17 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
     }
 
     @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        Location previous = lastKnownCoordinates.getIfPresent(event.getPlayer().getDisplayName());
+
+        String cause = event.getCause().name();
+
+        logAndSend(
+                generateLoggablePlayerEvent(
+                        event, PlayerEventAction.TELEPORT, cause, null));
+    }
+
+    @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Location previous = lastKnownCoordinates.getIfPresent(event.getPlayer().getDisplayName());
 
@@ -90,7 +103,7 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
 
         logAndSend(
                 generateLoggablePlayerEvent(
-                        event, PlayerEventAction.LOCATION, null, null));
+                        event, PlayerEventAction.MOVE,null, null));
     }
 
     private LoggablePlayerEvent generateLoggablePlayerEvent(
@@ -105,7 +118,7 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         loggable.setReason(reason);
         loggable.setMessage(message);
 
-        if (event.getClass().equals(PlayerMoveEvent.class)) {
+        if (event.getClass().equals(PlayerMoveEvent.class) || event.getClass().equals(PlayerTeleportEvent.class)) {
 
             loggable.setFrom(
                     locationAsPoint(lastKnownCoordinates.getIfPresent(event.getPlayer().getDisplayName())));
