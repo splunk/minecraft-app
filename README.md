@@ -1,16 +1,8 @@
 # Minecraft App
 
-### Version 1.0
+### Version 1.1
 
 The Minecraft App lets you visualize the minecraft world from the guts side. Wondering how many blocks have been dug up by your buddies? Not a problem. Wondering who's found the most diamonds? Yep, got it covered. Have you been planting enough wheat? Carrots? Pototoes? The Minecraft App will let you know.
-
-### Release Notes
-
-* Uses the new Splunk HTTP Event Collector as it's input instead of TCP.
-* Now supports Spigot and Forge as well as Craftbukkit as a unified plugin jar.
-* Plugin will cache items that the server does not acknowledge so restarting Splunk is no longer an issue
-* Ore images in the "Mined Blocks" page of the app now display correctly.
-* Minor bug fixes.
 
 ### Getting Started
 This section provides information about installing and using the Minecraft App. 
@@ -20,7 +12,6 @@ This section provides information about installing and using the Minecraft App.
 * Operating System: Windows, Linux, or Mac OS X.
 * Web browsers: Latest versions of Chrome, Safari, or Firefox, Internet Explorer 9 or later. 
 * Craftbukkit, Spigot or Forge
-  * [Craftbukkit](http://bukkit.org/)
   * [Spigot](https://www.spigotmc.org)
   * [Forge](http://www.minecraftforge.net/)
 * LogToSplunk Plugin: The log to splunk plugin that allows input of more detailed minecraft data to splunk from [CraftBukkit](http://dev.bukkit.org/bukkit-plugins/logtosplunk/)
@@ -46,10 +37,9 @@ or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.gi
 
 #### Event Collector Configuration
 
-1. Confgiure the Splunk Http Event Collector as noted in the [Documentation](http://dev.splunk.com/view/event-collector/SP-CAAAE6M) for whatever port you like.
+1. Configure the Splunk HTTP Event Collector as noted in the [Documentation](http://dev.splunk.com/view/event-collector/SP-CAAAE6M) for whatever port you like.
 2. Ensure firewalls and NAT are properly configured if applicable
 3. Take note of the application key as you will need it later on
-
 
 #### Installing the LogToSplunk Plugin
 
