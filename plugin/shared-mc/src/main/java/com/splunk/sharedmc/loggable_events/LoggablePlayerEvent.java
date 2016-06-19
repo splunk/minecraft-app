@@ -47,7 +47,8 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
 
     public LoggablePlayerEvent setMessage(String message) {
         this.message = message;
-        this.addField(MESSAGE, message);
+        if (message != null)
+            this.addField(MESSAGE, "'" + message + "'");
         return this;
     }
 
@@ -67,7 +68,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     }
 
     public LoggablePlayerEvent setTo(Point3dLong to) {
-        if(to == null){
+        if (to == null) {
             return this;
         }
         this.to = to;
@@ -82,7 +83,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     }
 
     public LoggablePlayerEvent setFrom(Point3dLong from) {
-        if(from == null){
+        if (from == null) {
             return this;
         }
         this.from = from;
@@ -90,7 +91,8 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         this.addField("from_y", from.yCoord);
         this.addField("from_z", from.zCoord);
 
-        return this;    }
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -143,7 +145,8 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         PLAYER_CONNECT("player_connect"),
         PLAYER_DISCONNECT("player_disconnect"),
         CHAT("chat"),
-        LOCATION("move");
+        MOVE("move"),
+        TELEPORT("teleport");
 
         /**
          * The name of the action.
