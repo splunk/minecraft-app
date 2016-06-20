@@ -4,7 +4,7 @@ Run `mvn clean package -Pinclude-forge` from the root directory to package the L
 
 The forge mod / spigot plugin that this project builds can be found in `logtosplunk-plugin/target` and is called `logtosplunk-plugin-{version}.jar`
 
-Currently the supported veresion of minecraft are 1.8.7 for spigot and 1.8-1504 for forge; possible that newer versions are compatible with the plugmod.
+Currently the supported veresion of minecraft are 1.10 for spigot and 1.8-1504 for forge; possible that newer versions are compatible with the plugmod.
 
 # Config
 
