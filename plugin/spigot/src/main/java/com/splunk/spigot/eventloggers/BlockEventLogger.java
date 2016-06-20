@@ -100,7 +100,7 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
         final World world = block.getWorld();
 
 
-            if (tool_used == "AIR") {
+            if (tool_used.equals("AIR")) {
                 tool_used = "FIST";
             }
 
