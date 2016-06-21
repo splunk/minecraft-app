@@ -8,7 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -103,8 +106,16 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
 
         logAndSend(
                 generateLoggablePlayerEvent(
-                        event, PlayerEventAction.MOVE,null, null));
+                        event, PlayerEventAction.MOVE, null, null));
     }
+
+    @EventHandler
+    public void OnPlayerEmpty(PlayerBucketEmptyEvent event) {
+        logAndSend(
+                generateLoggablePlayerEvent(
+                        event, PlayerEventAction.EMPTY, event.getBucket().name(), null));
+    }
+
 
     private LoggablePlayerEvent generateLoggablePlayerEvent(
             PlayerEvent event, PlayerEventAction actionType, String reason, String message) {

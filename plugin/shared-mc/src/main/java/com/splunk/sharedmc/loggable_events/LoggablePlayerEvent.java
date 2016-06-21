@@ -144,9 +144,10 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     public enum PlayerEventAction {
         PLAYER_CONNECT("player_connect"),
         PLAYER_DISCONNECT("player_disconnect"),
-        CHAT("chat"),
-        MOVE("move"),
-        TELEPORT("teleport");
+        CHAT("player_chat"),
+        MOVE("player_move"),
+        TELEPORT("player_teleport"),
+        EMPTY("player_empty");
 
         /**
          * The name of the action.
