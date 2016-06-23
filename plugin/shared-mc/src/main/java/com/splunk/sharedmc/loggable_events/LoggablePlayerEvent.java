@@ -46,9 +46,9 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     }
 
     public LoggablePlayerEvent setMessage(String message) {
-        this.message = message;
+        this.message = "'"+ message+ "'";
         if (message != null)
-            this.addField(MESSAGE, "'" + message + "'");
+            this.addField(MESSAGE, this.message);
         return this;
     }
 
