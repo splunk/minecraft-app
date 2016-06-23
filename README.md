@@ -1,6 +1,6 @@
 # Minecraft App
 
-### Version 1.1
+### Version 1.1.1
 
 The Minecraft App lets you visualize the minecraft world from the guts side. Wondering how many blocks have been dug up by your buddies? Not a problem. Wondering who's found the most diamonds? Yep, got it covered. Have you been planting enough wheat? Carrots? Pototoes? The Minecraft App will let you know.
 

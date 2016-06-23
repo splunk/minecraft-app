@@ -60,7 +60,7 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
     @EventHandler
     public void onPlayerConnect(PlayerLoginEvent event) {
         logAndSend(
-                generateLoggablePlayerEvent(event, PlayerEventAction.PLAYER_CONNECT, null, event.getKickMessage()));
+                generateLoggablePlayerEvent(event, PlayerEventAction.PLAYER_CONNECT, null, null));
     }
 
     /**
@@ -103,7 +103,7 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
 
         logAndSend(
                 generateLoggablePlayerEvent(
-                        event, PlayerEventAction.MOVE,null, null));
+                        event, PlayerEventAction.MOVE, null, null));
     }
 
     private LoggablePlayerEvent generateLoggablePlayerEvent(
@@ -114,9 +114,11 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(
                 actionType, worldTime, worldName, locationAsPoint(event.getPlayer().getLocation()));
 
-        loggable.setPlayerName(event.getPlayer().getDisplayName());
-        loggable.setReason(reason);
-        loggable.setMessage(message);
+        loggable.setPlayerName(event.getPlayer().getDisplayName().replace("§4", "").replace("§r", ""));
+        if ((reason != null) || (reason == ""))
+            loggable.setReason(reason);
+        if ((message != null) || (message == ""))
+        loggable.setMessage(message.replace("§e", ""));
 
         if (event.getClass().equals(PlayerMoveEvent.class) || event.getClass().equals(PlayerTeleportEvent.class)) {
 
