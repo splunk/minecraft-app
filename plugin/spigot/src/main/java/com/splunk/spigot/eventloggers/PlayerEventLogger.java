@@ -8,7 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -104,22 +107,45 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(
                 generateLoggablePlayerEvent(
                         event, PlayerEventAction.MOVE, null, null));
+<<<<<<< HEAD
+=======
+    }
+
+    @EventHandler
+    public void OnPlayerEmpty(PlayerBucketEmptyEvent event) {
+        logAndSend(
+                generateLoggablePlayerEvent(
+                        event, PlayerEventAction.EMPTY, null, null,event.getBucket().name()));
+>>>>>>> feature/track_liquids
     }
 
     private LoggablePlayerEvent generateLoggablePlayerEvent(
             PlayerEvent event, PlayerEventAction actionType, String reason, String message) {
+        return generateLoggablePlayerEvent(event, actionType, reason, message, null);
+    }
+
+    private LoggablePlayerEvent generateLoggablePlayerEvent(
+            PlayerEvent event, PlayerEventAction actionType, String reason, String message, String item) {
         final World world = event.getPlayer().getWorld();
         final long worldTime = world.getTime();
         final String worldName = world.getName();
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(
                 actionType, worldTime, worldName, locationAsPoint(event.getPlayer().getLocation()));
 
+<<<<<<< HEAD
         loggable.setPlayerName(event.getPlayer().getDisplayName().replace("§4", "").replace("§r", ""));
         if ((reason != null) || (reason == ""))
             loggable.setReason(reason);
         if ((message != null) || (message == ""))
         loggable.setMessage(message.replace("§e", ""));
 
+=======
+        loggable.setPlayerName(event.getPlayer().getDisplayName());
+        loggable.setReason(reason);
+        loggable.setMessage(message);
+        if ((item != null) || (item != ""))
+            loggable.setItem(item);
+>>>>>>> feature/track_liquids
         if (event.getClass().equals(PlayerMoveEvent.class) || event.getClass().equals(PlayerTeleportEvent.class)) {
 
             loggable.setFrom(
