@@ -113,12 +113,16 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
     public void OnPlayerEmpty(PlayerBucketEmptyEvent event) {
         logAndSend(
                 generateLoggablePlayerEvent(
-                        event, PlayerEventAction.EMPTY, event.getBucket().name(), null));
+                        event, PlayerEventAction.EMPTY, null, null,event.getBucket().name()));
     }
-
 
     private LoggablePlayerEvent generateLoggablePlayerEvent(
             PlayerEvent event, PlayerEventAction actionType, String reason, String message) {
+        return generateLoggablePlayerEvent(event, actionType, reason, message, null);
+    }
+
+    private LoggablePlayerEvent generateLoggablePlayerEvent(
+            PlayerEvent event, PlayerEventAction actionType, String reason, String message, String item) {
         final World world = event.getPlayer().getWorld();
         final long worldTime = world.getTime();
         final String worldName = world.getName();
@@ -128,7 +132,8 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         loggable.setPlayerName(event.getPlayer().getDisplayName());
         loggable.setReason(reason);
         loggable.setMessage(message);
-
+        if ((item != null) || (item != ""))
+            loggable.setItem(item);
         if (event.getClass().equals(PlayerMoveEvent.class) || event.getClass().equals(PlayerTeleportEvent.class)) {
 
             loggable.setFrom(

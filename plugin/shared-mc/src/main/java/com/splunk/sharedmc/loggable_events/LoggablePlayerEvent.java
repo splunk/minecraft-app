@@ -6,12 +6,16 @@ import com.splunk.sharedmc.Point3dLong;
  * Almost pojo with fields for information that might be associated with a player event.
  */
 public class LoggablePlayerEvent extends AbstractLoggableEvent {
+
     public static final String MESSAGE = "message";
     public static final String REASON = "reason";
+    public static final String ITEM = "item";
+
     private String playerName;
     private final PlayerEventAction action;
     private String message;
     private String reason;
+    private String item;
 
     private Point3dLong from;
     private Point3dLong to;
@@ -62,6 +66,13 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         return this;
     }
 
+    public String getItem() { return item;}
+
+    public LoggablePlayerEvent setItem( String item){
+        this.item = item;
+        this.addField(ITEM, item);
+        return this;
+    }
 
     public Point3dLong getTo() {
         return to;
@@ -147,7 +158,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         CHAT("player_chat"),
         MOVE("player_move"),
         TELEPORT("player_teleport"),
-        EMPTY("player_empty");
+        EMPTY("bucket_empty");
 
         /**
          * The name of the action.
