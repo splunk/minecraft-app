@@ -107,16 +107,13 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(
                 generateLoggablePlayerEvent(
                         event, PlayerEventAction.MOVE, null, null));
-<<<<<<< HEAD
-=======
     }
 
     @EventHandler
     public void OnPlayerEmpty(PlayerBucketEmptyEvent event) {
         logAndSend(
                 generateLoggablePlayerEvent(
-                        event, PlayerEventAction.EMPTY, null, null,event.getBucket().name()));
->>>>>>> feature/track_liquids
+                        event, PlayerEventAction.EMPTY, null, null, event.getBucket().name()));
     }
 
     private LoggablePlayerEvent generateLoggablePlayerEvent(
@@ -132,20 +129,15 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(
                 actionType, worldTime, worldName, locationAsPoint(event.getPlayer().getLocation()));
 
-<<<<<<< HEAD
+
         loggable.setPlayerName(event.getPlayer().getDisplayName().replace("§4", "").replace("§r", ""));
         if ((reason != null) || (reason == ""))
             loggable.setReason(reason);
         if ((message != null) || (message == ""))
-        loggable.setMessage(message.replace("§e", ""));
-
-=======
-        loggable.setPlayerName(event.getPlayer().getDisplayName());
-        loggable.setReason(reason);
-        loggable.setMessage(message);
+            loggable.setMessage(message.replace("§e", ""));
         if ((item != null) || (item != ""))
             loggable.setItem(item);
->>>>>>> feature/track_liquids
+
         if (event.getClass().equals(PlayerMoveEvent.class) || event.getClass().equals(PlayerTeleportEvent.class)) {
 
             loggable.setFrom(
