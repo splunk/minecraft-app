@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.splunk.sharedmc.Point3dLong;
 import com.splunk.spigot.eventloggers.BlockEventLogger;
 import com.splunk.spigot.eventloggers.DeathEventLogger;
+import com.splunk.spigot.eventloggers.EntityEventLogger;
 import com.splunk.spigot.eventloggers.PlayerEventLogger;
 
 public class LogToSplunkPlugin extends JavaPlugin implements Listener {
@@ -46,6 +47,7 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new BlockEventLogger(properties), this);
         getServer().getPluginManager().registerEvents(new DeathEventLogger(properties), this);
         getServer().getPluginManager().registerEvents(new PlayerEventLogger(properties), this);
+        getServer().getPluginManager().registerEvents(new EntityEventLogger(properties),this);
 
         logAndSend("Splunk for Minecraft initialized.");
     }

@@ -124,7 +124,7 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
     private LoggablePlayerEvent generateLoggablePlayerEvent(
             PlayerEvent event, PlayerEventAction actionType, String reason, String message, String item) {
         final World world = event.getPlayer().getWorld();
-        final long worldTime = world.getTime();
+        final long worldTime = world.getFullTime();
         final String worldName = world.getName();
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(
                 actionType, worldTime, worldName, locationAsPoint(event.getPlayer().getLocation()));
