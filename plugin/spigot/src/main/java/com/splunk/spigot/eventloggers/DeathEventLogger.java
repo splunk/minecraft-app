@@ -64,7 +64,7 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
             }
 
             if (killer == null) {
-                killer = event.getEntity().getLastDamageCause().getCause().name();
+                killer = event.getEntity().getLastDamageCause().getCause().name().replace("§4", "").replace("§r", "");
             }
             LoggableDeathEvent deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, gameTime, world, location);
             deathEvent.setKiller(killer);
