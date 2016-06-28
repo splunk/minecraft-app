@@ -8,6 +8,8 @@ import java.util.Properties;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityBreedEvent;
@@ -25,14 +27,14 @@ public class EntityEventLogger extends AbstractEventLogger implements Listener {
     }
 
     @EventHandler
-    public void captureSpawnEvent(CreatureSpawnEvent event){
+    public void captureSpawnEvent(CreatureSpawnEvent event) {
 
         final String reason = event.getSpawnReason().name();
-        logAndSend(getLoggableEntityDefaultEvent(LoggableEntityEvent.EntityEventAction.ENTITY_SPAWN, event,reason));
+        logAndSend(getLoggableEntityDefaultEvent(LoggableEntityEvent.EntityEventAction.ENTITY_SPAWN, event, reason));
     }
 
 
-    private LoggableEntityEvent getLoggableEntityDefaultEvent(LoggableEntityEvent.EntityEventAction action, EntityEvent event, String reason){
+    private LoggableEntityEvent getLoggableEntityDefaultEvent(LoggableEntityEvent.EntityEventAction action, EntityEvent event, String reason) {
 
 
         final Location location = event.getEntity().getLocation();
@@ -41,9 +43,13 @@ public class EntityEventLogger extends AbstractEventLogger implements Listener {
         final Point3dLong coords = new Point3dLong(location.getX(), location.getY(), location.getZ());
 
 
-
-        final String entityName = event.getEntity().getName();
-
+        String entityName = "";
+        if (event.getEntityType() == EntityType.SKELETON) {
+            org.bukkit.entity.Skeleton skeleton = (org.bukkit.entity.Skeleton) event.getEntity();
+            entityName = skeleton.getSkeletonType().name() + "_SKELETON";
+        } else {
+            entityName = event.getEntityType().getName();
+        }
 
         return new LoggableEntityEvent(action, world.getFullTime(), world.getName(), coords).setEntityName(entityName).setReason(reason);
     }
