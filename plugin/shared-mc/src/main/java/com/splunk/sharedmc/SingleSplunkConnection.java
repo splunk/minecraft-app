@@ -91,7 +91,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     public void sendToSplunk(String message) {
         JSONObject event = new JSONObject();
 
-        DateFormat df_8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:Z");
+        DateFormat df_8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
         message = df_8601.format(new Date()) + ' ' + message + " server=" + (this.server).trim();
         event.put("event", message);
