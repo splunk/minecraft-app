@@ -130,11 +130,11 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
                 actionType, worldTime, worldName, locationAsPoint(event.getPlayer().getLocation()));
 
 
-        loggable.setPlayerName(event.getPlayer().getDisplayName().replace("§4", "").replace("§r", ""));
+        loggable.setPlayerName(event.getPlayer().getDisplayName());
         if ((reason != null) || (reason == ""))
             loggable.setReason(reason);
         if ((message != null) || (message == ""))
-            loggable.setMessage(message.replace("§e", ""));
+            loggable.setMessage(message);
         if ((item != null) || (item != ""))
             loggable.setItem(item);
 

@@ -1,6 +1,8 @@
 package com.splunk.sharedmc.loggable_events;
 
 import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.Utilities;
+
 
 /**
  * Almost pojo with fields for information that might be associated with a block event.
@@ -31,7 +33,7 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
 
     public LoggableDeathEvent setVictim(String victim) {
         this.vicitim = victim;
-        this.addField(VICTIM, victim);
+        this.addField(VICTIM, Utilities.sanitizeString(victim));
         return this;
     }
 
@@ -41,7 +43,7 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
 
     public LoggableDeathEvent setKiller(String killer) {
         this.killer = killer;
-        this.addField(KILLER, killer);
+        this.addField(KILLER, Utilities.sanitizeString(killer));
         return this;
     }
 

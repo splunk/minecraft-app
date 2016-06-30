@@ -75,7 +75,7 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
             }
 
             if (killer == null) {
-                killer = event.getEntity().getLastDamageCause().getCause().name().replace("§4", "").replace("§r", "");
+                killer = event.getEntity().getLastDamageCause().getCause().name();
             }
 
 

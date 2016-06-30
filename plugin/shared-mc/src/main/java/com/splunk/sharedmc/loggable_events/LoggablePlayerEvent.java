@@ -1,6 +1,7 @@
 package com.splunk.sharedmc.loggable_events;
 
 import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.Utilities;
 
 /**
  * Almost pojo with fields for information that might be associated with a player event.
@@ -37,7 +38,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
 
     public LoggablePlayerEvent setPlayerName(String playerName) {
         this.playerName = playerName;
-        this.addField(PLAYER_NAME, playerName);
+        this.addField(PLAYER_NAME, Utilities.sanitizeString(playerName));
         return this;
     }
 
@@ -52,7 +53,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     public LoggablePlayerEvent setMessage(String message) {
         this.message = "'"+ message+ "'";
         if (message != null)
-            this.addField(MESSAGE, this.message);
+            this.addField(MESSAGE, Utilities.sanitizeString(this.message));
         return this;
     }
 
@@ -62,7 +63,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
 
     public LoggablePlayerEvent setReason(String reason) {
         this.reason = reason;
-        this.addField(REASON, reason);
+        this.addField(REASON, Utilities.sanitizeString(reason));
         return this;
     }
 
