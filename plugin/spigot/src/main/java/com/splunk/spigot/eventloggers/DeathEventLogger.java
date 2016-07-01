@@ -4,6 +4,8 @@ import static com.splunk.spigot.LogToSplunkPlugin.locationAsPoint;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -53,49 +55,55 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
 
 
         String victim = "";
-        if (event.getEntityType() == EntityType.SKELETON) {
-            org.bukkit.entity.Skeleton skeleton = (org.bukkit.entity.Skeleton) event.getEntity();
-            victim = skeleton.getSkeletonType().name() + "_SKELETON";
-        } else {
-            victim = event.getEntityType().getName();
-        }
 
 
+        LoggableDeathEvent deathEvent;
         if (event instanceof PlayerDeathEvent) {
-            event.getEntity().getLastDamageCause();
-            if (event.getEntity().getKiller() != null) {
-                killer = event.getEntity().getKiller().getDisplayName();
-            } else {
-                for (String mob : monsterNames) {
-                    if (((PlayerDeathEvent) event).getDeathMessage().contains(mob)) {
-                        killer = mob;
-                        break;
-                    }
-                }
-            }
-
-            if (killer == null) {
-                killer = event.getEntity().getLastDamageCause().getCause().name();
-            }
+            // Player died
+            deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, gameTime, world, location);
+            victim = event.getEntity().getName();
 
 
-            LoggableDeathEvent deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, gameTime, world, location);
-            deathEvent.setKiller(killer);
-            deathEvent.setVictim(victim);
-            deathEvent.setDamageSource(event.getEntity().getLastDamageCause().getCause().name());
-            logAndSend(deathEvent);
         } else {
-            if (event.getEntity().getKiller() != null && event.getEntity().getKiller().getDisplayName() != "ENTITY_ATTACK" && event.getEntity().getKiller().getDisplayName() != "FIRE_TICK") {
-                killer = event.getEntity().getKiller().getDisplayName();
-            } else {
-                // killer = event.getEntity().getLastDamageCause().getCause().name();
-            }
-            LoggableDeathEvent deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.MOB_DIED, gameTime, world, location);
-            deathEvent.setKiller(killer);
-            deathEvent.setVictim(victim);
-            deathEvent.setDamageSource(event.getEntity().getLastDamageCause().getCause().name());
-            logAndSend(deathEvent);
 
+            //mob died
+            deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.MOB_DIED, gameTime, world, location);
+
+            victim = event.getEntityType().name();
+            if (event.getEntityType() == EntityType.SKELETON) {
+                org.bukkit.entity.Skeleton skeleton = (org.bukkit.entity.Skeleton) event.getEntity();
+                victim = skeleton.getSkeletonType().name() + "_SKELETON";
+            }
         }
+
+        if (event.getEntity().getKiller() != null) {
+            // Player did the killing
+            killer = event.getEntity().getKiller().getDisplayName();
+            victim = event.getEntity().getCustomName();
+
+            final String instrument = event.getEntity().getKiller().getInventory().getItemInMainHand().getData().toString();
+            deathEvent.setInstrument(instrument.replaceAll("\\(\\S*\\)", ""));
+
+        } else {
+            // Mob did the killing
+            if (event instanceof PlayerDeathEvent) {
+                // Only works if a player dies.
+
+                Pattern regex = Pattern.compile("\\S* (was slain by|was shot by a|was blown up by) (?<killer>\\S*)");
+                Matcher matcher = regex.matcher(((PlayerDeathEvent) event).getDeathMessage());
+
+                if (matcher.matches()) {
+                    killer = matcher.group("killer");
+                }
+
+
+            }
+        }
+
+        deathEvent.setKiller(killer);
+        deathEvent.setVictim(victim);
+        deathEvent.setDamageSource(event.getEntity().getLastDamageCause().getCause().name());
+
+        logAndSend(deathEvent);
     }
 }
