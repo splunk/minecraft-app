@@ -8,7 +8,7 @@
     <modules>
         <module>spigot</module>
         <module>shared-mc</module>
-        <module>forge</module>
+        <!--<module>forge</module>-->
         <module>logtosplunk-plugin</module>
     </modules>
     <packaging>pom</packaging>

@@ -58,11 +58,11 @@
         <profile>
             <id>include-forge</id>
             <dependencies>
-                <dependency>
-                    <groupId>com.splunk</groupId>
-                    <artifactId>logtosplunk-forge</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
+                <!--<dependency>-->
+                    <!--<groupId>com.splunk</groupId>-->
+                    <!--<artifactId>logtosplunk-forge</artifactId>-->
+                    <!--<version>${project.version}</version>-->
+                <!--</dependency>-->
                 <dependency>
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-api</artifactId>
@@ -72,9 +72,9 @@
                     <artifactId>log4j-core</artifactId>
                 </dependency>
                 <dependency>
-                    <groupId>com.splunk</groupId>
+                    <groupId>com.splunk.logging</groupId>
                     <artifactId>splunk-library-javalogging</artifactId>
-                    <version>1.0.1</version>
+                    <version>1.5.1</version>
                 </dependency>
                 <dependency>
                     <groupId>com.splunk</groupId>
