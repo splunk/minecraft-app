@@ -66,7 +66,7 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
 
     public LoggableDeathEvent setInstrument(String instrument) {
         this._instrument = instrument;
-        this.addField(INSTRUMENT, Utilities.sanitizeString(this._instrument));
+        this.addField(INSTRUMENT, Utilities.removeSpaces(this._instrument));
         return this;
     }
 
