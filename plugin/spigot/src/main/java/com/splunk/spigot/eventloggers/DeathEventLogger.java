@@ -79,7 +79,6 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
         if (event.getEntity().getKiller() != null) {
             // Player did the killing
             killer = event.getEntity().getKiller().getDisplayName();
-            victim = event.getEntity().getCustomName();
 
             final String instrument = event.getEntity().getKiller().getInventory().getItemInMainHand().getData().toString();
             deathEvent.setInstrument(instrument.replaceAll("\\(\\S*\\)", ""));
