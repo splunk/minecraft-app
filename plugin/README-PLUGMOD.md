@@ -1,10 +1,10 @@
 # Overview
 
-Run `mvn clean package -Pinclude-forge` from the root directory to package the LogToSplunk plugmod.
+Run `mvn clean package` from the plugin directory to package the LogToSplunk plugmod.
 
-The forge mod / spigot plugin that this project builds can be found in `logtosplunk-plugin/target` and is called `logtosplunk-plugin-{version}.jar`
+The forge spigot plugin that this project builds can be found in `logtosplunk-plugin/target` and is called `logtosplunk-plugin-{version}.jar`
 
-Currently the supported veresion of minecraft are 1.10 for spigot and 1.8-1504 for forge; possible that newer versions are compatible with the plugmod.
+Currently the supported veresion of minecraft are 1.10 for spigot; possible that newer versions are compatible with the plugmod.
 
 # Config
 
@@ -15,8 +15,9 @@ The splunk host, port, and tokencan be configured with the properties: `splunk.c
 ```
 splunk.craft.connection.host=127.0.0.1
 splunk.craft.connection.port=8088
-splunk.craft.token=12345678-1234-5678-1234-123456789012
+splunk.craft.token=1234-5678-1234-123456789012
 splunk.craft.enable.consolelog=true
+splunk.craft.server.name=default
 ```
 
 Note that the values listed here are the defaults.
