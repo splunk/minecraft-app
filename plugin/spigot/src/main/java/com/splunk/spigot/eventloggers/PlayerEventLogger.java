@@ -8,7 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -106,19 +109,34 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
                         event, PlayerEventAction.MOVE, null, null));
     }
 
+    @EventHandler
+    public void OnPlayerEmpty(PlayerBucketEmptyEvent event) {
+        logAndSend(
+                generateLoggablePlayerEvent(
+                        event, PlayerEventAction.EMPTY, null, null, event.getBucket().name()));
+    }
+
     private LoggablePlayerEvent generateLoggablePlayerEvent(
             PlayerEvent event, PlayerEventAction actionType, String reason, String message) {
+        return generateLoggablePlayerEvent(event, actionType, reason, message, null);
+    }
+
+    private LoggablePlayerEvent generateLoggablePlayerEvent(
+            PlayerEvent event, PlayerEventAction actionType, String reason, String message, String item) {
         final World world = event.getPlayer().getWorld();
-        final long worldTime = world.getTime();
+        final long worldTime = world.getFullTime();
         final String worldName = world.getName();
         final LoggablePlayerEvent loggable = new LoggablePlayerEvent(
                 actionType, worldTime, worldName, locationAsPoint(event.getPlayer().getLocation()));
 
-        loggable.setPlayerName(event.getPlayer().getDisplayName().replace("§4", "").replace("§r", ""));
+
+        loggable.setPlayerName(event.getPlayer().getDisplayName());
         if ((reason != null) || (reason == ""))
             loggable.setReason(reason);
         if ((message != null) || (message == ""))
-        loggable.setMessage(message.replace("§e", ""));
+            loggable.setMessage(message);
+        if ((item != null) || (item != ""))
+            loggable.setItem(item);
 
         if (event.getClass().equals(PlayerMoveEvent.class) || event.getClass().equals(PlayerTeleportEvent.class)) {
 

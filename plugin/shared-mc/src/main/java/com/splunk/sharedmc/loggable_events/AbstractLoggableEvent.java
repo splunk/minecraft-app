@@ -12,6 +12,7 @@ import com.splunk.sharedmc.Point3dLong;
 public class AbstractLoggableEvent extends SplunkCimLogEvent implements LoggableEvent {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static final String PLAYER_NAME = "player";
+    public static final String ENTITY_NAME = "entity";
     public static final String CAUSE = "cause";
     public static final String ACTION = "action";
 

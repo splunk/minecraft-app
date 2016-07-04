@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -87,7 +90,10 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     @Override
     public void sendToSplunk(String message) {
         JSONObject event = new JSONObject();
-        message = Calendar.getInstance().getTime().toString() + ' ' + message + " server=" + (this.server).trim();
+
+        DateFormat df_8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+        message = df_8601.format(new Date()) + ' ' + message + " server=" + (this.server).trim();
         event.put("event", message);
 
         messagesToSend.append(event.toString());

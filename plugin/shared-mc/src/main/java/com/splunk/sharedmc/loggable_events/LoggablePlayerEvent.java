@@ -1,17 +1,22 @@
 package com.splunk.sharedmc.loggable_events;
 
 import com.splunk.sharedmc.Point3dLong;
+import com.splunk.sharedmc.Utilities;
 
 /**
  * Almost pojo with fields for information that might be associated with a player event.
  */
 public class LoggablePlayerEvent extends AbstractLoggableEvent {
+
     public static final String MESSAGE = "message";
     public static final String REASON = "reason";
+    public static final String ITEM = "item";
+
     private String playerName;
     private final PlayerEventAction action;
     private String message;
     private String reason;
+    private String item;
 
     private Point3dLong from;
     private Point3dLong to;
@@ -33,7 +38,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
 
     public LoggablePlayerEvent setPlayerName(String playerName) {
         this.playerName = playerName;
-        this.addField(PLAYER_NAME, playerName);
+        this.addField(PLAYER_NAME, Utilities.sanitizeString(playerName));
         return this;
     }
 
@@ -48,7 +53,7 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     public LoggablePlayerEvent setMessage(String message) {
         this.message = "'"+ message+ "'";
         if (message != null)
-            this.addField(MESSAGE, this.message);
+            this.addField(MESSAGE, Utilities.sanitizeString(this.message));
         return this;
     }
 
@@ -58,10 +63,17 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
 
     public LoggablePlayerEvent setReason(String reason) {
         this.reason = reason;
-        this.addField(REASON, reason);
+        this.addField(REASON, Utilities.sanitizeString(reason));
         return this;
     }
 
+    public String getItem() { return item;}
+
+    public LoggablePlayerEvent setItem( String item){
+        this.item = item;
+        this.addField(ITEM, item);
+        return this;
+    }
 
     public Point3dLong getTo() {
         return to;
@@ -144,9 +156,10 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
     public enum PlayerEventAction {
         PLAYER_CONNECT("player_connect"),
         PLAYER_DISCONNECT("player_disconnect"),
-        CHAT("chat"),
-        MOVE("move"),
-        TELEPORT("teleport");
+        CHAT("player_chat"),
+        MOVE("player_move"),
+        TELEPORT("player_teleport"),
+        EMPTY("bucket_empty");
 
         /**
          * The name of the action.

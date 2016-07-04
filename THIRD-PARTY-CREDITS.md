@@ -4,6 +4,6 @@ The Splunk Web Framework Toolkit contains some libraries that were written by ot
 
 Minecraft images are Copyright Mojang and published under the Creative Commons 3.0 license.
 
-| Library | Version | URL | License |
-| ------- |:-------:|:---:|:-------:|
+| Library     | Version          | URL                                                         | License                                                            |
+| -------     | :-------:        | :---:                                                       | :-------:                                                          |
 | CraftBukkit | v1.6.x and 1.5.x | [bukkit/CraftBukkit](https://github.com/Bukkit/CraftBukkit) | [LGPL](https://github.com/Bukkit/CraftBukkit/blob/master/LGPL.txt) |
