@@ -11,10 +11,13 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
     public static final String VICTIM = "victim";
     public static final String KILLER = "killer";
     public static final String DAMAGE_SOURCE = "damage_source";
-    private String killer;
-    private String vicitim;
-    private String damageSource;
+    public static final String INSTRUMENT = "killing_instrument";
+
+    private String _killer;
+    private String _victim;
+    private String _damageSource;
     private final DeathEventAction action;
+    private String _instrument;
 
     /**
      * Constructor.
@@ -28,32 +31,42 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
     }
 
     public String getVictim() {
-        return vicitim;
+        return _victim;
     }
 
     public LoggableDeathEvent setVictim(String victim) {
-        this.vicitim = victim;
-        this.addField(VICTIM, Utilities.sanitizeString(victim));
+        this._victim = victim;
+        this.addField(VICTIM, Utilities.sanitizeString(this._victim));
         return this;
     }
 
     public String getKiller() {
-        return killer;
+        return _killer;
     }
 
     public LoggableDeathEvent setKiller(String killer) {
-        this.killer = killer;
-        this.addField(KILLER, Utilities.sanitizeString(killer));
+        this._killer = killer;
+        this.addField(KILLER, Utilities.sanitizeString(this._killer));
         return this;
     }
 
     public String getDamageSource() {
-        return damageSource;
+        return _damageSource;
     }
 
     public LoggableDeathEvent setDamageSource(String damageSource) {
-        this.damageSource = damageSource;
-        this.addField(DAMAGE_SOURCE, damageSource);
+        this._damageSource = damageSource;
+        this.addField(DAMAGE_SOURCE, Utilities.sanitizeString(this._damageSource));
+        return this;
+    }
+
+    public String getInstrument() {
+        return _instrument;
+    }
+
+    public LoggableDeathEvent setInstrument(String instrument) {
+        this._instrument = instrument;
+        this.addField(INSTRUMENT, Utilities.removeSpaces(this._instrument));
         return this;
     }
 
@@ -80,11 +93,15 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
             return false;
         }
 
-        if (killer != null ? !killer.equals(that.killer) : that.killer != null) {
+        if (_killer != null ? !_killer.equals(that._killer) : that._killer != null) {
             return false;
         }
 
-        if (damageSource != null ? !damageSource.equals(that.damageSource) : that.damageSource != null) {
+        if (_damageSource != null ? !_damageSource.equals(that._damageSource) : that._damageSource != null) {
+            return false;
+        }
+
+        if (_instrument != null ? !_instrument.equals(that._instrument) : that._instrument != null) {
             return false;
         }
 
@@ -100,10 +117,11 @@ public class LoggableDeathEvent extends AbstractLoggableEvent {
 
     @Override
     public int hashCode() {
-        int result = killer != null ? killer.hashCode() : 0;
+        int result = _killer != null ? _killer.hashCode() : 0;
         result = 31 * result + (action != null ? action.hashCode() : 0);
-        result = 31 * result + (vicitim != null ? vicitim.hashCode() : 0);
-        result = 31 * result + (damageSource != null ? damageSource.hashCode() : 0);
+        result = 31 * result + (_victim != null ? _victim.hashCode() : 0);
+        result = 31 * result + (_damageSource != null ? _damageSource.hashCode() : 0);
+        result = 31 * result + (_instrument != null ? _instrument.hashCode() : 0);
         return result;
     }
 

@@ -26,4 +26,21 @@ public final class Utilities {
         }
     }
 
+    /**
+     * Converts spaces in a string to underscores
+     *
+     * @param message the message to be sanitized.
+     * @return the sanitized message.
+     */
+    public static String removeSpaces(String message ){
+
+        if ( message != null){
+            return message.replaceAll(" ","_");
+        }
+        else
+        {
+            return message;
+        }
+    }
+
 }
