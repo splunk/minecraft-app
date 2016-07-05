@@ -1,0 +1,19 @@
+Splunk logger for Minecraft Forge 1.0-SNAPSHOT
+
+To install, add the LogToSplunkPlugin build by this project
+to your plugins directory for Spigot and the mod directory for
+Forge (see respective docs in Spigot/Forge for more info).
+
+The Splunk logger for Minecraft Forge provides additional logging
+functionality to the Minecraft Forge server. The logs are written
+to the console/Minecraft server log and to the http collector at
+a given Splunk host:port. A splunk token must be generated for the
+collector and assigned to the property `splunk.craft.token`.
+
+The config file should be located here: `config/splunk.properties`
+where that path is relative to the directory minecraft is run from.
+
+The messages conform to Splunk's logging best practices:
+
+http://dev.splunk.com/view/logging-best-practices/SP-CAAADP6
+

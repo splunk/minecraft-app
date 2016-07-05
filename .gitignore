@@ -3,3 +3,18 @@
 *.swp
 build
 .gradle
+bin/
+.project
+*.iml
+.idea/
+eclipse/
+.classpath
+logs/
+.settings
+target/
+
+*.DS_Store
+
+#forge .idea things:
+*.ipr
+*.iws
