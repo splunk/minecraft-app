@@ -50,7 +50,7 @@ or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.gi
 
  * Use the app token from the Event Collector Configuration above for this property `splunk.craft.connection.port=8088`
 
- * If you wish to log the output to a local log as well set this property to "true" `mod.splunk.enable.consolelog=false`
+ * If you wish to log the output to a local log as well set this property to "true" `splunk.craft.enable.consolelogging=false`
 
 #### Configuring The Livemap
 

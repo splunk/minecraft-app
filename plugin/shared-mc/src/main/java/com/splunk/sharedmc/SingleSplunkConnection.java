@@ -110,7 +110,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
             return messagesOnRunway == null;
         }
         try {
-            logger.info("Sending data to splunk...");
+           // logger.info("Sending data to splunk...");
             HttpPost post = new HttpPost(url);
             post.setHeader("Authorization", "Splunk " + token);
             StringEntity entity = new StringEntity(messagesOnRunway.toString(), ContentType.APPLICATION_JSON);
