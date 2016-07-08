@@ -16,7 +16,7 @@ The splunk host, port, and tokencan be configured with the properties: `splunk.c
 splunk.craft.connection.host=127.0.0.1
 splunk.craft.connection.port=8088
 splunk.craft.token=1234-5678-1234-123456789012
-splunk.craft.enable.consolelog=true
+splunk.craft.enable.consolelogging=true
 splunk.craft.server.name=default
 ```
 

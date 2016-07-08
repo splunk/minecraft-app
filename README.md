@@ -1,6 +1,6 @@
 # Minecraft App
 
-### Version 1.1.2
+### Version 1.1.3
 
 The Minecraft App lets you visualize the minecraft world from the guts side. Wondering how many blocks have been dug up by your buddies? Not a problem. Wondering who's found the most diamonds? Yep, got it covered. Have you been planting enough wheat? Carrots? Pototoes? The Minecraft App will let you know.
 
@@ -50,7 +50,7 @@ or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.gi
 
  * Use the app token from the Event Collector Configuration above for this property `splunk.craft.connection.port=8088`
 
- * If you wish to log the output to a local log as well set this property to "true" `mod.splunk.enable.consolelog=false`
+ * If you wish to log the output to a local log as well set this property to "true" `splunk.craft.enable.consolelogging=false`
 
 #### Configuring The Livemap
 
