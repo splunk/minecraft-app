@@ -14,7 +14,7 @@ import com.splunk.sharedmc.loggable_events.LoggableEvent;
 public class AbstractEventLogger {
     public static final String LOGGER_NAME = "LogToSplunk";
 
-    public static final String LOG_EVENTS_TO_CONSOLE_PROP_KEY = "splunk.craft.enable.consolelog";
+    public static final String LOG_EVENTS_TO_CONSOLE_PROP_KEY = "splunk.craft.enable.consolelogging";
     public static final String SPLUNK_HOST = "splunk.craft.connection.host";
     public static final String SPLUNK_PORT = "splunk.craft.connection.port";
     public static final String MINECRAFT_SERVER = "splunk.craft.server.name";
