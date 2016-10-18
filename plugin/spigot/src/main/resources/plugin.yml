@@ -1,0 +1,6 @@
+name: LogToSplunk
+main: com.splunk.spigot.LogToSplunkPlugin
+version: ${project.version}
+description: This plugin registers event handlers and logs events to Splunk via the Splunk HTTP Event Collector.
+author: PowerSchill
+website: https://github.com/PowerSchill/minecraft-app

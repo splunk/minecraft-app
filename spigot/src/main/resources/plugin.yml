@@ -1,3 +1,0 @@
-name: LogToSplunk
-main: com.splunk.spigot.LogToSplunkPlugin
-version: 1.0-SNAPSHOT
