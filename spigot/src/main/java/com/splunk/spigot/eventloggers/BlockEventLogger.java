@@ -58,10 +58,6 @@ public class BlockEventLogger extends AbstractEventLogger implements Listener {
         final String baseType = block.getType().name();
         final World w = block.getWorld();
 
-        if(block.getType() == Material.LOG || block.getType() ==  Material.LOG_2){
-            // TODO: Something like this to get log names using item stacks....
-        }
-
         final Point3dLong coords = new Point3dLong(location.getX(), location.getY(), location.getZ());
         String playerName = null;
 
