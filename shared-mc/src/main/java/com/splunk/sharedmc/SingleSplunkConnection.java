@@ -7,14 +7,23 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+//import org.apache.http.client.methods.CloseableHttpResponse;
+//import org.apache.http.client.methods.HttpPost;
+//import org.apache.http.entity.ContentType;
+//import org.apache.http.entity.StringEntity;
+//import org.apache.http.impl.client.CloseableHttpClient;
+//import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.io.CloseMode;
+
 import org.json.simple.JSONObject;
 
 /**
@@ -35,7 +44,8 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     private final String url;
 
     private CloseableHttpClient httpClient;
-
+    private CloseableHttpResponse response;
+    
     private String token;
 
     // lazy
@@ -54,7 +64,6 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
         logger = LogManager.getLogger(LOGGER_PREFIX + host + ':' + port);
         this.token = token;
         url = String.format(BASE_URL, host, port);
-        httpClient = HttpClients.createDefault();
 
         addFlushShutdownHook();
 
@@ -83,7 +92,7 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     @Override
     public void sendToSplunk(String message) {
         JSONObject event = new JSONObject();
-        message = Calendar.getInstance().getTime().toString() + ' ' + message;
+        //message = Calendar.getInstance().getTime().toString() + ' ' + message;
         event.put("event", message);
 
         messagesToSend.append(event.toString());
@@ -101,12 +110,13 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
         }
         try {
             logger.info("Sending data to splunk...");
+            httpClient = HttpClients.createDefault();
             HttpPost post = new HttpPost(url);
             post.setHeader("Authorization", "Splunk " + token);
             StringEntity entity = new StringEntity(messagesOnRunway.toString(), ContentType.APPLICATION_JSON);
             post.setEntity(entity);
-            CloseableHttpResponse response = httpClient.execute(post);
-            int responseCode = response.getStatusLine().getStatusCode();
+            response = httpClient.execute(post);
+            int responseCode = response.getCode();
 
             if (responseCode > 199 && responseCode < 300) {
                 messagesOnRunway = null;
@@ -118,11 +128,13 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
                 logger.error(new String(responseBody));
             }
 
-            response.close();
-            post.completed();
+            //post.completed();
         } catch (final IOException e) {
             logger.error("Unable to send message!", e);
             success = false;
+        }finally{
+            httpClient.close(CloseMode.GRACEFUL);
+            response.close(CloseMode.GRACEFUL);
         }
 
         return success;

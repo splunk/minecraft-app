@@ -9,123 +9,28 @@ public class LoggableBlockEvent extends AbstractLoggableEvent {
     public static final String BASE_TYPE = "base_type";
     public static final String BLOCK_NAME = "block_type";
 
-    private String playerName;
-    private String cause;
-    private final BlockEventAction action;
-    private String blockName;
-    private String baseType;
-
     /**
      * Constructor.
      *
      * @param action The type of block action this represents, e.g. 'break'.
      */
-    public LoggableBlockEvent(BlockEventAction action, long gameTime, String worldName, Point3dLong location) {
+    public LoggableBlockEvent(BlockEventAction action, long gameTime, String worldName, Point3dLong location, String blockName, String playerName) {
         super(LoggableEventType.BLOCK, gameTime, worldName, location);
-        this.action = action;
-        this.addField(ACTION, action.asString());
+        setBlockName(blockName);
+        setPlayerName(playerName);
+        this.addField(ACTION, action.asString().toUpperCase());
     }
 
-    /**
-     * unused
-     */
-    public String getCause() {
-        return cause;
-    }
-
-    /**
-     * unused
-     */
-    public LoggableBlockEvent setCause(String cause) {
-        this.cause = cause;
-        this.addField(CAUSE, cause);
-        return this;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public LoggableBlockEvent setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public void setPlayerName(String playerName) {
         this.addField(PLAYER_NAME, playerName);
-        return this;
     }
 
-    public BlockEventAction getAction() {
-        return action;
-    }
-
-    public String getBlockName() {
-        return blockName;
-    }
-
-    public LoggableBlockEvent setBlockName(String blockName) {
-        this.blockName = blockName;
+    public void setBlockName(String blockName) {
         this.addField(BLOCK_NAME, blockName);
-        return this;
     }
 
-    public String getBaseType() {
-        return baseType;
-    }
-
-    public LoggableBlockEvent setBaseType(String baseType) {
-        this.baseType = baseType;
+    public void setBaseType(String baseType) {
         this.addField(BASE_TYPE, baseType);
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final LoggableBlockEvent that = (LoggableBlockEvent) o;
-
-        if (action != that.action) {
-            return false;
-        }
-
-        if (getCoordinates() != null ? !getCoordinates().equals(that.getCoordinates()) :
-                that.getCoordinates() != null) {
-            return false;
-        }
-
-        if (playerName != null ? !playerName.equals(that.playerName) : that.playerName != null) {
-            return false;
-        }
-        if (blockName != null ? !blockName.equals(that.blockName) : that.blockName != null) {
-            return false;
-        }
-
-        if (baseType != null ? !baseType.equals(that.baseType) : that.baseType != null) {
-            return false;
-        }
-
-        if (this.getWorldTime() != that.getWorldTime()) {
-            return false;
-        }
-        if (getWorldName() != null ? !getWorldName().equals(that.getWorldName()) : that.getWorldName() != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = playerName != null ? playerName.hashCode() : 0;
-        result = 31 * result + (action != null ? action.hashCode() : 0);
-        result = 31 * result + (cause != null ? cause.hashCode() : 0);
-        result = 31 * result + (blockName != null ? blockName.hashCode() : 0);
-        result = 31 * result + (baseType != null ? baseType.hashCode() : 0);
-
-        return result;
     }
 
     /**

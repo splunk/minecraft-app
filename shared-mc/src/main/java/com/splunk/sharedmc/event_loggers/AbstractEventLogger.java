@@ -57,6 +57,6 @@ public class AbstractEventLogger {
         if(logEventsToConsole) {
             logger.info(message);
         }
-        connection.sendToSplunk(message);
+        connection.sendToSplunk(loggable.toJson());
     }
 }

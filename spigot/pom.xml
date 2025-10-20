@@ -18,20 +18,35 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-chat</artifactId>
+            <version>1.21-R0.4</version>
+        </dependency>
         <!--Spigot-API-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.8.7-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>1.21.10-R0.1-SNAPSHOT</version>
         </dependency>
         <!--Bukkit API-->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.8.7-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>1.21.10</version>
+            <scope>system</scope>
+            <systemPath>/Users/mzeb/Code/spigot/craftbukkit-1.21.10.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>13.5.1</version>
+        </dependency>
+        <!--<dependency>
+          <groupId>org.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+          <version>1.20.5-R0.1-20240423.155811-1</version>
+        </dependency>-->
 
         <!--other third party deps-->
         <dependency>

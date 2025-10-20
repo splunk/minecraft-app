@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.splunk.sharedmc.Point3dLong;
 import com.splunk.sharedmc.event_loggers.AbstractEventLogger;
 import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent;
 import com.splunk.sharedmc.loggable_events.LoggablePlayerEvent.PlayerEventAction;
@@ -105,11 +106,11 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         loggable.setMessage(message);
 
         if (event.getClass().equals(PlayerMoveEvent.class)) {
+            Point3dLong from = locationAsPoint(lastKnownCoordinates.getIfPresent(event.getPlayer().getDisplayName()));
 
-            loggable.setFrom(
-                    locationAsPoint(lastKnownCoordinates.getIfPresent(event.getPlayer().getDisplayName())));
-
-            if (loggable.getFrom() == null) {
+            if (from != null) {
+                loggable.setFrom(from);
+            }else{
                 loggable.setFrom(locationAsPoint(((PlayerMoveEvent) event).getFrom()));
             }
             loggable.setTo(locationAsPoint(((PlayerMoveEvent) event).getTo()));

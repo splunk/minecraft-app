@@ -48,6 +48,7 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
         long gameTime = event.getEntity().getWorld().getTime();
         String world = event.getEntity().getWorld().getName();
         Point3dLong location = locationAsPoint(event.getEntity().getLocation());
+        LoggableDeathEvent deathEvent;
 
         if (event instanceof PlayerDeathEvent) {
             event.getEntity().getLastDamageCause();
@@ -65,19 +66,11 @@ public class DeathEventLogger extends AbstractEventLogger implements Listener {
             if(killer == null){
                 killer = event.getEntity().getLastDamageCause().getCause().name();
             }
-            LoggableDeathEvent deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, gameTime, world, location);
-            deathEvent.setKiller(killer);
-            deathEvent.setVictim(victim);
-            deathEvent.setDamageSource(event.getEntity().getLastDamageCause().getCause().name());
-            logAndSend(deathEvent);
+            logAndSend(new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.PLAYER_DIED, gameTime, world, location, killer, victim, event.getEntity().getLastDamageCause().getCause().name()));
         } else {
             if (event.getEntity().getKiller() != null) {
                 killer = event.getEntity().getKiller().getDisplayName();
-                LoggableDeathEvent deathEvent = new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.MOB_DIED, gameTime, world, location);
-                deathEvent.setKiller(killer);
-                deathEvent.setVictim(victim);
-                deathEvent.setDamageSource(event.getEntity().getLastDamageCause().getCause().name());
-                logAndSend(deathEvent);
+                logAndSend(new LoggableDeathEvent(LoggableDeathEvent.DeathEventAction.MOB_DIED, gameTime, world, location, killer, victim, event.getEntity().getLastDamageCause().getCause().name()));
             }
         }
     }

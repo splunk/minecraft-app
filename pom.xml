@@ -12,18 +12,7 @@
         <module>logtosplunk-plugin</module>
     </modules>
     <packaging>pom</packaging>
-
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>central</id>
-            <name>libs-releases</name>
-            <url>http://splunk.artifactoryonline.com/splunk/libs-releases</url>
-        </repository>
-    </repositories>
-
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -44,13 +33,18 @@
             <dependency>
                 <groupId>com.splunk.logging</groupId>
                 <artifactId>splunk-library-javalogging</artifactId>
-                <version>1.5.0</version>
+                <version>1.11.8</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.8.2</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.json-simple</groupId>
+                <artifactId>json-simple</artifactId>
+                <version>1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -61,8 +55,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
