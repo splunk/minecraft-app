@@ -35,7 +35,7 @@
             <artifactId>bukkit</artifactId>
             <version>1.21.10</version>
             <scope>system</scope>
-            <systemPath>/Users/mzeb/Code/spigot/craftbukkit-1.21.10.jar</systemPath>
+            <systemPath>${HOME}/Code/spigot/craftbukkit-1.21.10.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
