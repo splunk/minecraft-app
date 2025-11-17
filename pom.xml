@@ -13,13 +13,16 @@
     </modules>
     <packaging>pom</packaging>
     
+    <repositories>
+        <repository>
+            <id>mvnrepository-central</id>
+            <name>mvnrepository.com Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
+    
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
