@@ -42,21 +42,8 @@
             <artifactId>XSeries</artifactId>
             <version>13.5.1</version>
         </dependency>
-        <!--<dependency>
-          <groupId>org.bukkit</groupId>
-          <artifactId>bukkit</artifactId>
-          <version>1.20.5-R0.1-20240423.155811-1</version>
-        </dependency>-->
 
         <!--other third party deps-->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-        </dependency>
 
         <!--project dependencies-->
         <dependency>

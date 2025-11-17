@@ -10,14 +10,14 @@
     
     <repositories>
         <repository>
-            <id>splunk-artifactory</id>
-            <name>Splunk Releases</name>
-            <url>https://splunk.jfrog.io/splunk/ext-releases-local</url>
+            <id>mvnrepository-central</id>
+            <name>mvnrepository.com Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
-            <id>apache-maven</id>
-            <name>Apache Maven</name>
-            <url>https://repo.maven.apache.org/maven2</url>
+            <id>splunk-releases</id>
+            <name>Splunk Artifactory</name>
+            <url>https://splunk.jfrog.io/splunk/ext-releases-local/</url>
         </repository>
     </repositories>
     
@@ -26,12 +26,12 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.3</version>
+            <version>2.25.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.3</version>
+            <version>2.25.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
@@ -51,8 +51,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.3.1</version>
-        </dependency>
-        <dependency>
+        </dependency><dependency>
             <groupId>com.splunk.logging</groupId>
             <artifactId>splunk-library-javalogging</artifactId>
             <version>1.11.8</version>
