@@ -15,6 +15,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>nms</id>
+            <url>https://repo.codemc.io/repository/nms/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -32,10 +36,8 @@
         <!--Bukkit API-->
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.21.10</version>
-            <scope>system</scope>
-            <systemPath>${HOME}/Code/spigot/craftbukkit-1.21.10.jar</systemPath>
+            <artifactId>craftbukkit</artifactId>
+            <version>1.7.2-R0.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
