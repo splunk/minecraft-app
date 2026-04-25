@@ -20,6 +20,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Spotless
+        run: mvn spotless:check
+
       - name: Build
         run: mvn package
 
