@@ -25,17 +25,15 @@
         </dependency>
         <!--Spigot-API-->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.21.10-R0.1-SNAPSHOT</version>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot-api</artifactId>
+          <version>26.2-R0.1-20260616.212206-1</version>
         </dependency>
         <!--Bukkit API-->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.21.10</version>
-            <scope>system</scope>
-            <systemPath>${HOME}/Code/spigot/craftbukkit-1.21.10.jar</systemPath>
+            <version>26.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
