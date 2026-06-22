@@ -24,8 +24,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.io.CloseMode;
 
-import org.json.simple.JSONObject;
-
 /**
  * Knows a single Splunk instance by its host:port and forwards data to it.
  */
@@ -85,17 +83,23 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     }
 
     /**
+     * Wraps a raw event message in the Splunk HEC envelope: {"event": <message>}.
+     * Package-private for testing.
+     */
+    static String buildHecEnvelope(String message) {
+        com.google.gson.JsonObject event = new com.google.gson.JsonObject();
+        event.addProperty("event", message);
+        return event.toString();
+    }
+
+    /**
      * Queues up a message to send to this Spunk connections' Splunk instance.
      *
      * @param message The message to send.
      */
     @Override
     public void sendToSplunk(String message) {
-        JSONObject event = new JSONObject();
-        //message = Calendar.getInstance().getTime().toString() + ' ' + message;
-        event.put("event", message);
-
-        messagesToSend.append(event.toString());
+        messagesToSend.append(buildHecEnvelope(message));
     }
 
     private boolean sendData() {
