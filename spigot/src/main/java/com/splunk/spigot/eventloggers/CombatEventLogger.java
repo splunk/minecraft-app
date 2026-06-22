@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -48,23 +47,6 @@ public class CombatEventLogger extends AbstractEventLogger implements Listener {
                 .setAmount(event.getFinalDamage())
                 .setCause(event.getCause().toString())
                 .setHealthRemaining(victim.getHealth());
-        logAndSend(loggable);
-    }
-
-    @EventHandler
-    public void onDeath(EntityDeathEvent event) {
-        if (event.getEntity() instanceof Player) {
-            return;
-        }
-        Player killer = event.getEntity().getKiller();
-        if (killer == null) {
-            return;
-        }
-        LoggableCombatEvent loggable = new LoggableCombatEvent(
-                CombatAction.KILL, event.getEntity().getWorld().getTime(),
-                event.getEntity().getWorld().getName(), locationAsPoint(event.getEntity().getLocation()));
-        loggable.setSource(killer.getName())
-                .setVictim(event.getEntity().getType().toString());
         logAndSend(loggable);
     }
 

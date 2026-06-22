@@ -160,6 +160,9 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
+        if (!isEnabled(ENABLE_SESSION_DETAIL)) {
+            return;
+        }
         LoggablePlayerEvent loggable = generateLoggablePlayerEvent(
                 event, PlayerEventAction.TELEPORT, event.getCause().toString(), null);
         loggable.setFrom(locationAsPoint(event.getFrom()));
@@ -169,6 +172,9 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
 
     @EventHandler
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        if (!isEnabled(ENABLE_SESSION_DETAIL)) {
+            return;
+        }
         LoggablePlayerEvent loggable = generateLoggablePlayerEvent(
                 event, PlayerEventAction.GAMEMODE_CHANGE, null, null);
         loggable.setGamemode(event.getNewGameMode().toString());
@@ -177,6 +183,9 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
 
     @EventHandler
     public void onBedEnter(PlayerBedEnterEvent event) {
+        if (!isEnabled(ENABLE_SESSION_DETAIL)) {
+            return;
+        }
         LoggablePlayerEvent loggable = generateLoggablePlayerEvent(
                 event, PlayerEventAction.BED_ENTER, null, null);
         logAndSend(loggable);
@@ -184,6 +193,9 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
 
     @EventHandler
     public void onWorldChange(PlayerChangedWorldEvent event) {
+        if (!isEnabled(ENABLE_SESSION_DETAIL)) {
+            return;
+        }
         LoggablePlayerEvent loggable = generateLoggablePlayerEvent(
                 event, PlayerEventAction.WORLD_CHANGE, null, event.getFrom().getName());
         logAndSend(loggable);
