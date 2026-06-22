@@ -6,7 +6,12 @@ package com.splunk.sharedmc.loggable_events;
 public enum LoggableEventType {
     PLAYER("PlayerEvent"),
     BLOCK("BlockEvent"),
-    DEATH("DeathEvent");
+    DEATH("DeathEvent"),
+    SERVER("ServerEvent"),
+    PERFORMANCE("PerformanceEvent"),
+    COMBAT("CombatEvent"),
+    ITEM("ItemEvent"),
+    PROGRESSION("ProgressionEvent");
 
     private final String eventName;
 
