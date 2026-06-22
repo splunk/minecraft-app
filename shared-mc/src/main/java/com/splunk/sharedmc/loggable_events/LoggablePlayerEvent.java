@@ -51,7 +51,27 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         this.addField("from_x", from.xCoord);
         this.addField("from_y", from.yCoord);
         this.addField("from_z", from.zCoord);
-        
+
+        return this;
+    }
+
+    public LoggablePlayerEvent setPlayerUuid(String uuid) {
+        this.addField("uuid", uuid);
+        return this;
+    }
+
+    public LoggablePlayerEvent setPlayerIp(String ip) {
+        this.addField("client_ip", ip);
+        return this;
+    }
+
+    public LoggablePlayerEvent setProtocolVersion(int protocol) {
+        this.addField("protocol_version", protocol);
+        return this;
+    }
+
+    public LoggablePlayerEvent setGamemode(String gamemode) {
+        this.addField("gamemode", gamemode);
         return this;
     }
 
@@ -62,7 +82,12 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         PLAYER_CONNECT("player_connect"),
         PLAYER_DISCONNECT("player_disconnect"),
         CHAT("chat"),
-        LOCATION("move");
+        LOCATION("move"),
+        TELEPORT("teleport"),
+        GAMEMODE_CHANGE("gamemode_change"),
+        BED_ENTER("bed_enter"),
+        WORLD_CHANGE("world_change"),
+        ADVANCEMENT("advancement");
 
         /**
          * The name of the action.
