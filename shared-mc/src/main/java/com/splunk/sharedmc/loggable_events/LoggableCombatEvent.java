@@ -7,6 +7,11 @@ import com.splunk.sharedmc.Point3dLong;
  */
 public class LoggableCombatEvent extends AbstractLoggableEvent {
 
+    /**
+     * Constructor.
+     *
+     * @param action The type of combat action this represents, e.g. 'damage' or 'kill'.
+     */
     public LoggableCombatEvent(CombatAction action, long gameTime, String worldName, Point3dLong location) {
         super(LoggableEventType.COMBAT, gameTime, worldName, location);
         this.addField(ACTION, action.asString());

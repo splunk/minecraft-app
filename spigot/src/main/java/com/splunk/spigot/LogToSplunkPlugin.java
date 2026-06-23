@@ -50,6 +50,8 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
         final org.bukkit.plugin.PluginManager pm = getServer().getPluginManager();
         final java.util.Properties p = properties;
 
+        // Each extended logging category is opt-in: only register its listener/sampler if
+        // the corresponding splunk.craft.enable.* toggle is set to true in config.
         if (Boolean.parseBoolean(p.getProperty("splunk.craft.enable.combat", "false"))) {
             pm.registerEvents(new com.splunk.spigot.eventloggers.CombatEventLogger(p), this);
         }

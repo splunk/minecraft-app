@@ -7,6 +7,11 @@ import com.splunk.sharedmc.Point3dLong;
  */
 public class LoggableItemEvent extends AbstractLoggableEvent {
 
+    /**
+     * Constructor.
+     *
+     * @param action The type of item action this represents, e.g. 'pickup' or 'drop'.
+     */
     public LoggableItemEvent(ItemAction action, long gameTime, String worldName, Point3dLong location) {
         super(LoggableEventType.ITEM, gameTime, worldName, location);
         this.addField(ACTION, action.asString());

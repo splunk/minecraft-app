@@ -5,6 +5,11 @@ package com.splunk.sharedmc.loggable_events;
  */
 public class LoggableProgressionEvent extends AbstractLoggableEvent {
 
+    /**
+     * Constructor.
+     *
+     * @param action The type of progression action this represents, e.g. 'level_change'.
+     */
     public LoggableProgressionEvent(ProgressionAction action, long gameTime, String worldName) {
         super(LoggableEventType.PROGRESSION, gameTime, worldName);
         this.addField(ACTION, action.asString());

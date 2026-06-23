@@ -16,7 +16,9 @@ import com.splunk.sharedmc.loggable_events.LoggableItemEvent.ItemAction;
 import com.splunk.sharedmc.util.EventThrottle;
 
 /**
- * Logs item pickup and drop. Pickups are throttled per-player to avoid floods.
+ * Logs item pickup and drop events. Pickup is throttled (it can fire rapidly, e.g. when
+ * picking up XP orbs or arrows); drop is not throttled since it is a deliberate, low
+ * frequency player action.
  */
 public class ItemEventLogger extends AbstractEventLogger implements Listener {
 
