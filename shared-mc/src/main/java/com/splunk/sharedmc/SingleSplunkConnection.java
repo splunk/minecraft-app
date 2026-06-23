@@ -83,8 +83,12 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     }
 
     /**
-     * Wraps a raw event message in the Splunk HEC envelope: {"event": <message>}.
-     * Package-private for testing.
+     * Wraps a raw event message in the Splunk HTTP Event Collector JSON envelope:
+     * {@code {"event": "<message>"}}. Built with gson (replaced the previous json-simple
+     * dependency). Package-private for testing.
+     *
+     * @param message The raw event message to wrap.
+     * @return The HEC envelope as a JSON string.
      */
     static String buildHecEnvelope(String message) {
         com.google.gson.JsonObject event = new com.google.gson.JsonObject();

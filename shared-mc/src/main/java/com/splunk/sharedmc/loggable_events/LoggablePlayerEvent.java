@@ -55,21 +55,34 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         return this;
     }
 
+    /**
+     * Sets the player's unique id, captured on connect to disambiguate players across
+     * name changes.
+     */
     public LoggablePlayerEvent setPlayerUuid(String uuid) {
         this.addField("uuid", uuid);
         return this;
     }
 
+    /**
+     * Sets the player's client IP. The project explicitly treats this as non-PII data;
+     * it is only logged when {@code splunk.craft.enable.session_ip=true}.
+     */
     public LoggablePlayerEvent setPlayerIp(String ip) {
         this.addField("client_ip", ip);
         return this;
     }
 
+    /**
+     * Currently unused — {@code Player.getProtocolVersion()} is a Paper-only API and is
+     * not available on vanilla spigot-api.
+     */
     public LoggablePlayerEvent setProtocolVersion(int protocol) {
         this.addField("protocol_version", protocol);
         return this;
     }
 
+    /** Sets the player's new game mode, e.g. for a gamemode-change event. */
     public LoggablePlayerEvent setGamemode(String gamemode) {
         this.addField("gamemode", gamemode);
         return this;
@@ -83,9 +96,13 @@ public class LoggablePlayerEvent extends AbstractLoggableEvent {
         PLAYER_DISCONNECT("player_disconnect"),
         CHAT("chat"),
         LOCATION("move"),
+        /** Player teleported, e.g. via command, plugin, or end/nether portal. */
         TELEPORT("teleport"),
+        /** Player switched game mode, e.g. survival to creative. */
         GAMEMODE_CHANGE("gamemode_change"),
+        /** Player entered a bed. */
         BED_ENTER("bed_enter"),
+        /** Player changed worlds, e.g. via portal or teleport command. */
         WORLD_CHANGE("world_change"),
         ADVANCEMENT("advancement");
 

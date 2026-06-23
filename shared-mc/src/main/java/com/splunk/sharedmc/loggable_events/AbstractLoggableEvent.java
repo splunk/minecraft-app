@@ -16,7 +16,9 @@ public class AbstractLoggableEvent extends SplunkCimLogEvent implements Loggable
     public static final String ACTION = "action";
 
     /**
-     * Constructor. Enforces that subclasses must have a loggable event type.
+     * Constructor. Enforces that subclasses must have a loggable event type. Null-checks
+     * {@code coordinates} before dereferencing it (fixes a prior NPE risk when an event has
+     * no location, e.g. server lifecycle events) and delegates to the 3-arg constructor.
      *
      * @param type The type of event that this is.
      */

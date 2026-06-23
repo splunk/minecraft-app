@@ -158,6 +158,12 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
                 generateLoggablePlayerEvent(event, PlayerEventAction.ADVANCEMENT, null, key));
     }
 
+    /**
+     * Logs player teleports to Splunk. Returns early via the
+     * {@code isEnabled(ENABLE_SESSION_DETAIL)} guard — this category is opt-in.
+     *
+     * @param event The captured event.
+     */
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
         if (!isEnabled(ENABLE_SESSION_DETAIL)) {
@@ -170,6 +176,12 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(loggable);
     }
 
+    /**
+     * Logs player game mode changes to Splunk. Returns early via the
+     * {@code isEnabled(ENABLE_SESSION_DETAIL)} guard — this category is opt-in.
+     *
+     * @param event The captured event.
+     */
     @EventHandler
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
         if (!isEnabled(ENABLE_SESSION_DETAIL)) {
@@ -181,6 +193,12 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(loggable);
     }
 
+    /**
+     * Logs when a player enters a bed. Returns early via the
+     * {@code isEnabled(ENABLE_SESSION_DETAIL)} guard — this category is opt-in.
+     *
+     * @param event The captured event.
+     */
     @EventHandler
     public void onBedEnter(PlayerBedEnterEvent event) {
         if (!isEnabled(ENABLE_SESSION_DETAIL)) {
@@ -191,6 +209,12 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(loggable);
     }
 
+    /**
+     * Logs when a player changes worlds. Returns early via the
+     * {@code isEnabled(ENABLE_SESSION_DETAIL)} guard — this category is opt-in.
+     *
+     * @param event The captured event.
+     */
     @EventHandler
     public void onWorldChange(PlayerChangedWorldEvent event) {
         if (!isEnabled(ENABLE_SESSION_DETAIL)) {

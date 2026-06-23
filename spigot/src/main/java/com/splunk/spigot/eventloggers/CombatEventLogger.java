@@ -20,6 +20,10 @@ import com.splunk.sharedmc.util.EventThrottle;
 /**
  * Logs combat and survival events. High-frequency events (damage, hunger) are throttled
  * per-player.
+ *
+ * <p>Note: there is intentionally no {@code onDeath}/{@code EntityDeathEvent} handler here.
+ * Kill events are still handled by the pre-existing {@code DeathEventLogger} to avoid
+ * double-logging the same kill as both a CombatEvent and a DeathEvent.
  */
 public class CombatEventLogger extends AbstractEventLogger implements Listener {
 
@@ -30,6 +34,7 @@ public class CombatEventLogger extends AbstractEventLogger implements Listener {
         super(props);
     }
 
+    /** Throttled per-victim: damage events can fire many times per second. */
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player)) {
@@ -50,6 +55,7 @@ public class CombatEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(loggable);
     }
 
+    /** Throttled per-player: regen-based healing (e.g. saturation) can fire frequently. */
     @EventHandler
     public void onRegainHealth(EntityRegainHealthEvent event) {
         if (!(event.getEntity() instanceof Player)) {
@@ -69,6 +75,7 @@ public class CombatEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(loggable);
     }
 
+    /** Throttled per-player: food level changes frequently while eating, sprinting, etc. */
     @EventHandler
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
         if (!(event.getEntity() instanceof Player)) {
@@ -85,6 +92,7 @@ public class CombatEventLogger extends AbstractEventLogger implements Listener {
         logAndSend(loggable);
     }
 
+    /** Not throttled: respawn is a rare, deliberate-trigger event for a given player. */
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
         LoggableCombatEvent loggable = new LoggableCombatEvent(

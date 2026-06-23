@@ -5,6 +5,11 @@ package com.splunk.sharedmc.loggable_events;
  */
 public class LoggableServerEvent extends AbstractLoggableEvent {
 
+    /**
+     * Constructor.
+     *
+     * @param action The type of server action this represents, e.g. 'server_start'.
+     */
     public LoggableServerEvent(ServerAction action, long gameTime, String worldName) {
         super(LoggableEventType.SERVER, gameTime, worldName);
         this.addField(ACTION, action.asString());
