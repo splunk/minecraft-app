@@ -1,0 +1,12 @@
+# Make the collection and its lookup readable app-wide (and globally, so other apps and
+# saved searches can reference the lookup). Writes restricted to admin/power.
+
+[]
+access = read : [ * ], write : [ admin, power ]
+export = system
+
+[collections/minecraft_player_stats]
+export = system
+
+[transforms/minecraft_player_stats]
+export = system
