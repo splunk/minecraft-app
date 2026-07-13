@@ -10,46 +10,120 @@
 
     <artifactId>spigot</artifactId>
 
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
+    <!--
+      MC version profiles. Activate exactly one at build time:
+        mvn package                  → 1.21.1 (default)
+        mvn package -P mc-1201       → 1.20.1
+        mvn package -P mc-1204       → 1.20.4
+        mvn package -P mc-1206       → 1.20.6
+
+      Output: logtosplunk-<mc.version>-spigot-<loader.version.display>.jar
+    -->
+    <properties>
+        <mc.version>1.21.1</mc.version>
+        <loader.name>spigot</loader.name>
+        <loader.version.display>1.21.1-R0.1</loader.version.display>
+        <spigot.api.version>1.21.1-R0.1-SNAPSHOT</spigot.api.version>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>mc-1201</id>
+            <properties>
+                <mc.version>1.20.1</mc.version>
+                <loader.version.display>1.20.1-R0.1</loader.version.display>
+                <spigot.api.version>1.20.1-R0.1-SNAPSHOT</spigot.api.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>mc-1204</id>
+            <properties>
+                <mc.version>1.20.4</mc.version>
+                <loader.version.display>1.20.4-R0.1</loader.version.display>
+                <spigot.api.version>1.20.4-R0.1-SNAPSHOT</spigot.api.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>mc-1206</id>
+            <properties>
+                <mc.version>1.20.6</mc.version>
+                <loader.version.display>1.20.6-R0.1</loader.version.display>
+                <spigot.api.version>1.20.6-R0.1-SNAPSHOT</spigot.api.version>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
+        <!-- Provided by the server at runtime — must NOT be bundled. -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
             <version>1.21-R0.4</version>
+            <scope>provided</scope>
         </dependency>
-        <!--Spigot-API-->
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.21.10-R0.1-SNAPSHOT</version>
-        </dependency>
-        <!--Bukkit API-->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.21.10</version>
-            <scope>system</scope>
-            <systemPath>${HOME}/Code/spigot/craftbukkit-1.21.10.jar</systemPath>
-        </dependency>
+
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
             <version>13.5.1</version>
         </dependency>
 
-        <!--other third party deps-->
+        <!-- log4j-api: provided by the MC server at runtime; needed for compilation because
+             shared-mc sources reference LogManager/Logger. NOT shaded into the fat JAR. -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
 
-        <!--project dependencies-->
+        <!-- Shared core: event model + Splunk HEC/KV transport. Bundled into fat JAR. -->
         <dependency>
             <groupId>com.splunk</groupId>
             <artifactId>shared-mc</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+              Produce a self-contained fat JAR. spigot-api is provided-scope so Bukkit
+              classes are excluded automatically. Output name follows the project convention:
+                logtosplunk-1.20.1-spigot-1.20.1-R0.1.jar
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <finalName>logtosplunk-${mc.version}-${loader.name}-${loader.version.display}</finalName>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/versions/*/module-info.class</exclude>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
