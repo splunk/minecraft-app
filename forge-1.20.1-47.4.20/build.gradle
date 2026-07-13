@@ -1,0 +1,97 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java'
+}
+
+version = "${mod_version}"
+group = "${mod_group_id}"
+
+base {
+    archivesName = "${archives_base_name}"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+minecraft {
+    // 1.20.1 uses Mojang's official mappings.
+    mappings channel: 'official', version: minecraft_version
+    copyIdeResources = true
+}
+
+// Reuse the platform-agnostic core from the shared-mc module (single source of truth).
+sourceSets.main.java.srcDir '../shared-mc/src/main/java'
+
+// 'shade' holds runtime libs that Minecraft/Forge does NOT provide; they get fat-jarred
+// into the final mod jar by shadowJar, then reobfuscated.
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'Splunk Artifactory'
+        url = 'https://splunk.jfrog.io/splunk/ext-releases-local/'
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Provided by Minecraft/Forge at runtime: compile-only, not bundled.
+    compileOnly "com.google.code.gson:gson:2.13.2"
+    compileOnly "com.google.guava:guava:33.5.0-jre"
+
+    // Not provided by Minecraft/Forge: bundle via shadow (transitive=false, exact set only).
+    // httpcore5-h2 is REQUIRED even for plain HTTP: httpclient5's TlsConfig references
+    // org.apache.hc.core5.http2.HttpVersionPolicy. Omitting it => NoClassDefFoundError on
+    // the first POST.
+    shade("com.splunk.logging:splunk-library-javalogging:1.11.8") { transitive = false }
+    shade("org.apache.httpcomponents.client5:httpclient5:5.5.1") { transitive = false }
+    shade("org.apache.httpcomponents.core5:httpcore5:5.3.6") { transitive = false }
+    shade("org.apache.httpcomponents.core5:httpcore5-h2:5.3.6") { transitive = false }
+    shade("commons-codec:commons-codec:1.17.1") { transitive = false }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Plain jar = thin dev jar (named mappings, NO bundled libs). Pushed to build/devlibs so it
+// can never be mistaken for the shippable artifact in build/libs. Deploying it = missing
+// httpcore5 at runtime. The shaded+reobf shadowJar (build/libs) is the only deployable jar.
+tasks.named('jar', Jar) {
+    archiveClassifier = 'slim'
+    destinationDirectory = layout.buildDirectory.dir('devlibs')
+    manifest {
+        attributes([
+            'Implementation-Version': project.version,
+            'Specification-Title'   : 'logtosplunk',
+            'Specification-Version' : '1'
+        ])
+    }
+}
+
+tasks.named('shadowJar') {
+    configurations = [project.configurations.shade]
+    archiveClassifier = ''
+    manifest {
+        attributes(['Implementation-Version': project.version])
+    }
+    finalizedBy 'reobfShadowJar'
+}
+
+// Reobfuscate the shaded jar from official -> SRG so Forge can load it at runtime.
+reobf {
+    shadowJar { }
+}
+
+tasks.named('assemble') {
+    dependsOn 'shadowJar'
+}
