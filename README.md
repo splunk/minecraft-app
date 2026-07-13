@@ -12,6 +12,59 @@ The Minecraft App lets you visualize the minecraft world from the guts side. Won
 * Ore images in the "Mined Blocks" page of the app now display correctly.
 * Minor bug fixes.
 
+### Architecture
+
+The project has two independent halves: a **Minecraft-side plugin/mod** (one build per server
+platform, sharing a common core) and a **Splunk-side app** that visualizes what it sends. Two
+separate Splunk write paths are used because they carry different kinds of data:
+
+```mermaid
+flowchart TB
+    subgraph MC["Minecraft server"]
+        direction TB
+        Platform["Spigot / Paper / Forge / NeoForge / Fabric\n(platform-specific event hooks)"]
+        Shared["shared-mc\n(event model, HTTP clients, config)"]
+        Platform --> Shared
+        EventLoggers["Event loggers\nBlock, Death, Player, Combat, Item,\nProgression, Server, Performance"]
+        Scraper["PlayerStatsScraper\n(async: reads world/stats + advancements JSON)"]
+        Shared --> EventLoggers
+        Shared --> Scraper
+    end
+
+    HEC["Splunk HEC :8088\n(SingleSplunkConnection)"]
+    KV["splunkd management REST :8089\n(KvStoreConnection, bearer token)"]
+
+    EventLoggers -->|"JSON events,\nsourcetype=minecraft:json"| HEC
+    Scraper -->|"batch_save upsert\nby player UUID"| KV
+
+    HEC --> Index[("index (per HEC token config)")]
+    KV --> Collection[("KV collection\nminecraft_player_stats\n(SplunkCraft app)")]
+    Collection --> Lookup["transforms.conf lookup\n`| inputlookup minecraft_player_stats`"]
+
+    Index --> App["minecraft-app\n(Django views, dashboards,\nlive map)"]
+    Lookup --> App
+```
+
+**Why two paths:** HEC can only write to an index (time-series events); it cannot write a KV
+store. Player stats are a current-state snapshot (one row per player, overwritten each scrape),
+which is what a KV store is for — hence the separate `KvStoreConnection` over the splunkd
+management port, authenticated with a bearer token instead of the HEC token. See "Collecting
+Player Stats into the KV Store" below for setup.
+
+**Platform support matrix** (MC version(s) each build targets, and which logging categories are
+implemented):
+
+| Platform  | MC version(s)                  | Block/Death/Player | Combat/Item/Progression/Server/Performance | KV-store player stats |
+|-----------|---------------------------------|:---:|:---:|:---:|
+| Spigot    | 1.21.1 (default), 1.20.1, 1.20.4, 1.20.6 | ✅ | ✅ | ✅ |
+| Paper     | 1.21.1                          | ✅ | ✅ | ✅ |
+| Forge     | 1.20.1                          | ✅ | ✅ | ✅ |
+| NeoForge  | 1.20.4                          | ✅ | ❌ | ❌ |
+| Fabric    | 1.20.6                          | ✅ | ❌ | ❌ |
+
+NeoForge and Fabric only have the original block/death/player logging — the extended categories
+and KV-store scraper haven't been ported to those two platforms yet (contributions welcome).
+
 ### Getting Started
 This section provides information about installing and using the Minecraft App. 
 
@@ -64,6 +117,40 @@ or clone the repository from [GitHub](https://github.com/splunk/minecraft-app.gi
  * Use the app token from the Event Collector Configuration above for this property `splunk.craft.connection.port=8088`
 
  * If you wish to log the output to a local log as well set this property to "true" `mod.splunk.enable.consolelog=false`
+
+#### Collecting Player Stats into the KV Store
+
+The plugin can periodically scrape the per-player snapshot files Minecraft writes to disk
+(`<world>/stats/<uuid>.json` and `<world>/advancements/<uuid>.json`) and upsert one row per
+player into the `minecraft_player_stats` KV-store collection. Because this is current-state
+snapshot data (not a time series), it goes to a KV store keyed by player UUID rather than an
+index.
+
+> **Note:** This path does **not** use HEC. The HTTP Event Collector can only write events to
+> an index, never to a KV store. Populating a KV store requires the splunkd **management** REST
+> endpoint (default port `8089`, HTTPS) authenticated with a **bearer token** — a different port
+> and credential than HEC.
+
+1. Create a bearer token in Splunk: **Settings → Tokens** (enable token auth if needed). The
+   token's user needs write access to the `SplunkCraft` app's collections.
+2. Add the following to `splunk.properties` (all default off / placeholder):
+
+   ```
+   splunk.craft.enable.playerstats=true
+   splunk.craft.playerstats.interval_ticks=6000        # ~5 min (20 ticks = 1s)
+   splunk.craft.kvstore.host=127.0.0.1
+   splunk.craft.kvstore.port=8089                       # splunkd mgmt port, NOT 8088
+   splunk.craft.kvstore.app=SplunkCraft
+   splunk.craft.kvstore.collection=minecraft_player_stats
+   splunk.craft.kvstore.bearer_token=YOUR-BEARER-TOKEN
+   #splunk.craft.world.path=world                       # optional override
+   ```
+
+3. Query it in SPL: `| inputlookup minecraft_player_stats`
+
+The collection and its lookup definition ship in the **SplunkCraft** app (`collections.conf` /
+`transforms.conf`), which also houses the player reports and dashboards. The scraper only
+uploads players whose files changed since the last cycle.
 
 #### Configuring The Livemap
 
