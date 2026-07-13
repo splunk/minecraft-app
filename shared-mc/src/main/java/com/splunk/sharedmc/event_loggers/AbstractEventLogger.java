@@ -32,6 +32,22 @@ public class AbstractEventLogger {
     public static final String ENABLE_SESSION_IP = "splunk.craft.enable.session_ip";
     public static final String PERFORMANCE_INTERVAL_TICKS = "splunk.craft.performance.interval_ticks";
 
+    /**
+     * Player-stats scraper: periodically reads the per-player {@code stats/<uuid>.json} and
+     * {@code advancements/<uuid>.json} files and upserts a flattened snapshot into a Splunk
+     * KV-store collection via {@link com.splunk.sharedmc.KvStoreConnection}. This path uses the
+     * splunkd management REST endpoint (default port 8089, HTTPS, bearer token) -- NOT HEC,
+     * which cannot write a KV store.
+     */
+    public static final String ENABLE_PLAYERSTATS = "splunk.craft.enable.playerstats";
+    public static final String PLAYERSTATS_INTERVAL_TICKS = "splunk.craft.playerstats.interval_ticks";
+    public static final String KVSTORE_HOST = "splunk.craft.kvstore.host";
+    public static final String KVSTORE_PORT = "splunk.craft.kvstore.port";
+    public static final String KVSTORE_APP = "splunk.craft.kvstore.app";
+    public static final String KVSTORE_COLLECTION = "splunk.craft.kvstore.collection";
+    public static final String KVSTORE_TOKEN = "splunk.craft.kvstore.bearer_token";
+    public static final String WORLD_PATH = "splunk.craft.world.path";
+
     protected static final Logger logger = LogManager.getLogger(LOGGER_NAME);
 
     private static SingleSplunkConnection connection;

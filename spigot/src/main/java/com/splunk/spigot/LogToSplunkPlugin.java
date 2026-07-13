@@ -21,7 +21,7 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
     public static final String NAME = "Splunk for Minecraft";
     public static final String SPLUNK_PROPERTIES = "/config/splunk.properties";
 
-    private Properties properties;
+    protected Properties properties;
 
     private static final Logger logger = LogManager.getLogger(LogToSplunkPlugin.class.getName());
 
@@ -69,17 +69,29 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
             try {
                 interval = Integer.parseInt(p.getProperty("splunk.craft.performance.interval_ticks", "600"));
             } catch (NumberFormatException ignored) { }
-            new com.splunk.spigot.eventloggers.PerformanceSampler(p).start(this, interval);
+            createPerformanceSampler(p).start(this, interval);
+        }
+        // Player-stats scraper: reads on-disk stats/advancements JSON and upserts to the KV
+        // store. Runs async (file I/O + HTTP) so it never stalls a tick.
+        if (Boolean.parseBoolean(p.getProperty("splunk.craft.enable.playerstats", "false"))) {
+            int interval = 6000;
+            try {
+                interval = Integer.parseInt(p.getProperty("splunk.craft.playerstats.interval_ticks", "6000"));
+            } catch (NumberFormatException ignored) { }
+            new com.splunk.spigot.eventloggers.PlayerStatsScraper(p).startAsync(this, interval);
         }
 
         logAndSend("Splunk for Minecraft initialized.");
     }
 
     /**
-     * Logs and sends messages to be prepared for Splunk.
-     *
-     * @param message The message to log.
+     * Factory for the performance sampler. Subclasses (e.g. the Paper module) override this
+     * to return a platform-specific sampler that fills in TPS/MSPT from Paper-only APIs.
      */
+    protected com.splunk.spigot.eventloggers.PerformanceSampler createPerformanceSampler(Properties props) {
+        return new com.splunk.spigot.eventloggers.PerformanceSampler(props);
+    }
+
     private void logAndSend(String message) {
         logger.info(message);
     }
