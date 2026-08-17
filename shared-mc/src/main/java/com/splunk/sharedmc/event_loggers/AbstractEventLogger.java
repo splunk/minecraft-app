@@ -19,6 +19,19 @@ public class AbstractEventLogger {
     public static final String SPLUNK_PORT = "splunk.craft.connection.port";
     public static final String SPLUNK_TOKEN = "splunk.craft.token";
 
+    /**
+     * Opt-in toggles for the extended logging categories. All default to {@code false} in
+     * config so existing deployments don't see new event volume until explicitly enabled.
+     */
+    public static final String ENABLE_COMBAT = "splunk.craft.enable.combat";
+    public static final String ENABLE_ITEM = "splunk.craft.enable.item";
+    public static final String ENABLE_PROGRESSION = "splunk.craft.enable.progression";
+    public static final String ENABLE_SESSION_DETAIL = "splunk.craft.enable.session_detail";
+    public static final String ENABLE_SERVER = "splunk.craft.enable.server";
+    public static final String ENABLE_PERFORMANCE = "splunk.craft.enable.performance";
+    public static final String ENABLE_SESSION_IP = "splunk.craft.enable.session_ip";
+    public static final String PERFORMANCE_INTERVAL_TICKS = "splunk.craft.performance.interval_ticks";
+
     protected static final Logger logger = LogManager.getLogger(LOGGER_NAME);
 
     private static SingleSplunkConnection connection;
@@ -31,7 +44,10 @@ public class AbstractEventLogger {
     private static int port;
     private static String token;
 
+    protected final Properties props;
+
     public AbstractEventLogger(Properties properties) {
+        this.props = properties;
         //  brittle way to do this
         if (connection == null) {
             logEventsToConsole = Boolean.valueOf(properties.getProperty(LOG_EVENTS_TO_CONSOLE_PROP_KEY, "true"));
@@ -58,5 +74,25 @@ public class AbstractEventLogger {
             logger.info(message);
         }
         connection.sendToSplunk(loggable.toJson());
+    }
+
+    /**
+     * Reads a boolean toggle from the plugin's {@link Properties}, loaded once at startup
+     * (no hot-reload); default false keeps high-volume categories opt-in.
+     */
+    protected boolean isEnabled(String key) {
+        return Boolean.parseBoolean(props.getProperty(key, "false"));
+    }
+
+    /**
+     * Reads an integer config value from the plugin's {@link Properties}, loaded once at
+     * startup (no hot-reload); falls back to {@code defaultValue} if missing or unparseable.
+     */
+    protected int intProp(String key, int defaultValue) {
+        try {
+            return Integer.parseInt(props.getProperty(key, Integer.toString(defaultValue)));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 }

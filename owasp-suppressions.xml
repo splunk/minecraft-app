@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- Add <suppress> entries here only for verified false positives, with a justifying comment. -->
+
+    <!--
+      CVE-2026-53914 (CVSS 9.8) — affects kotlin-stdlib across all versions including 2.0.21.
+      We do not ship any Kotlin code. kotlin-stdlib is a transitive compile-time dep pulled in
+      by okhttp3:4.11.0 (itself a dep of splunk-library-javalogging). We've pinned kotlin-stdlib
+      to 2.0.21 in <dependencyManagement> which is the latest available; the CVE has no
+      published fix version as of this writing. Suppress pending a Kotlin or OkHttp release
+      that resolves this CVE. Re-evaluate when splunk-library-javalogging ships with a newer
+      okhttp3 that drops or upgrades kotlin-stdlib to a fixed version.
+    -->
+    <suppress>
+        <notes>CVE-2026-53914: affects all kotlin-stdlib versions, no fix available. kotlin-stdlib
+        is a transitive dep from okhttp3 via splunk-library-javalogging; we write no Kotlin code.
+        Pinned to 2.0.21 (latest); re-evaluate when a fixed kotlin-stdlib version is published.</notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin\-stdlib.*@.*$</packageUrl>
+        <cve>CVE-2026-53914</cve>
+    </suppress>
+
+    <!--
+      CVE-2020-29582 — Kotlin scripting engine writes artifacts to a world-readable temp directory.
+      We do not use Kotlin scripting (no script engine invocation anywhere in this codebase).
+      kotlin-stdlib is only present as a transitive runtime dep from OkHttp.
+    -->
+    <suppress>
+        <notes>CVE-2020-29582: Kotlin scripting temp-dir exposure. We don't use Kotlin scripting;
+        kotlin-stdlib is a transitive dep from okhttp3/splunk-library-javalogging.</notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin\-stdlib.*@.*$</packageUrl>
+        <cve>CVE-2020-29582</cve>
+    </suppress>
+
+
+    <!--
+      CVE-2023-33245 (8.8) and CVE-2021-35054 (7.5) — false positives on shared-mc-1.0-SNAPSHOT.jar.
+      OWASP matched the JAR to cpe:2.3:a:minecraft:minecraft:1.0:snapshot because the project
+      directory contains "minecraft" in its path and the version string is "1.0-SNAPSHOT". These
+      CVEs describe vulnerabilities in the Minecraft game client/server, not in this library.
+      shared-mc is our own code (Splunk HEC/KV transport logic), not the Mojang Minecraft product.
+    -->
+    <suppress>
+        <notes>False positive: shared-mc JAR matched to Minecraft game CPE due to "minecraft" in
+        project path and "SNAPSHOT" in version. CVE-2023-33245 and CVE-2021-35054 are Minecraft
+        game vulnerabilities, unrelated to this library.</notes>
+        <packageUrl regex="true">^pkg:maven/com\.splunk/shared\-mc@.*$</packageUrl>
+        <cve>CVE-2023-33245</cve>
+    </suppress>
+    <suppress>
+        <notes>False positive — same reason as CVE-2023-33245 above.</notes>
+        <packageUrl regex="true">^pkg:maven/com\.splunk/shared\-mc@.*$</packageUrl>
+        <cve>CVE-2021-35054</cve>
+    </suppress>
+
+</suppressions>

@@ -47,6 +47,31 @@ public class LogToSplunkPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new DeathEventLogger(properties), this);
         getServer().getPluginManager().registerEvents(new PlayerEventLogger(properties), this);
 
+        final org.bukkit.plugin.PluginManager pm = getServer().getPluginManager();
+        final java.util.Properties p = properties;
+
+        // Each extended logging category is opt-in: only register its listener/sampler if
+        // the corresponding splunk.craft.enable.* toggle is set to true in config.
+        if (Boolean.parseBoolean(p.getProperty("splunk.craft.enable.combat", "false"))) {
+            pm.registerEvents(new com.splunk.spigot.eventloggers.CombatEventLogger(p), this);
+        }
+        if (Boolean.parseBoolean(p.getProperty("splunk.craft.enable.item", "false"))) {
+            pm.registerEvents(new com.splunk.spigot.eventloggers.ItemEventLogger(p), this);
+        }
+        if (Boolean.parseBoolean(p.getProperty("splunk.craft.enable.progression", "false"))) {
+            pm.registerEvents(new com.splunk.spigot.eventloggers.ProgressionEventLogger(p), this);
+        }
+        if (Boolean.parseBoolean(p.getProperty("splunk.craft.enable.server", "false"))) {
+            pm.registerEvents(new com.splunk.spigot.eventloggers.ServerEventLogger(p), this);
+        }
+        if (Boolean.parseBoolean(p.getProperty("splunk.craft.enable.performance", "false"))) {
+            int interval = 600;
+            try {
+                interval = Integer.parseInt(p.getProperty("splunk.craft.performance.interval_ticks", "600"));
+            } catch (NumberFormatException ignored) { }
+            new com.splunk.spigot.eventloggers.PerformanceSampler(p).start(this, interval);
+        }
+
         logAndSend("Splunk for Minecraft initialized.");
     }
 

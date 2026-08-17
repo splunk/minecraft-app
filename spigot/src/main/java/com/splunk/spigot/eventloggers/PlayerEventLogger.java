@@ -13,6 +13,12 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -57,8 +63,13 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
      */
     @EventHandler
     public void onPlayerConnect(PlayerLoginEvent event) {
-        logAndSend(
-                generateLoggablePlayerEvent(event, PlayerEventAction.PLAYER_CONNECT, null, event.getKickMessage()));
+        LoggablePlayerEvent loggable =
+                generateLoggablePlayerEvent(event, PlayerEventAction.PLAYER_CONNECT, null, event.getKickMessage());
+        loggable.setPlayerUuid(event.getPlayer().getUniqueId().toString());
+        if (isEnabled(ENABLE_SESSION_IP) && event.getAddress() != null) {
+            loggable.setPlayerIp(event.getAddress().getHostAddress());
+        }
+        logAndSend(loggable);
     }
 
     /**
@@ -118,5 +129,99 @@ public class PlayerEventLogger extends AbstractEventLogger implements Listener {
         }
 
         return loggable;
+    }
+
+    /**
+     * Logs player chat messages to Splunk.
+     *
+     * @param event The captured event.
+     */
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        logAndSend(
+                generateLoggablePlayerEvent(event, PlayerEventAction.CHAT, null, event.getMessage()));
+    }
+
+    /**
+     * Logs player advancement unlocks to Splunk.
+     *
+     * @param event The captured event.
+     */
+    @EventHandler
+    public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent event) {
+        // We only want to log real achievements/advancements, not recipe unlocks.
+        String key = event.getAdvancement().getKey().toString();
+        if (key.startsWith("minecraft:recipes/")) {
+            return;
+        }
+        logAndSend(
+                generateLoggablePlayerEvent(event, PlayerEventAction.ADVANCEMENT, null, key));
+    }
+
+    /**
+     * Logs player teleports to Splunk. Returns early via the
+     * {@code isEnabled(ENABLE_SESSION_DETAIL)} guard — this category is opt-in.
+     *
+     * @param event The captured event.
+     */
+    @EventHandler
+    public void onTeleport(PlayerTeleportEvent event) {
+        if (!isEnabled(ENABLE_SESSION_DETAIL)) {
+            return;
+        }
+        LoggablePlayerEvent loggable = generateLoggablePlayerEvent(
+                event, PlayerEventAction.TELEPORT, event.getCause().toString(), null);
+        loggable.setFrom(locationAsPoint(event.getFrom()));
+        loggable.setTo(locationAsPoint(event.getTo()));
+        logAndSend(loggable);
+    }
+
+    /**
+     * Logs player game mode changes to Splunk. Returns early via the
+     * {@code isEnabled(ENABLE_SESSION_DETAIL)} guard — this category is opt-in.
+     *
+     * @param event The captured event.
+     */
+    @EventHandler
+    public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        if (!isEnabled(ENABLE_SESSION_DETAIL)) {
+            return;
+        }
+        LoggablePlayerEvent loggable = generateLoggablePlayerEvent(
+                event, PlayerEventAction.GAMEMODE_CHANGE, null, null);
+        loggable.setGamemode(event.getNewGameMode().toString());
+        logAndSend(loggable);
+    }
+
+    /**
+     * Logs when a player enters a bed. Returns early via the
+     * {@code isEnabled(ENABLE_SESSION_DETAIL)} guard — this category is opt-in.
+     *
+     * @param event The captured event.
+     */
+    @EventHandler
+    public void onBedEnter(PlayerBedEnterEvent event) {
+        if (!isEnabled(ENABLE_SESSION_DETAIL)) {
+            return;
+        }
+        LoggablePlayerEvent loggable = generateLoggablePlayerEvent(
+                event, PlayerEventAction.BED_ENTER, null, null);
+        logAndSend(loggable);
+    }
+
+    /**
+     * Logs when a player changes worlds. Returns early via the
+     * {@code isEnabled(ENABLE_SESSION_DETAIL)} guard — this category is opt-in.
+     *
+     * @param event The captured event.
+     */
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        if (!isEnabled(ENABLE_SESSION_DETAIL)) {
+            return;
+        }
+        LoggablePlayerEvent loggable = generateLoggablePlayerEvent(
+                event, PlayerEventAction.WORLD_CHANGE, null, event.getFrom().getName());
+        logAndSend(loggable);
     }
 }

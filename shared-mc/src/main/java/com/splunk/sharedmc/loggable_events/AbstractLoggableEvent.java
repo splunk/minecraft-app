@@ -16,23 +16,31 @@ public class AbstractLoggableEvent extends SplunkCimLogEvent implements Loggable
     public static final String ACTION = "action";
 
     /**
-     * Constructor. Enforces that subclasses must have a loggable event type.
+     * Constructor. Enforces that subclasses must have a loggable event type. Null-checks
+     * {@code coordinates} before dereferencing it (fixes a prior NPE risk when an event has
+     * no location, e.g. server lifecycle events) and delegates to the 3-arg constructor.
      *
      * @param type The type of event that this is.
      */
     public AbstractLoggableEvent(LoggableEventType type, long worldTime, String worldName, Point3dLong coordinates) {
+        this(type, worldTime, worldName);
+        if (coordinates != null) {
+            this.addField("xCoord", coordinates.xCoord);
+            this.addField("yCoord", coordinates.yCoord);
+            this.addField("zCoord", coordinates.zCoord);
+        }
+    }
+
+    /**
+     * Constructor for events with no world location (e.g. server lifecycle, performance).
+     */
+    public AbstractLoggableEvent(LoggableEventType type, long worldTime, String worldName) {
         super(type.getEventName(), "");
- 
         this.addField("time", System.currentTimeMillis());
-
-
         this.addField("game_time", worldTime);
-        if(worldName != null) {
+        if (worldName != null) {
             this.addField("world", worldName);
         }
-        this.addField("xCoord", coordinates.xCoord);
-        this.addField("yCoord", coordinates.yCoord);
-        this.addField("zCoord", coordinates.zCoord);
     }
 
     @Override
