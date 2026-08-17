@@ -24,8 +24,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.io.CloseMode;
 
-import org.json.simple.JSONObject;
-
 /**
  * Knows a single Splunk instance by its host:port and forwards data to it.
  */
@@ -75,7 +73,14 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     @Override
     public void run() {
         while (true) {
-            sendData();
+            // Never let a single send failure kill the sender thread -- otherwise one
+            // transient error (e.g. HEC briefly unreachable at startup) permanently stops
+            // all logging until the server restarts.
+            try {
+                sendData();
+            } catch (final Throwable t) {
+                logger.error("Unexpected error while sending to Splunk; will retry.", t);
+            }
             try {
                 Thread.sleep(1000 * RECONNECT_TIME);
             } catch (final InterruptedException e) {
@@ -85,29 +90,42 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
     }
 
     /**
+     * Wraps a raw event message in the Splunk HEC envelope: {"event": <message>}.
+     * Package-private for testing.
+     */
+    static String buildHecEnvelope(String message) {
+        com.google.gson.JsonObject event = new com.google.gson.JsonObject();
+        event.addProperty("event", message);
+        return event.toString();
+    }
+
+    /**
      * Queues up a message to send to this Spunk connections' Splunk instance.
      *
      * @param message The message to send.
      */
     @Override
     public void sendToSplunk(String message) {
-        JSONObject event = new JSONObject();
-        //message = Calendar.getInstance().getTime().toString() + ' ' + message;
-        event.put("event", message);
-
-        messagesToSend.append(event.toString());
+        messagesToSend.append(buildHecEnvelope(message));
     }
 
     private boolean sendData() {
         boolean success = false;
-        // probably a better way to do this.
-        if (messagesOnRunway == null && messagesToSend.length() > 0) {
+        if (messagesOnRunway == null) {
+            // No batch in flight: promote queued messages to the runway, or bail if empty.
+            if (messagesToSend.length() == 0) {
+                return true; // nothing to send
+            }
             messagesOnRunway = messagesToSend;
             messagesToSend = new StringBuilder();
-        }else{
-            // no messages to send, so safe to say messages have been sent.
-            return messagesOnRunway == null;
         }
+        // else: a previous batch failed to send and is still on the runway -- retry it
+        // (the old code returned here without retrying, so any failed batch was stranded
+        // forever and never reached Splunk).
+        // Reset per-attempt so the finally block never closes a stale/previous response, and
+        // so a null check correctly detects an execute() that threw before assigning.
+        httpClient = null;
+        response = null;
         try {
             logger.info("Sending data to splunk...");
             httpClient = HttpClients.createDefault();
@@ -133,8 +151,23 @@ public class SingleSplunkConnection implements SplunkConnection, Runnable {
             logger.error("Unable to send message!", e);
             success = false;
         }finally{
-            httpClient.close(CloseMode.GRACEFUL);
-            response.close(CloseMode.GRACEFUL);
+            // Null-guard both closes: when execute() throws, response stays null. The old
+            // code dereferenced it here, turning every send failure into an uncaught NPE
+            // that killed the sender thread for good.
+            if (response != null) {
+                try {
+                    response.close(CloseMode.GRACEFUL);
+                } catch (final Exception e) {
+                    logger.warn("Error closing Splunk response.", e);
+                }
+            }
+            if (httpClient != null) {
+                try {
+                    httpClient.close(CloseMode.GRACEFUL);
+                } catch (final Exception e) {
+                    logger.warn("Error closing Splunk HTTP client.", e);
+                }
+            }
         }
 
         return success;
