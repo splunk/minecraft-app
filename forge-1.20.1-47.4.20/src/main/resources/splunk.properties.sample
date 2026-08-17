@@ -1,0 +1,42 @@
+splunk.craft.connection.host=127.0.0.1
+splunk.craft.connection.port=8088
+splunk.craft.token=CHANGEME-1234-5678-1234-123456789012
+splunk.craft.enable.consolelog=true
+
+# --- Extended logging categories (all opt-in; default off) ---
+# Combat & survival: damage, kills, healing, hunger, respawn (throttled per player)
+splunk.craft.enable.combat=false
+# Item economy: pickup, drop
+splunk.craft.enable.item=false
+# Progression: xp, level, enchant, craft, fish, command
+splunk.craft.enable.progression=false
+# Server lifecycle: start, weather change
+splunk.craft.enable.server=false
+# Performance sampler: online players, loaded chunks (TPS/MSPT require Paper API)
+splunk.craft.enable.performance=false
+# How often (in server ticks, 20 ticks = 1s) to sample performance
+splunk.craft.performance.interval_ticks=600
+# Session detail: log client IP on connect (PII -- opt in deliberately)
+splunk.craft.enable.session_ip=false
+# Session detail: teleport, gamemode change, bed enter, world change
+splunk.craft.enable.session_detail=false
+
+# --- Player stats scraper -> KV store (snapshot data, NOT sent via HEC) ---
+# Reads <world>/players/stats/<uuid>.json + advancements/<uuid>.json and upserts one doc per
+# player into a Splunk KV-store collection. Uses the splunkd MANAGEMENT REST endpoint, which
+# is a different host/port and credential than HEC -- HEC cannot write a KV store.
+splunk.craft.enable.playerstats=false
+# How often (in server ticks, 20 ticks = 1s) to scrape; 6000 = ~5 min
+splunk.craft.playerstats.interval_ticks=6000
+# splunkd management interface (NOT the HEC port). Default mgmt port is 8089, HTTPS.
+splunk.craft.kvstore.host=127.0.0.1
+splunk.craft.kvstore.port=8089
+# App namespace (app DIRECTORY name under etc/apps) that owns the collection. The
+# SplunkCraft app ships collections.conf + transforms.conf for minecraft_player_stats.
+splunk.craft.kvstore.app=SplunkCraft
+# KV-store collection name (must match collections.conf)
+splunk.craft.kvstore.collection=minecraft_player_stats
+# Splunk bearer/JWT token with write access (Settings -> Tokens). NOT the HEC token.
+splunk.craft.kvstore.bearer_token=CHANGEME
+# Optional: world directory name or absolute path (default: world)
+#splunk.craft.world.path=world

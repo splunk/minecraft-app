@@ -6,32 +6,84 @@
     <artifactId>splunk.minecraft.app</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>spigot</module>
         <module>shared-mc</module>
+        <module>spigot</module>
+        <module>paper</module>
         <module>forge</module>
+        <module>neoforge</module>
         <module>logtosplunk-plugin</module>
     </modules>
     <packaging>pom</packaging>
-    
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--
+          Per-platform output name fragments. Overridden by each platform module's
+          MC-version profiles so the shade/jar plugin can produce:
+            logtosplunk-<mc.version>-<loader.name>-<loader.version.display>.jar
+        -->
+        <mc.version>1.21.1</mc.version>
+        <loader.name>spigot</loader.name>
+        <loader.version.display>1.21.1-R0.1</loader.version.display>
+    </properties>
+
     <repositories>
         <repository>
             <id>mvnrepository-central</id>
             <name>mvnrepository.com Central</name>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>papermc</id>
+            <name>Paper Maven</name>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <name>Spigot Snapshots</name>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
     
     <dependencyManagement>
         <dependencies>
+            <!-- Pin kotlin-stdlib and siblings to a version that fixes CVE-2026-53914 (9.8).
+                 Transitive path: splunk-library-javalogging -> okhttp3:4.11.0 -> kotlin-stdlib:1.6.20.
+                 Pinning here forces Maven to pick up the newer version throughout the classpath. -->
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>2.0.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-common</artifactId>
+                <version>2.0.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk7</artifactId>
+                <version>2.0.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>2.0.21</version>
+            </dependency>
+            <!-- Log4j is bundled with all MC server runtimes (Spigot, Paper, Forge, NeoForge, Fabric).
+                 Mark as provided so it is available at compile time but never shaded into plugin JARs. -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
                 <version>2.25.1</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>2.25.1</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.splunk.logging</groupId>
@@ -39,15 +91,30 @@
                 <version>1.11.8</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.8.2</version>
-                <scope>test</scope>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.13.2</version>
             </dependency>
             <dependency>
-                <groupId>com.googlecode.json-simple</groupId>
-                <artifactId>json-simple</artifactId>
-                <version>1.1</version>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.5.0-jre</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.3.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.13.2</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -56,10 +123,26 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.14.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>12.1.0</version>
+                <configuration>
+                    <failBuildOnCVSS>7.0</failBuildOnCVSS>
+                    <!-- Provided-scope deps are bundled by the MC server, not this plugin. Their
+                         CVEs are the server operator's responsibility, not ours. -->
+                    <skipProvidedScope>true</skipProvidedScope>
+                    <!-- Sonatype OSS Index requires paid credentials; don't fail on 401 errors.
+                         CVE-score failures are still enforced via failBuildOnCVSS above. -->
+                    <failOnError>false</failOnError>
+                    <suppressionFiles>
+                        <suppressionFile>${maven.multiModuleProjectDirectory}/owasp-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
                 </configuration>
             </plugin>
         </plugins>

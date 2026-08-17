@@ -16,3 +16,15 @@ target/
 #forge .idea things:
 *.ipr
 *.iws
+# Editor/tooling droppings
+.vscode/
+.cursor/
+.codegraph/
+graphify-out/
+*.code-workspace
+
+# Local tool installs / build output not meant for version control
+mvn-bin/
+dist/
+node_modules/
+*.tar.gz
